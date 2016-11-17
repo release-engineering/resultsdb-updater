@@ -87,3 +87,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# custom
+.idea
+export/
+.DS_Store
+.vagrant/
+ciconsumer.egg-info

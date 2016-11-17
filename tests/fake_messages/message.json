@@ -1,0 +1,31 @@
+{
+    "body": {
+        "msg": {
+            "CI_infra_failure": "DNS", 
+            "CI_infra_failure_desc": "Cant resolve name to IP address", 
+            "base_distro": "TESTDISTRO", 
+            "brew_task_id": "0000000", 
+            "build_type": "official", 
+            "completion_time": "2016-11-15 14:48:10+0100", 
+            "component": "matt-0.0.0-0.testmsg",
+            "compose_id": "NULL", 
+            "create_time": "2016-11-15 14:45:51+0100", 
+            "job_link_back": "TESTURL", 
+            "job_names": "myjobname", 
+            "team": "someteam",
+            "trigger": "git push"
+        }, 
+        "topic": "/topic/CI"
+    }, 
+    "headers": {
+        "CI_TYPE": "ci-metricsdata", 
+        "content-length": "433", 
+        "destination": "/topic/CI", 
+        "expires": "0", 
+        "message-id": "ID\\cci-msg-bus.domain.local-37448-1476968870292-2\\c13412\\c-1\\c1\\c1",
+        "priority": "4", 
+        "subscription": "/topic/CI", 
+        "timestamp": "1479239442909"
+    }, 
+    "topic": "/topic/CI"
+}

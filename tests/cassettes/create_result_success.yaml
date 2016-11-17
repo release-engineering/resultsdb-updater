@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: !!python/unicode '{"result_data": {"failed": "1", "executed": "20", "arch":
+      "aarch64", "executor": "beaker"}, "outcome": "PASSED", "job_id": 10, "testcase_name":
+      "some_testcase"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['160']
+      User-Agent: [python-requests/2.11.1]
+      content-type: [application/json]
+    method: POST
+    uri: http://resultsdb.domain.local/api/v1.0/results
+  response:
+    body: {string: !!python/unicode "{\n  \"href\": \"http://resultsdb.domain.local/api/v1.0/results/2\"\
+        , \n  \"id\": 2, \n  \"job_url\": \"http://resultsdb.domain.local/api/v1.0/jobs/10\"\
+        , \n  \"log_url\": null, \n  \"outcome\": \"PASSED\", \n  \"result_data\"\
+        : {\n    \"arch\": [\n      \"aarch64\"\n    ], \n    \"executed\": [\n  \
+        \    \"20\"\n    ], \n    \"executor\": [\n      \"beaker\"\n    ], \n   \
+        \ \"failed\": [\n      \"1\"\n    ]\n  }, \n  \"submit_time\": \"2016-11-21T21:24:02.748421\"\
+        , \n  \"summary\": null, \n  \"testcase\": {\n    \"href\": \"http://resultsdb.domain.local/api/v1.0/testcases/some_testcase\"\
+        , \n    \"name\": \"some_testcase\", \n    \"url\": \"\"\n  }\n}"}
+    headers:
+      connection: [Keep-Alive]
+      content-length: ['540']
+      content-type: [application/json]
+      date: ['Mon, 21 Nov 2016 21:24:02 GMT']
+      keep-alive: ['timeout=5, max=100']
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+    status: {code: 201, message: CREATED}
+version: 1

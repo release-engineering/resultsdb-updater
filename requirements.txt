@@ -1,0 +1,8 @@
+fedmsg
+m2crypto
+m2ext
+moksha
+psutil
+qpid-python
+stomper
+requests
