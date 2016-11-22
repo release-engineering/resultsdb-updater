@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: !!python/unicode '{"status": "RUNNING", "ref_url": "http://someurl.domain.local/path/to/test",
+      "name": "some_job"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['96']
+      User-Agent: [python-requests/2.11.1]
+      content-type: [application/json]
+    method: POST
+    uri: http://resultsdb.domain.local/api/v1.0/jobs
+  response:
+    body: {string: !!python/unicode "{\n  \"end_time\": null, \n  \"href\": \"http://resultsdb.domain.local/api/v1.0/jobs/10\"\
+        , \n  \"id\": 10, \n  \"name\": \"some_job\", \n  \"ref_url\": \"http://someurl.domain.local/path/to/test\"\
+        , \n  \"results\": [], \n  \"results_count\": 0, \n  \"start_time\": null,\
+        \ \n  \"status\": \"RUNNING\", \n  \"uuid\": null\n}"}
+    headers:
+      connection: [Keep-Alive]
+      content-length: ['272']
+      content-type: [application/json]
+      date: ['Mon, 21 Nov 2016 21:21:47 GMT']
+      keep-alive: ['timeout=5, max=100']
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+    status: {code: 201, message: CREATED}
+version: 1

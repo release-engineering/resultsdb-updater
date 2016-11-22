@@ -1,0 +1,111 @@
+interactions:
+- request:
+    body: !!python/unicode '{"status": "RUNNING", "ref_url": " http://domain.local/job-package-4.4.4-6.el7",
+      "name": "package-rhel-7.2-candidate-runtest-fslock-func"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['138']
+      User-Agent: [python-requests/2.11.1]
+      content-type: [application/json]
+    method: POST
+    uri: http://resultsdb.domain.local/api/v1.0/jobs
+  response:
+    body: {string: !!python/unicode "{\n  \"end_time\": null, \n  \"href\": \"http://resultsdb.domain.local/api/v1.0/jobs/13\"\
+        , \n  \"id\": 13, \n  \"name\": \"package-rhel-7.2-candidate-runtest-fslock-func\"\
+        , \n  \"ref_url\": \" http://domain.local/job-package-4.4.4-6.el7\", \n  \"\
+        results\": [], \n  \"results_count\": 0, \n  \"start_time\": null, \n  \"\
+        status\": \"RUNNING\", \n  \"uuid\": null\n}"}
+    headers:
+      connection: [Keep-Alive]
+      content-length: ['314']
+      content-type: [application/json]
+      date: ['Mon, 21 Nov 2016 21:30:30 GMT']
+      keep-alive: ['timeout=5, max=100']
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+    status: {code: 201, message: CREATED}
+- request:
+    body: !!python/unicode '{"result_data": {"failed": "1", "executed": "20", "arch":
+      "aarch64", "executor": "beaker"}, "outcome": "FAILED", "job_id": 13, "testcase_name":
+      "package-rhel-7.2-candidate-runtest-fslock-func"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      User-Agent: [python-requests/2.11.1]
+      content-type: [application/json]
+    method: POST
+    uri: http://resultsdb.domain.local/api/v1.0/results
+  response:
+    body: {string: !!python/unicode "{\n  \"href\": \"http://resultsdb.domain.local/api/v1.0/results/3\"\
+        , \n  \"id\": 3, \n  \"job_url\": \"http://resultsdb.domain.local/api/v1.0/jobs/13\"\
+        , \n  \"log_url\": null, \n  \"outcome\": \"FAILED\", \n  \"result_data\"\
+        : {\n    \"arch\": [\n      \"aarch64\"\n    ], \n    \"executed\": [\n  \
+        \    \"20\"\n    ], \n    \"executor\": [\n      \"beaker\"\n    ], \n   \
+        \ \"failed\": [\n      \"1\"\n    ]\n  }, \n  \"submit_time\": \"2016-11-21T21:30:30.225792\"\
+        , \n  \"summary\": null, \n  \"testcase\": {\n    \"href\": \"http://resultsdb.domain.local/api/v1.0/testcases/package-rhel-7.2-candidate-runtest-fslock-func\"\
+        , \n    \"name\": \"package-rhel-7.2-candidate-runtest-fslock-func\", \n \
+        \   \"url\": \"\"\n  }\n}"}
+    headers:
+      connection: [Keep-Alive]
+      content-length: ['606']
+      content-type: [application/json]
+      date: ['Mon, 21 Nov 2016 21:30:30 GMT']
+      keep-alive: ['timeout=5, max=100']
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+    status: {code: 201, message: CREATED}
+- request:
+    body: !!python/unicode '{"result_data": {"failed": "54", "executed": "1000", "arch":
+      "x86_64", "executor": "CI-OSP"}, "outcome": "FAILED", "job_id": 13, "testcase_name":
+      "package-rhel-7.2-candidate-runtest-fslock-func"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['195']
+      User-Agent: [python-requests/2.11.1]
+      content-type: [application/json]
+    method: POST
+    uri: http://resultsdb.domain.local/api/v1.0/results
+  response:
+    body: {string: !!python/unicode "{\n  \"href\": \"http://resultsdb.domain.local/api/v1.0/results/4\"\
+        , \n  \"id\": 4, \n  \"job_url\": \"http://resultsdb.domain.local/api/v1.0/jobs/13\"\
+        , \n  \"log_url\": null, \n  \"outcome\": \"FAILED\", \n  \"result_data\"\
+        : {\n    \"arch\": [\n      \"x86_64\"\n    ], \n    \"executed\": [\n   \
+        \   \"1000\"\n    ], \n    \"executor\": [\n      \"CI-OSP\"\n    ], \n  \
+        \  \"failed\": [\n      \"54\"\n    ]\n  }, \n  \"submit_time\": \"2016-11-21T21:30:30.343349\"\
+        , \n  \"summary\": null, \n  \"testcase\": {\n    \"href\": \"http://resultsdb.domain.local/api/v1.0/testcases/package-rhel-7.2-candidate-runtest-fslock-func\"\
+        , \n    \"name\": \"package-rhel-7.2-candidate-runtest-fslock-func\", \n \
+        \   \"url\": \"\"\n  }\n}"}
+    headers:
+      connection: [Keep-Alive]
+      content-length: ['608']
+      content-type: [application/json]
+      date: ['Mon, 21 Nov 2016 21:30:30 GMT']
+      keep-alive: ['timeout=5, max=100']
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+    status: {code: 201, message: CREATED}
+- request:
+    body: !!python/unicode '{"status": "COMPLETED"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['23']
+      User-Agent: [python-requests/2.11.1]
+      content-type: [application/json]
+    method: PUT
+    uri: http://resultsdb.domain.local/api/v1.0/jobs/13
+  response:
+    body: {string: !!python/unicode '{}'}
+    headers:
+      connection: [Keep-Alive]
+      content-length: ['2']
+      content-type: [application/json]
+      date: ['Mon, 21 Nov 2016 21:30:30 GMT']
+      keep-alive: ['timeout=5, max=100']
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+    status: {code: 200, message: OK}
+version: 1
