@@ -16,7 +16,7 @@ $script = <<SCRIPT
     pip install -r /opt/resultsdb-updater/src/requirements.txt
     pip install -r /opt/resultsdb-updater/src/test-requirements.txt
     cd /opt/resultsdb-updater/src
-    python setup.py develop
+    python setup.py egg_info
 SCRIPT
 
 Vagrant.configure("2") do |config|
