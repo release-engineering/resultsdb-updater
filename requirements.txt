@@ -1,7 +1,7 @@
 fedmsg
 m2crypto
 m2ext
-moksha
+moksha.hub
 psutil
 qpid-python
 stomper
