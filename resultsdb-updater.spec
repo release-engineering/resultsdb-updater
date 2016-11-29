@@ -7,7 +7,7 @@
 %endif
 
 Name:               resultsdb-updater
-Version:            1.0.0
+Version:            1.0.1
 Release:            1%{?dist}
 Summary:            Translates test results on the message bus to ResultsDB
 
@@ -25,6 +25,7 @@ Requires:           m2crypto
 Requires:           python-moksha-hub
 Requires:           python-fedmsg-commands
 Requires:           python-fedmsg-consumers
+Requires:           fedmsg-hub
 Requires:           python-m2ext
 Requires:           python-psutil
 Requires:           python-qpid
@@ -57,5 +58,8 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/resultsdb_updater-%{version}*
 
 %changelog
+* Tue Nov 29 2016 Matt Prahl <mprahl@redhat.com> - 1.0.1-1
+- Add fedmsg-hub as a runtime dependency.
+
 * Tue Nov 22 2016 Matt Prahl <mprahl@redhat.com> - 1.0.0-1
 - The dawn of time.
