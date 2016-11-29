@@ -22,7 +22,7 @@ BuildRequires:      python-setuptools
 
 Requires:           fedmsg
 Requires:           m2crypto
-Requires:           moksha
+Requires:           python-moksha-hub
 Requires:           python-fedmsg-commands
 Requires:           python-fedmsg-consumers
 Requires:           python-m2ext
