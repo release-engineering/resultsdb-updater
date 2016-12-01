@@ -88,9 +88,10 @@ def post_to_resultsdb(msg):
             msg['body']['msg']['team'], msg['body']['msg']['job_names'])
     else:
         LOGGER.warn((
-            'The message "{0}" did not contain a team. Using just "job_names" '
-            'as the name for the Test Case').format(msg_id))
-        testcase_name = msg['body']['msg']['job_names']
+            'The message "{0}" did not contain a team. Using '
+            '"unassinged\job_names" as the name for the Test Case')
+                .format(msg_id))
+        testcase_name = 'unassigned\{0}'.format(msg['body']['msg']['job_names'])
 
     job_name = msg['body']['msg']['job_names']
     job_url = msg['body']['msg']['job_link_back']
@@ -127,7 +128,8 @@ def post_to_resultsdb(msg):
                     .format(msg_id))
                 return
 
-    if not set_job_status(job_id, 'COMPLETED'):
+    # Only mark the job as completed if it is in the RUNNING state
+    if job_status == 'RUNNING' and not set_job_status(job_id, 'COMPLETED'):
         LOGGER.error(
             'The job status for message "{0}" couldn\'t be set to "COMPLETED"'
             .format(msg_id))
