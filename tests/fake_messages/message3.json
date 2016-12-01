@@ -1,0 +1,37 @@
+{
+    "body": {
+        "msg": {
+            "CI_infra_failure" : "DNS",
+            "CI_infra_failure_desc" : "Can't resolve name to IP address",
+            "CI_tier" : "1",
+            "base_distro" : "RHEL 7.2+updates",
+            "brew_task_id" : "11610935",
+            "build_type" : "official",
+            "completion_time" : "2016-08-18T20:55:10Z",
+            "component" : "package-4.4.4-7.el7",
+            "compose_id" : "NULL",
+            "create_time" : "2016-08-18T20:13:51Z",
+            "job_link_back" : " http://domain.local/job-package-4.4.4-7.el7",
+            "job_names" : "package-rhel-7.2-candidate-runtest-fslock-func",
+            "owner" : "some_owner",
+            "team": "someteam",
+            "tests" : [
+                { "executor" : "beaker" , "arch" : "aarch64" , "executed" : "25", "failed" : "0" },
+                { "executor" : "CI-OSP" , "arch" : "x86_64" , "executed" : "1000",   "failed" : "0" }
+            ],
+            "trigger" : "git push"
+        },
+        "topic": "/topic/CI"
+    },
+    "headers": {
+        "CI_TYPE": "ci-metricsdata",
+        "content-length": "433",
+        "destination": "/topic/CI",
+        "expires": "0",
+        "message-id": "ID\\ci-hub.domain.local-37141-1460606438905-1\\1\\1\\1\\6641",
+        "priority": "4",
+        "subscription": "/topic/CI",
+        "timestamp": "1460652076192"
+    },
+    "topic": "/topic/CI"
+}

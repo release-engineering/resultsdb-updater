@@ -48,6 +48,15 @@ class TestConsumer(unittest.TestCase):
 
         self.assertEqual(self.consumer.consume(fake_msg), None)
 
+    @vcr.use_cassette(
+        path.join(CASSETTES_DIR, 'consume_msg_three_success.yaml'))
+    def test_full_consume_msg_three(self):
+        fake_msg_path = path.join(self.json_dir, 'message3.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        self.assertEqual(self.consumer.consume(fake_msg), None)
+
     @vcr.use_cassette(path.join(CASSETTES_DIR, 'create_job_success.yaml'))
     def test_create_job(self):
         response = {
