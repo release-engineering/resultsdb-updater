@@ -84,14 +84,14 @@ def set_job_status(job_id, status):
 def post_to_resultsdb(msg):
     msg_id = msg['headers']['message-id']
     if msg['body']['msg'].get('team'):
-        testcase_name = '{0}\{1}'.format(
+        testcase_name = '{0}.{1}'.format(
             msg['body']['msg']['team'], msg['body']['msg']['job_names'])
     else:
         LOGGER.warn((
             'The message "{0}" did not contain a team. Using '
-            '"unassinged\job_names" as the name for the Test Case')
+            '"unassinged.job_names" as the name for the Test Case')
                 .format(msg_id))
-        testcase_name = 'unassigned\{0}'.format(msg['body']['msg']['job_names'])
+        testcase_name = 'unassigned.{0}'.format(msg['body']['msg']['job_names'])
 
     job_name = msg['body']['msg']['job_names']
     job_url = msg['body']['msg']['job_link_back']
