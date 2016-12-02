@@ -7,7 +7,7 @@
 %endif
 
 Name:               resultsdb-updater
-Version:            1.1.0
+Version:            1.2.0
 Release:            1%{?dist}
 Summary:            Translates test results on the message bus to ResultsDB
 
@@ -58,6 +58,9 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/resultsdb_updater-%{version}*
 
 %changelog
+* Fri Dec 2 2016 Matt Prahl <mprahl@redhat.com> - 1.2.0-1
+- Update to v1.2.0
+
 * Thu Dec 1 2016 Matt Prahl <mprahl@redhat.com> - 1.1.0-1
 - Update to v1.1.0
 
