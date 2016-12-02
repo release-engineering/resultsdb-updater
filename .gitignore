@@ -93,3 +93,4 @@ export/
 .DS_Store
 .vagrant/
 ciconsumer.egg-info
+ca.crt

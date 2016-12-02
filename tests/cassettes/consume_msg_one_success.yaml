@@ -9,17 +9,17 @@ interactions:
       User-Agent: [python-requests/2.12.3]
       content-type: [application/json]
     method: POST
-    uri: http://resultsdb.domain.local/api/v1.0/jobs
+    uri: https://resultsdb.domain.local/api/v1.0/jobs
   response:
-    body: {string: !!python/unicode "{\n  \"end_time\": null, \n  \"href\": \"http://resultsdb.domain.local/api/v1.0/jobs/2\"\
-        , \n  \"id\": 2, \n  \"name\": \"myjobname\", \n  \"ref_url\": \"TESTURL\"\
+    body: {string: !!python/unicode "{\n  \"end_time\": null, \n  \"href\": \"https://resultsdb.domain.local/api/v1.0/jobs/1\"\
+        , \n  \"id\": 1, \n  \"name\": \"myjobname\", \n  \"ref_url\": \"TESTURL\"\
         , \n  \"results\": [], \n  \"results_count\": 0, \n  \"start_time\": null,\
         \ \n  \"status\": \"CRASHED\", \n  \"uuid\": null\n}"}
     headers:
       connection: [Keep-Alive]
       content-length: ['273']
       content-type: [application/json]
-      date: ['Thu, 01 Dec 2016 15:06:04 GMT']
+      date: ['Fri, 02 Dec 2016 20:42:40 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]
@@ -27,3 +27,4 @@ interactions:
       x-content-type-options: [nosniff]
       x-frame-options: [DENY]
     status: {code: 201, message: CREATED}
+version: 1

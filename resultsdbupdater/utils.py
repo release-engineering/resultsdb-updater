@@ -96,6 +96,12 @@ def post_to_resultsdb(msg):
     job_name = msg['body']['msg']['job_names']
     job_url = msg['body']['msg']['job_link_back']
     job_tests = msg['body']['msg'].get('tests')
+    job_component = msg['body']['msg'].get('component', 'unknown')
+
+    if msg['body']['msg'].get('brew_task_id'):
+        job_type = 'koji_build'
+    else:
+        job_type = 'unknown'
 
     if not job_tests:
         LOGGER.warn((
@@ -120,6 +126,9 @@ def post_to_resultsdb(msg):
                 outcome = 'PASSED'
             else:
                 outcome = 'FAILED'
+
+            test['item'] = job_component
+            test['type'] = job_type
 
             if not create_result(testcase_name, job_id, outcome,
                                  result_data=test):
