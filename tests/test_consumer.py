@@ -32,26 +32,10 @@ class TestConsumer(unittest.TestCase):
             self.consumer.consume(fake_msg)
             post_to_resultsdb.assert_called_once_with(fake_msg)
 
-    @vcr.use_cassette(path.join(CASSETTES_DIR, 'consume_msg_one_success.yaml'))
-    def test_full_consume_msg_one(self):
-        fake_msg_path = path.join(self.json_dir, 'message.json')
-        with open(fake_msg_path) as fake_msg_file:
-            fake_msg = json.load(fake_msg_file)
-
-        self.assertEqual(self.consumer.consume(fake_msg), None)
-
-    @vcr.use_cassette(path.join(CASSETTES_DIR, 'consume_msg_two_success.yaml'))
-    def test_full_consume_msg_two(self):
-        fake_msg_path = path.join(self.json_dir, 'message2.json')
-        with open(fake_msg_path) as fake_msg_file:
-            fake_msg = json.load(fake_msg_file)
-
-        self.assertEqual(self.consumer.consume(fake_msg), None)
-
     @vcr.use_cassette(
-        path.join(CASSETTES_DIR, 'consume_msg_three_success.yaml'))
-    def test_full_consume_msg_three(self):
-        fake_msg_path = path.join(self.json_dir, 'message3.json')
+        path.join(CASSETTES_DIR, 'consume_msg_success.yaml'))
+    def test_full_consume_msg(self):
+        fake_msg_path = path.join(self.json_dir, 'message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
 
@@ -61,8 +45,8 @@ class TestConsumer(unittest.TestCase):
     def test_create_job(self):
         response = {
             'end_time': None,
-            'href': 'http://resultsdb.domain.local/api/v1.0/jobs/10',
-            'id': 10,
+            'href': 'https://resultsdb.domain.local/api/v1.0/jobs/2',
+            'id': 2,
             'name': 'some_job',
             'ref_url': 'http://someurl.domain.local/path/to/test',
             'results': [],
@@ -74,7 +58,7 @@ class TestConsumer(unittest.TestCase):
 
         url = 'http://someurl.domain.local/path/to/test'
         self.assertEqual(
-            utils.create_job('some_job', url, 'COMPLETED'), response)
+            utils.create_job('some_job', url, 'RUNNING'), response)
 
     @vcr.use_cassette(path.join(CASSETTES_DIR, 'create_result_success.yaml'))
     def test_create_result(self):
@@ -87,8 +71,39 @@ class TestConsumer(unittest.TestCase):
 
         self.assertEqual(
             utils.create_result(
-                'some_testcase', 10, 'PASSED', result_data=result), True)
+                'some_testcase', 2, 'PASSED',
+                'http://domain.local/job/package/136/console', result),
+            True
+        )
 
     @vcr.use_cassette(path.join(CASSETTES_DIR, 'set_job_status_success.yaml'))
     def test_set_job_status(self):
-        self.assertEqual(utils.set_job_status(10, 'COMPLETED'), True)
+        self.assertEqual(utils.set_job_status(2, 'COMPLETED'), True)
+
+    @vcr.use_cassette(path.join(CASSETTES_DIR, 'create_testcase_success.yaml'))
+    def test_create_testcase(self):
+        self.assertEqual(
+            utils.create_testcase('team.the_best_testcase_of_my_life',
+                                  'https://http.cat/404'),
+            True
+        )
+
+    @vcr.use_cassette(path.join(CASSETTES_DIR, 'get_testcase_success.yaml'))
+    def test_get_testcase(self):
+        results = {
+            'url': 'https://http.cat/404',
+            'href': 'https://resultsdb.domain.local/api/v1.0/testcases/team.the_best_testcase_of_my_life',
+            'name': 'team.the_best_testcase_of_my_life'
+        }
+        self.assertEqual(
+            utils.get_testcase('team.the_best_testcase_of_my_life'),
+            results
+        )
+
+    @vcr.use_cassette(path.join(CASSETTES_DIR, 'put_testcase_success.yaml'))
+    def test_set_testcase(self):
+        self.assertEqual(
+            utils.set_testcase('team.the_best_testcase_of_my_life',
+                               'https://http.cat/401'),
+            True
+        )

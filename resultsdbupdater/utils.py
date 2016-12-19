@@ -18,9 +18,46 @@ logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
 
 
+def get_testcase(testcase_name):
+    testcase_get_url = '{0}/testcases/{1}'.format(
+        RESULTSDB_API_URL, quote_plus(testcase_name))
+    get_req = requests.get(testcase_get_url, verify=TRUSTED_CA)
+    if get_req.status_code == 200:
+        return get_req.json()
+
+    return {}
+
+
+def create_testcase(testcase_name, url):
+    headers = {'content-type': 'application/json'}
+    testcase_post_url = '{0}/testcases'.format(RESULTSDB_API_URL)
+    post_req = requests.post(
+        testcase_post_url,
+        data=json.dumps(
+            {'name': testcase_name, 'url': url}),
+        headers=headers,
+        verify=TRUSTED_CA)
+
+    return post_req.status_code == 201
+
+
+def set_testcase(testcase_name, url):
+    headers = {'content-type': 'application/json'}
+    testcase_put_url = '{0}/testcases/{1}'.format(
+        RESULTSDB_API_URL, quote_plus(testcase_name))
+    put_req = requests.put(
+        testcase_put_url,
+        data=json.dumps(
+            {'url': url}),
+        headers=headers,
+        verify=TRUSTED_CA)
+
+    return put_req.status_code == 200
+
+
 def create_job(job_name, url, status):
     headers = {'content-type': 'application/json'}
-    job_post_url = '{0}/{1}'.format(RESULTSDB_API_URL, 'jobs')
+    job_post_url = '{0}/jobs'.format(RESULTSDB_API_URL)
     post_req = requests.post(
         job_post_url,
         data=json.dumps({'name': job_name, 'ref_url': url, 'status': status}),
@@ -38,15 +75,16 @@ def create_job(job_name, url, status):
         return {}
 
 
-def create_result(testcase_name, job_id, outcome, result_data):
+def create_result(testcase_name, job_id, outcome, log_url, result_data):
     headers = {'content-type': 'application/json'}
-    result_post_url = '{0}/{1}'.format(RESULTSDB_API_URL, 'results')
+    result_post_url = '{0}/results'.format(RESULTSDB_API_URL)
     post_req = requests.post(
         result_post_url,
         data=json.dumps({
             'testcase_name': testcase_name,
             'job_id': job_id,
             'outcome': outcome,
+            'log_url': log_url,
             'result_data': result_data}),
         headers=headers,
         verify=TRUSTED_CA)
@@ -65,7 +103,7 @@ def create_result(testcase_name, job_id, outcome, result_data):
 
 def set_job_status(job_id, status):
     headers = {'content-type': 'application/json'}
-    job_put_url = '{0}/{1}/{2}'.format(RESULTSDB_API_URL, 'jobs', job_id)
+    job_put_url = '{0}/jobs/{1}'.format(RESULTSDB_API_URL, job_id)
     put_req = requests.put(
         job_put_url,
         data=json.dumps({'status': status}),
@@ -93,9 +131,23 @@ def post_to_resultsdb(msg):
                 .format(msg_id))
         testcase_name = 'unassigned.{0}'.format(msg['body']['msg']['job_names'])
 
+    testcase_url = msg['body']['msg']['job_link_back']
+    testcase_json = get_testcase(testcase_name)
+    if testcase_json:
+        # Verify that the URL on the testcase is correct
+        if testcase_json.get('url') != testcase_url:
+            set_testcase(testcase_name, testcase_url)
+    else:
+        new_testcase = create_testcase(testcase_name, testcase_url)
+        if not new_testcase:
+            LOGGER.error(
+                'The testcase "{0}" couldn\'t be created'.format(testcase_name))
+            return
+
     job_name = msg['body']['msg']['job_names']
-    job_url = msg['body']['msg']['job_link_back']
+    job_url = msg['body']['msg']['jenkins_build_url']
     job_tests = msg['body']['msg'].get('tests')
+    job_tests_log_url = '{0}/console'.format(job_url.rstrip('/'))
     job_component = msg['body']['msg'].get('component', 'unknown')
 
     if msg['body']['msg'].get('brew_task_id'):
@@ -131,7 +183,7 @@ def post_to_resultsdb(msg):
             test['type'] = job_type
 
             if not create_result(testcase_name, job_id, outcome,
-                                 result_data=test):
+                                 job_tests_log_url, test):
                 LOGGER.error(
                     'The new result for message "{0}" couldn\'t be created'
                     .format(msg_id))
