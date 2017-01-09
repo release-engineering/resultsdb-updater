@@ -131,7 +131,7 @@ def post_to_resultsdb(msg):
                 .format(msg_id))
         testcase_name = 'unassigned.{0}'.format(msg['body']['msg']['job_names'])
 
-    testcase_url = msg['body']['msg']['job_link_back']
+    testcase_url = msg['body']['msg']['jenkins_job_url']
     testcase_json = get_testcase(testcase_name)
     if testcase_json:
         # Verify that the URL on the testcase is correct
