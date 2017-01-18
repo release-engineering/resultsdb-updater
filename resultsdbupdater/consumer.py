@@ -15,4 +15,5 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
                 msg['headers']['CI_TYPE'] == 'ci-metricsdata':
             LOGGER.debug('Processing message "{0}"'.format(
                 msg['headers']['message-id']))
-            post_to_resultsdb(msg)
+            LOGGER.debug(str(msg))
+            return post_to_resultsdb(msg)
