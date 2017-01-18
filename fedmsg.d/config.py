@@ -11,6 +11,6 @@ config = {
     'stomp_user': 'user',
     'stomp_pass': 'password',
     'resultsdb-updater.log_level': logging.INFO,
-    'resultsdb-updater.resultsdb_api_url': 'https://resultsdb.domain.local/api/v1.0',
+    'resultsdb-updater.resultsdb_api_url': 'http://resultsdb.domain.local/api/v2.0',
     'resultsdb-updater.resultsdb_api_ca': None
 }

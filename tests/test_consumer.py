@@ -39,71 +39,19 @@ class TestConsumer(unittest.TestCase):
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
 
-        self.assertEqual(self.consumer.consume(fake_msg), None)
-
-    @vcr.use_cassette(path.join(CASSETTES_DIR, 'create_job_success.yaml'))
-    def test_create_job(self):
-        response = {
-            'end_time': None,
-            'href': 'https://resultsdb.domain.local/api/v1.0/jobs/2',
-            'id': 2,
-            'name': 'some_job',
-            'ref_url': 'http://someurl.domain.local/path/to/test',
-            'results': [],
-            'results_count': 0,
-            'start_time': None,
-            'status': 'RUNNING',
-            'uuid': None
-        }
-
-        url = 'http://someurl.domain.local/path/to/test'
-        self.assertEqual(
-            utils.create_job('some_job', url, 'RUNNING'), response)
+        self.assertEqual(self.consumer.consume(fake_msg), True)
 
     @vcr.use_cassette(path.join(CASSETTES_DIR, 'create_result_success.yaml'))
     def test_create_result(self):
-        result = {
+        data = {
             'executor': 'beaker',
             'arch': 'aarch64',
             'executed': '20',
             'failed': '1'
         }
-
+        fake_ref_url = 'http://domain.local/job/package/136/console'
         self.assertEqual(
             utils.create_result(
-                'some_testcase', 2, 'PASSED',
-                'http://domain.local/job/package/136/console', result),
-            True
-        )
-
-    @vcr.use_cassette(path.join(CASSETTES_DIR, 'set_job_status_success.yaml'))
-    def test_set_job_status(self):
-        self.assertEqual(utils.set_job_status(2, 'COMPLETED'), True)
-
-    @vcr.use_cassette(path.join(CASSETTES_DIR, 'create_testcase_success.yaml'))
-    def test_create_testcase(self):
-        self.assertEqual(
-            utils.create_testcase('team.the_best_testcase_of_my_life',
-                                  'https://http.cat/404'),
-            True
-        )
-
-    @vcr.use_cassette(path.join(CASSETTES_DIR, 'get_testcase_success.yaml'))
-    def test_get_testcase(self):
-        results = {
-            'url': 'https://http.cat/404',
-            'href': 'https://resultsdb.domain.local/api/v1.0/testcases/team.the_best_testcase_of_my_life',
-            'name': 'team.the_best_testcase_of_my_life'
-        }
-        self.assertEqual(
-            utils.get_testcase('team.the_best_testcase_of_my_life'),
-            results
-        )
-
-    @vcr.use_cassette(path.join(CASSETTES_DIR, 'put_testcase_success.yaml'))
-    def test_set_testcase(self):
-        self.assertEqual(
-            utils.set_testcase('team.the_best_testcase_of_my_life',
-                               'https://http.cat/401'),
+                {'name': 'testcase'}, 'PASSED', fake_ref_url, data),
             True
         )
