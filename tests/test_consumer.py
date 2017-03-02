@@ -52,6 +52,6 @@ class TestConsumer(unittest.TestCase):
         fake_ref_url = 'http://domain.local/job/package/136/console'
         self.assertEqual(
             utils.create_result(
-                {'name': 'testcase'}, 'PASSED', fake_ref_url, data),
+                {'name': 'testcase'}, 'PASSED', fake_ref_url, data, recipients=['jkulda', 'unknown']),
             True
         )
