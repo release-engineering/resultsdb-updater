@@ -19,7 +19,9 @@ logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
 
 
-def create_result(testcase, outcome, ref_url, data, groups=[]):
+def create_result(testcase, outcome, ref_url, data, recipients, groups=None):
+    if not groups:
+        groups = []
     post_req = requests.post(
         '{0}/results'.format(RESULTSDB_API_URL),
         data=json.dumps({
@@ -27,7 +29,8 @@ def create_result(testcase, outcome, ref_url, data, groups=[]):
             'groups': groups,
             'outcome': outcome,
             'ref_url': ref_url,
-            'data': data}),
+            'data': data,
+            'recipients': recipients}),
         headers={'content-type': 'application/json'},
         verify=TRUSTED_CA)
     if post_req.status_code == 201:
@@ -56,6 +59,7 @@ def post_to_resultsdb(msg):
     tests = msg['body']['msg']['tests']
     group_tests_ref_url = '{0}/console'.format(group_ref_url.rstrip('/'))
     component = msg['body']['msg'].get('component', 'unknown')
+    recipients = msg['body']['msg'].get('recipients', ['unknown'])
 
     if msg['body']['msg'].get('brew_task_id'):
         test_type = 'koji_build'
@@ -84,7 +88,7 @@ def post_to_resultsdb(msg):
         test['type'] = test_type
 
         if not create_result(testcase, outcome, group_tests_ref_url,
-                             test, groups):
+                             test, recipients, groups):
             LOGGER.error(
                 'A new result for message "{0}" couldn\'t be created'
                 .format(msg_id))
@@ -101,7 +105,7 @@ def post_to_resultsdb(msg):
     }
 
     if not create_result(testcase, overall_outcome, group_tests_ref_url,
-                         result_data, groups):
+                         result_data, recipients, groups):
         LOGGER.error(
             'An overall result for message "{0}" couldn\'t be created'
             .format(msg_id))
