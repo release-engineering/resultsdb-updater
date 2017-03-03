@@ -1,109 +1,124 @@
 interactions:
 - request:
-    body: !!python/unicode '{"testcase": {"ref_url": " http://domain.local/job/package-4.4.4-7.el7/",
-      "name": "someteam.package-rhel-7.2-candidate-runtest-fslock-func.beaker"}, "ref_url":
-      "http://domain.local/job/package-4.4.4-7.el7/136/console", "outcome": "PASSED",
-      "data": {"executed": "25", "item": "package-4.4.4-7.el7", "arch": "aarch64",
-      "failed": "0", "executor": "beaker", "type": "koji_build"}, "groups": [{"ref_url":
-      "http://domain.local/job/package-4.4.4-7.el7/136/", "uuid": "741eecea-4c5c-4bdd-a7d8-583ab749e8da"}]}'
+    body: !!python/unicode '{"recipients": ["unknown"], "ref_url": "http://domain.local/job/package-4.4.4-7.el7/136/console",
+      "testcase": {"ref_url": " http://domain.local/job/package-4.4.4-7.el7/", "name":
+      "someteam.package-rhel-7.2-candidate-runtest-fslock-func.beaker"}, "groups":
+      [{"ref_url": "http://domain.local/job/package-4.4.4-7.el7/136/", "uuid": "0b7cce4e-b79b-4dcd-881b-26d6215033d6"}],
+      "outcome": "PASSED", "data": {"executed": "25", "item": "package-4.4.4-7.el7",
+      "arch": "aarch64", "failed": "0", "executor": "beaker", "type": "koji_build"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['501']
-      User-Agent: [python-requests/2.12.4]
+      Content-Length: ['528']
+      User-Agent: [python-requests/2.13.0]
       content-type: [application/json]
     method: POST
-    uri: http://resultsdb.domain.local/api/v2.0/results
+    uri: https://resultsdb.domain.local/api/v2.0/results
   response:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"arch\": [\n      \"aarch64\"\
         \n    ], \n    \"executed\": [\n      \"25\"\n    ], \n    \"executor\": [\n\
         \      \"beaker\"\n    ], \n    \"failed\": [\n      \"0\"\n    ], \n    \"\
         item\": [\n      \"package-4.4.4-7.el7\"\n    ], \n    \"type\": [\n     \
-        \ \"koji_build\"\n    ]\n  }, \n  \"groups\": [\n    \"741eecea-4c5c-4bdd-a7d8-583ab749e8da\"\
-        \n  ], \n  \"href\": \"http://resultsdb.domain.local/api/v2.0/results/4\", \n  \"id\"\
-        : 4, \n  \"note\": null, \n  \"outcome\": \"PASSED\", \n  \"ref_url\": \"\
-        http://domain.local/job/package-4.4.4-7.el7/136/console\", \n  \"submit_time\"\
-        : \"2017-01-18T15:32:02.054780\", \n  \"testcase\": {\n    \"href\": \"http://resultsdb.domain.local/api/v2.0/testcases/someteam.package-rhel-7.2-candidate-runtest-fslock-func.beaker\"\
+        \ \"koji_build\"\n    ]\n  }, \n  \"groups\": [\n    \"0b7cce4e-b79b-4dcd-881b-26d6215033d6\"\
+        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/1269\"\
+        , \n  \"id\": 1269, \n  \"note\": null, \n  \"outcome\": \"PASSED\", \n  \"\
+        ref_url\": \"http://domain.local/job/package-4.4.4-7.el7/136/console\", \n\
+        \  \"submit_time\": \"2017-03-03T15:40:36.889947\", \n  \"testcase\": {\n\
+        \    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/someteam.package-rhel-7.2-candidate-runtest-fslock-func.beaker\"\
         , \n    \"name\": \"someteam.package-rhel-7.2-candidate-runtest-fslock-func.beaker\"\
         , \n    \"ref_url\": \" http://domain.local/job/package-4.4.4-7.el7/\"\n \
         \ }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['830']
+      content-length: ['906']
       content-type: [application/json]
-      date: ['Wed, 18 Jan 2017 15:32:02 GMT']
+      date: ['Fri, 03 Mar 2017 15:40:36 GMT']
       keep-alive: ['timeout=5, max=100']
-      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
+          Python/2.7.5]
+      strict-transport-security: [max-age=63072000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
     status: {code: 201, message: CREATED}
 - request:
-    body: !!python/unicode '{"testcase": {"ref_url": " http://domain.local/job/package-4.4.4-7.el7/",
-      "name": "someteam.package-rhel-7.2-candidate-runtest-fslock-func.CI-OSP"}, "ref_url":
-      "http://domain.local/job/package-4.4.4-7.el7/136/console", "outcome": "PASSED",
-      "data": {"executed": "1000", "item": "package-4.4.4-7.el7", "arch": "x86_64",
-      "failed": "0", "executor": "CI-OSP", "type": "koji_build"}, "groups": [{"ref_url":
-      "http://domain.local/job/package-4.4.4-7.el7/136/", "uuid": "741eecea-4c5c-4bdd-a7d8-583ab749e8da"}]}'
+    body: !!python/unicode '{"recipients": ["unknown"], "ref_url": "http://domain.local/job/package-4.4.4-7.el7/136/console",
+      "testcase": {"ref_url": " http://domain.local/job/package-4.4.4-7.el7/", "name":
+      "someteam.package-rhel-7.2-candidate-runtest-fslock-func.CI-OSP"}, "groups":
+      [{"ref_url": "http://domain.local/job/package-4.4.4-7.el7/136/", "uuid": "0b7cce4e-b79b-4dcd-881b-26d6215033d6"}],
+      "outcome": "PASSED", "data": {"executed": "1000", "item": "package-4.4.4-7.el7",
+      "arch": "x86_64", "failed": "0", "executor": "CI-OSP", "type": "koji_build"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['502']
-      User-Agent: [python-requests/2.12.4]
+      Content-Length: ['529']
+      User-Agent: [python-requests/2.13.0]
       content-type: [application/json]
     method: POST
-    uri: http://resultsdb.domain.local/api/v2.0/results
+    uri: https://resultsdb.domain.local/api/v2.0/results
   response:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"arch\": [\n      \"x86_64\"\
         \n    ], \n    \"executed\": [\n      \"1000\"\n    ], \n    \"executor\"\
         : [\n      \"CI-OSP\"\n    ], \n    \"failed\": [\n      \"0\"\n    ], \n\
         \    \"item\": [\n      \"package-4.4.4-7.el7\"\n    ], \n    \"type\": [\n\
-        \      \"koji_build\"\n    ]\n  }, \n  \"groups\": [\n    \"741eecea-4c5c-4bdd-a7d8-583ab749e8da\"\
-        \n  ], \n  \"href\": \"http://resultsdb.domain.local/api/v2.0/results/5\", \n  \"id\"\
-        : 5, \n  \"note\": null, \n  \"outcome\": \"PASSED\", \n  \"ref_url\": \"\
-        http://domain.local/job/package-4.4.4-7.el7/136/console\", \n  \"submit_time\"\
-        : \"2017-01-18T15:32:02.132377\", \n  \"testcase\": {\n    \"href\": \"http://resultsdb.domain.local/api/v2.0/testcases/someteam.package-rhel-7.2-candidate-runtest-fslock-func.CI-OSP\"\
+        \      \"koji_build\"\n    ]\n  }, \n  \"groups\": [\n    \"0b7cce4e-b79b-4dcd-881b-26d6215033d6\"\
+        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/1270\"\
+        , \n  \"id\": 1270, \n  \"note\": null, \n  \"outcome\": \"PASSED\", \n  \"\
+        ref_url\": \"http://domain.local/job/package-4.4.4-7.el7/136/console\", \n\
+        \  \"submit_time\": \"2017-03-03T15:40:38.255833\", \n  \"testcase\": {\n\
+        \    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/someteam.package-rhel-7.2-candidate-runtest-fslock-func.CI-OSP\"\
         , \n    \"name\": \"someteam.package-rhel-7.2-candidate-runtest-fslock-func.CI-OSP\"\
         , \n    \"ref_url\": \" http://domain.local/job/package-4.4.4-7.el7/\"\n \
         \ }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['831']
+      content-length: ['907']
       content-type: [application/json]
-      date: ['Wed, 18 Jan 2017 15:32:02 GMT']
+      date: ['Fri, 03 Mar 2017 15:40:38 GMT']
       keep-alive: ['timeout=5, max=100']
-      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
+          Python/2.7.5]
+      strict-transport-security: [max-age=63072000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
     status: {code: 201, message: CREATED}
 - request:
-    body: !!python/unicode '{"testcase": {"ref_url": " http://domain.local/job/package-4.4.4-7.el7/",
-      "name": "someteam.package-rhel-7.2-candidate-runtest-fslock-func"}, "ref_url":
-      "http://domain.local/job/package-4.4.4-7.el7/136/console", "outcome": "PASSED",
-      "data": {"item": "package-4.4.4-7.el7", "type": "koji_build"}, "groups": [{"ref_url":
-      "http://domain.local/job/package-4.4.4-7.el7/136/", "uuid": "741eecea-4c5c-4bdd-a7d8-583ab749e8da"}]}'
+    body: !!python/unicode '{"recipients": ["unknown"], "ref_url": "http://domain.local/job/package-4.4.4-7.el7/136/console",
+      "testcase": {"ref_url": " http://domain.local/job/package-4.4.4-7.el7/", "name":
+      "someteam.package-rhel-7.2-candidate-runtest-fslock-func"}, "groups": [{"ref_url":
+      "http://domain.local/job/package-4.4.4-7.el7/136/", "uuid": "0b7cce4e-b79b-4dcd-881b-26d6215033d6"}],
+      "outcome": "PASSED", "data": {"item": "package-4.4.4-7.el7", "type": "koji_build"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['420']
-      User-Agent: [python-requests/2.12.4]
+      Content-Length: ['447']
+      User-Agent: [python-requests/2.13.0]
       content-type: [application/json]
     method: POST
-    uri: http://resultsdb.domain.local/api/v2.0/results
+    uri: https://resultsdb.domain.local/api/v2.0/results
   response:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"item\": [\n      \"package-4.4.4-7.el7\"\
         \n    ], \n    \"type\": [\n      \"koji_build\"\n    ]\n  }, \n  \"groups\"\
-        : [\n    \"741eecea-4c5c-4bdd-a7d8-583ab749e8da\"\n  ], \n  \"href\": \"http://resultsdb.domain.local/api/v2.0/results/6\"\
-        , \n  \"id\": 6, \n  \"note\": null, \n  \"outcome\": \"PASSED\", \n  \"ref_url\"\
-        : \"http://domain.local/job/package-4.4.4-7.el7/136/console\", \n  \"submit_time\"\
-        : \"2017-01-18T15:32:02.201367\", \n  \"testcase\": {\n    \"href\": \"http://resultsdb.domain.local/api/v2.0/testcases/someteam.package-rhel-7.2-candidate-runtest-fslock-func\"\
+        : [\n    \"0b7cce4e-b79b-4dcd-881b-26d6215033d6\"\n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/1271\"\
+        , \n  \"id\": 1271, \n  \"note\": null, \n  \"outcome\": \"PASSED\", \n  \"\
+        ref_url\": \"http://domain.local/job/package-4.4.4-7.el7/136/console\", \n\
+        \  \"submit_time\": \"2017-03-03T15:40:39.673783\", \n  \"testcase\": {\n\
+        \    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/someteam.package-rhel-7.2-candidate-runtest-fslock-func\"\
         , \n    \"name\": \"someteam.package-rhel-7.2-candidate-runtest-fslock-func\"\
         , \n    \"ref_url\": \" http://domain.local/job/package-4.4.4-7.el7/\"\n \
         \ }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['666']
+      content-length: ['742']
       content-type: [application/json]
-      date: ['Wed, 18 Jan 2017 15:32:02 GMT']
+      date: ['Fri, 03 Mar 2017 15:40:39 GMT']
       keep-alive: ['timeout=5, max=100']
-      server: [Apache/2.4.6 (Red Hat Enterprise Linux) mod_wsgi/3.4 Python/2.7.5]
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
+          Python/2.7.5]
+      strict-transport-security: [max-age=63072000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
     status: {code: 201, message: CREATED}
 version: 1
