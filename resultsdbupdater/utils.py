@@ -19,7 +19,7 @@ logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
 
 
-def create_result(testcase, outcome, ref_url, data, recipients, groups=None):
+def create_result(testcase, outcome, ref_url, data, groups=None):
     if not groups:
         groups = []
     post_req = requests.post(
@@ -29,8 +29,7 @@ def create_result(testcase, outcome, ref_url, data, recipients, groups=None):
             'groups': groups,
             'outcome': outcome,
             'ref_url': ref_url,
-            'data': data,
-            'recipients': recipients}),
+            'data': data}),
         headers={'content-type': 'application/json'},
         verify=TRUSTED_CA)
     if post_req.status_code == 201:
@@ -86,9 +85,10 @@ def post_to_resultsdb(msg):
         }
         test['item'] = component
         test['type'] = test_type
+        test['recipients'] = recipients
 
         if not create_result(testcase, outcome, group_tests_ref_url,
-                             test, recipients, groups):
+                             test, groups):
             LOGGER.error(
                 'A new result for message "{0}" couldn\'t be created'
                 .format(msg_id))
@@ -101,11 +101,12 @@ def post_to_resultsdb(msg):
     }
     result_data = {
         'item': component,
-        'type': test_type
+        'type': test_type,
+        'recipients': recipients
     }
 
     if not create_result(testcase, overall_outcome, group_tests_ref_url,
-                         result_data, recipients, groups):
+                         result_data, groups):
         LOGGER.error(
             'An overall result for message "{0}" couldn\'t be created'
             .format(msg_id))
