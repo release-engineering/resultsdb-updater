@@ -15,6 +15,7 @@
             "jenkins_job_url" : " http://domain.local/job/package-4.4.4-7.el7/",
             "job_names" : "package-rhel-7.2-candidate-runtest-fslock-func",
             "owner" : "some_owner",
+            "recipients": ["tbrady", "jedelman"],
             "team": "someteam",
             "tests" : [
                 { "executor" : "beaker" , "arch" : "aarch64" , "executed" : "25", "failed" : "0" },
