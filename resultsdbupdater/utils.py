@@ -3,6 +3,7 @@ import fedmsg
 import logging
 import json
 import uuid
+import re
 try:
     from urllib import quote_plus
 except ImportError:
@@ -17,6 +18,13 @@ LOGGER = logging.getLogger('CIConsumer')
 log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
+
+
+def get_error_from_request(request):
+    try:
+        return request.json().get('message')
+    except ValueError:
+        return request.text
 
 
 def create_result(testcase, outcome, ref_url, data, groups=None):
@@ -35,16 +43,30 @@ def create_result(testcase, outcome, ref_url, data, groups=None):
     if post_req.status_code == 201:
         return True
     else:
-        try:
-            message = post_req.json().get('message')
-        except ValueError:
-            message = post_req.text
+        message = get_error_from_request(post_req)
         LOGGER.error(
             'The result failed with the following: {0}'.format(message))
         return False
 
 
-def post_to_resultsdb(msg):
+def get_first_group(description):
+    get_req = requests.get(
+        '{0}/groups?description={1}'.format(RESULTSDB_API_URL, description),
+        verify=TRUSTED_CA
+    )
+    if get_req.status_code == 200:
+        if len(get_req.json()['data']) > 0:
+            return get_req.json()['data'][0]
+        else:
+            return {}
+    else:
+        message = get_error_from_request(get_req)
+        raise RuntimeError(
+            'The query for groups failed with the following: {0}'.format(
+                message))
+
+
+def ci_metrics_post_to_resultsdb(msg):
     msg_id = msg['headers']['message-id']
     team = msg['body']['msg'].get('team', 'unassigned')
     if team == 'unassigned':
@@ -109,6 +131,48 @@ def post_to_resultsdb(msg):
                          result_data, groups):
         LOGGER.error(
             'An overall result for message "{0}" couldn\'t be created'
+            .format(msg_id))
+        return False
+
+    return True
+
+
+def rpmdiff_post_to_resultsdb(msg):
+    msg_id = msg['headers']['message-id']
+    rpmdiff_url_regex_match = re.match(
+        r'^(?P<url_prefix>http.+\/run\/)(?P<run>\d+)(?:\/)?(?P<result>\d+)?$',
+        msg['body']['msg']['ref_url'])
+
+    if rpmdiff_url_regex_match:
+        run_url = '{0}{1}'.format(
+            rpmdiff_url_regex_match.groupdict()['url_prefix'],
+            rpmdiff_url_regex_match.groupdict()['run'])
+    else:
+        raise ValueError(
+            'The ref_url of "{0}" did not match the rpmdiff URL scheme'
+            .format(msg['body']['msg']['ref_url']))
+
+    groups = [{
+        # Check to see if there is a group already for these sets of tests,
+        # otherwise, generate a UUID
+        'uuid': get_first_group(run_url).get('uuid', str(uuid.uuid4())),
+        'ref_url': run_url,
+        # Set the description to run URL so that we can query for the group
+        # by it later
+        'description': run_url
+    }]
+
+    result_rv = create_result(
+        msg['body']['msg']['testcase'],
+        msg['body']['msg']['outcome'],
+        msg['body']['msg']['ref_url'],
+        msg['body']['msg']['data'],
+        groups
+    )
+
+    if not result_rv:
+        LOGGER.error(
+            'A new result for message "{0}" couldn\'t be created'
             .format(msg_id))
         return False
 

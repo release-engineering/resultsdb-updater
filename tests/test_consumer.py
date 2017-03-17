@@ -28,14 +28,32 @@ class TestConsumer(unittest.TestCase):
         fake_msg_path = path.join(self.json_dir, 'message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
-        with mock.patch('resultsdbupdater.consumer.post_to_resultsdb') as post_to_resultsdb:
+        with mock.patch('resultsdbupdater.consumer.ci_metrics_post_to_resultsdb') as ci_metrics_post_to_resultsdb:
             self.consumer.consume(fake_msg)
-            post_to_resultsdb.assert_called_once_with(fake_msg)
+            ci_metrics_post_to_resultsdb.assert_called_once_with(fake_msg)
 
     @vcr.use_cassette(
         path.join(CASSETTES_DIR, 'consume_msg_success.yaml'))
     def test_full_consume_msg(self):
         fake_msg_path = path.join(self.json_dir, 'message.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        self.assertEqual(self.consumer.consume(fake_msg), True)
+
+    @vcr.use_cassette(
+        path.join(CASSETTES_DIR, 'consume_msg_overall_rpmdiff_success.yaml'))
+    def test_full_consume_overall_rpmdiff_msg(self):
+        fake_msg_path = path.join(self.json_dir, 'rpmdiff_message.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        self.assertEqual(self.consumer.consume(fake_msg), True)
+
+    @vcr.use_cassette(
+        path.join(CASSETTES_DIR, 'consume_msg_rpmdiff_success.yaml'))
+    def test_full_consume_rpmdiff_msg(self):
+        fake_msg_path = path.join(self.json_dir, 'rpmdiff_message_two.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
 
