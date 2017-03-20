@@ -59,6 +59,15 @@ class TestConsumer(unittest.TestCase):
 
         self.assertEqual(self.consumer.consume(fake_msg), True)
 
+    @vcr.use_cassette(
+        path.join(CASSETTES_DIR, 'consume_msg_covscan_success.yaml'))
+    def test_full_consume_covscan_msg(self):
+        fake_msg_path = path.join(self.json_dir, 'covscan_message.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        self.assertEqual(self.consumer.consume(fake_msg), True)
+
     @vcr.use_cassette(path.join(CASSETTES_DIR, 'create_result_success.yaml'))
     def test_create_result(self):
         data = {

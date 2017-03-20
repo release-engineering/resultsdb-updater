@@ -1,7 +1,7 @@
 import fedmsg.consumers
 
 from utils import (
-    LOGGER, ci_metrics_post_to_resultsdb, rpmdiff_post_to_resultsdb)
+    LOGGER, ci_metrics_post_to_resultsdb, resultsdb_post_to_resultsdb)
 
 
 class CIConsumer(fedmsg.consumers.FedmsgConsumer):
@@ -23,4 +23,4 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
                 return ci_metrics_post_to_resultsdb(msg)
             elif msg['headers']['CI_TYPE'] == 'resultsdb':
                 self.debug_log_msg(msg)
-                return rpmdiff_post_to_resultsdb(msg)
+                return resultsdb_post_to_resultsdb(msg)

@@ -137,29 +137,32 @@ def ci_metrics_post_to_resultsdb(msg):
     return True
 
 
-def rpmdiff_post_to_resultsdb(msg):
+def resultsdb_post_to_resultsdb(msg):
     msg_id = msg['headers']['message-id']
-    rpmdiff_url_regex_match = re.match(
-        r'^(?P<url_prefix>http.+\/run\/)(?P<run>\d+)(?:\/)?(?P<result>\d+)?$',
-        msg['body']['msg']['ref_url'])
+    group_ref_url = msg['body']['msg']['ref_url']
+    rpmdiff_url_regex_pattern = \
+        r'^(?P<url_prefix>http.+\/run\/)(?P<run>\d+)(?:\/)?(?P<result>\d+)?$'
+    if msg['headers']['testcase'].startswith('dist.rpmdiff'):
+        rpmdiff_url_regex_match = re.match(
+            rpmdiff_url_regex_pattern, msg['body']['msg']['ref_url'])
 
-    if rpmdiff_url_regex_match:
-        run_url = '{0}{1}'.format(
-            rpmdiff_url_regex_match.groupdict()['url_prefix'],
-            rpmdiff_url_regex_match.groupdict()['run'])
-    else:
-        raise ValueError(
-            'The ref_url of "{0}" did not match the rpmdiff URL scheme'
-            .format(msg['body']['msg']['ref_url']))
+        if rpmdiff_url_regex_match:
+            group_ref_url = '{0}{1}'.format(
+                rpmdiff_url_regex_match.groupdict()['url_prefix'],
+                rpmdiff_url_regex_match.groupdict()['run'])
+        else:
+            raise ValueError(
+                'The ref_url of "{0}" did not match the rpmdiff URL scheme'
+                .format(msg['body']['msg']['ref_url']))
 
     groups = [{
         # Check to see if there is a group already for these sets of tests,
         # otherwise, generate a UUID
-        'uuid': get_first_group(run_url).get('uuid', str(uuid.uuid4())),
-        'ref_url': run_url,
-        # Set the description to run URL so that we can query for the group
+        'uuid': get_first_group(group_ref_url).get('uuid', str(uuid.uuid4())),
+        'ref_url': group_ref_url,
+        # Set the description to the ref_url so that we can query for the group
         # by it later
-        'description': run_url
+        'description': group_ref_url
     }]
 
     result_rv = create_result(

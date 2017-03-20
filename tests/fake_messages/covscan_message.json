@@ -1,0 +1,29 @@
+{
+  "headers": {
+    "message-id": "ID:ci-msg-bus.lab.eng.rdu2.redhat.com-63709-1487212854278-2:1439:-1:1:2",
+    "CI_TYPE": "resultsdb",
+    "item": "tzdata-2016i-1.el6 tzdata-2017a-1.el6",
+    "scratch": true,
+    "taskid": 12794223,
+    "testcase": "dist.covscan",
+    "type": "koji_build_pair"
+  },
+  "body": {
+    "msg": {
+      "data": {
+        "item": "tzdata-2016i-1.el6 tzdata-2017a-1.el6",
+        "newnvr": "tzdata-2016i-1.el6",
+        "oldnvr": "tzdata-2017a-1.el6",
+        "scratch": true,
+        "taskid": 12794223,
+        "type": "koji_build_pair"
+      },
+      "outcome": "FAILED",
+      "ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/40208/",
+      "testcase": {
+        "name": "dist.covscan",
+        "ref_url": "https://url.corp.redhat.com/covscan-in-ci"
+      }
+    }
+  }
+}
