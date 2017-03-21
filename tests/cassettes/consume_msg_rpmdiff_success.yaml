@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: https://resultsdb.domain.local/api/v2.0/groups?description=https://rpmdiff.engineering.redhat.com/run/12345
+  response:
+    body: {string: !!python/unicode "{\n  \"data\": [\n    {\n      \"description\"\
+        : \"https://rpmdiff.engineering.redhat.com/run/12345\", \n      \"href\":\
+        \ \"https://resultsdb.domain.local/api/v2.0/groups/454fbcda-3fa7-4aed-ae3b-a3921a35098b\"\
+        , \n      \"ref_url\": \"https://rpmdiff.engineering.redhat.com/run/12345\"\
+        , \n      \"results\": \"https://resultsdb.domain.local/api/v2.0/results?groups=454fbcda-3fa7-4aed-ae3b-a3921a35098b\"\
+        , \n      \"results_count\": 1, \n      \"uuid\": \"454fbcda-3fa7-4aed-ae3b-a3921a35098b\"\
+        \n    }\n  ], \n  \"next\": null, \n  \"prev\": null\n}"}
+    headers:
+      connection: [Keep-Alive]
+      content-length: ['552']
+      content-type: [application/json]
+      date: ['Fri, 17 Mar 2017 15:58:45 GMT']
+      keep-alive: ['timeout=5, max=100']
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
+          Python/2.7.5]
+      strict-transport-security: [max-age=63072000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+    status: {code: 200, message: OK}
+- request:
+    body: !!python/unicode '{"testcase": {"ref_url": "https://docs.engineering.redhat.com/display/HTD/rpmdiff-abi-symbols",
+      "name": "dist.rpmdiff.comparison.abi_symbols"}, "ref_url": "https://rpmdiff.engineering.redhat.com/run/12345/13",
+      "outcome": "PASSED", "data": {"oldnvr": "lapack-3.4.2-7.el7", "newnvr": "lapack-3.4.2-8.el7",
+      "scratch": false, "item": "lapack-3.4.2-8.el7 lapack-3.4.2-7.el7", "taskid":
+      12665429, "type": "koji_build_pair"}, "groups": [{"ref_url": "https://rpmdiff.engineering.redhat.com/run/12345",
+      "uuid": "454fbcda-3fa7-4aed-ae3b-a3921a35098b", "description": "https://rpmdiff.engineering.redhat.com/run/12345"}]}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['610']
+      User-Agent: [python-requests/2.13.0]
+      content-type: [application/json]
+    method: POST
+    uri: https://resultsdb.domain.local/api/v2.0/results
+  response:
+    body: {string: !!python/unicode "{\n  \"data\": {\n    \"item\": [\n      \"lapack-3.4.2-8.el7\
+        \ lapack-3.4.2-7.el7\"\n    ], \n    \"newnvr\": [\n      \"lapack-3.4.2-8.el7\"\
+        \n    ], \n    \"oldnvr\": [\n      \"lapack-3.4.2-7.el7\"\n    ], \n    \"\
+        scratch\": [\n      \"False\"\n    ], \n    \"taskid\": [\n      \"12665429\"\
+        \n    ], \n    \"type\": [\n      \"koji_build_pair\"\n    ]\n  }, \n  \"\
+        groups\": [\n    \"454fbcda-3fa7-4aed-ae3b-a3921a35098b\"\n  ], \n  \"href\"\
+        : \"https://resultsdb.domain.local/api/v2.0/results/3237\"\
+        , \n  \"id\": 3237, \n  \"note\": null, \n  \"outcome\": \"PASSED\", \n  \"\
+        ref_url\": \"https://rpmdiff.engineering.redhat.com/run/12345/13\", \n  \"\
+        submit_time\": \"2017-03-17T15:58:47.664356\", \n  \"testcase\": {\n    \"\
+        href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dist.rpmdiff.comparison.abi_symbols\"\
+        , \n    \"name\": \"dist.rpmdiff.comparison.abi_symbols\", \n    \"ref_url\"\
+        : \"https://docs.engineering.redhat.com/display/HTD/rpmdiff-abi-symbols\"\n\
+        \  }\n}"}
+    headers:
+      connection: [Keep-Alive]
+      content-length: ['925']
+      content-type: [application/json]
+      date: ['Fri, 17 Mar 2017 15:58:47 GMT']
+      keep-alive: ['timeout=5, max=100']
+      server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
+          Python/2.7.5]
+      strict-transport-security: [max-age=63072000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-frame-options: [DENY]
+    status: {code: 201, message: CREATED}
+version: 1

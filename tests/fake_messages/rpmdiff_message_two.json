@@ -1,0 +1,35 @@
+{
+  "headers": {
+    "CI_TYPE": "resultsdb",
+    "content-length": "512",
+    "destination": "/topic/CI",
+    "expires": "0",
+    "item": "lapack-3.4.2-8.el7 lapack-3.4.2-7.el7",
+    "message-id": "ID:ci-msg-bus.lab.eng.rdu2.redhat.com-53709-1487212854278-2:1438:-1:1:2",
+    "priority": "4",
+    "scratch": "False",
+    "subscription": "1",
+    "taskid": "12665429",
+    "testcase": "dist.rpmdiff.comparison.abi_symbols",
+    "timestamp": "1488529767072",
+    "type": "koji_build_pair"
+  },
+  "body": {
+    "msg": {
+      "data": {
+        "item": "lapack-3.4.2-8.el7 lapack-3.4.2-7.el7",
+        "newnvr": "lapack-3.4.2-8.el7",
+        "oldnvr": "lapack-3.4.2-7.el7",
+        "scratch": false,
+        "taskid": 12665429,
+        "type": "koji_build_pair"
+      },
+      "outcome": "PASSED",
+      "ref_url": "https://rpmdiff.engineering.redhat.com/run/12345/13",
+      "testcase": {
+        "name": "dist.rpmdiff.comparison.abi_symbols",
+        "ref_url": "https://docs.engineering.redhat.com/display/HTD/rpmdiff-abi-symbols"
+      }
+    }
+  }
+}
