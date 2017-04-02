@@ -81,6 +81,7 @@ def ci_metrics_post_to_resultsdb(msg):
     group_tests_ref_url = '{0}/console'.format(group_ref_url.rstrip('/'))
     component = msg['body']['msg'].get('component', 'unknown')
     recipients = msg['body']['msg'].get('recipients', ['unknown'])
+    ci_tier = msg['body']['msg'].get('CI_tier', ['unknown'])
 
     if msg['body']['msg'].get('brew_task_id'):
         test_type = 'koji_build'
@@ -108,6 +109,7 @@ def ci_metrics_post_to_resultsdb(msg):
         test['item'] = component
         test['type'] = test_type
         test['recipients'] = recipients
+        test['CI_tier'] = ci_tier
 
         if not create_result(testcase, outcome, group_tests_ref_url,
                              test, groups):
@@ -124,7 +126,8 @@ def ci_metrics_post_to_resultsdb(msg):
     result_data = {
         'item': component,
         'type': test_type,
-        'recipients': recipients
+        'recipients': recipients,
+        'CI_tier': ci_tier
     }
 
     if not create_result(testcase, overall_outcome, group_tests_ref_url,
