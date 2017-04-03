@@ -110,7 +110,7 @@ def ci_metrics_post_to_resultsdb(msg):
         test['type'] = test_type
         test['recipients'] = recipients
         test['CI_tier'] = ci_tier
-        test['job_names'] = test_name
+        test['job_name'] = test_name
 
         if not create_result(testcase, outcome, group_tests_ref_url,
                              test, groups):
@@ -129,7 +129,7 @@ def ci_metrics_post_to_resultsdb(msg):
         'type': test_type,
         'recipients': recipients,
         'CI_tier': ci_tier,
-        'job_names': test_name
+        'job_name': test_name
     }
 
     if not create_result(testcase, overall_outcome, group_tests_ref_url,
