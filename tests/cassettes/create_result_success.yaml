@@ -1,13 +1,13 @@
 interactions:
 - request:
-    body: !!python/unicode '{"testcase": {"name": "testcase"}, "ref_url": "http://domain.local/job/package/136/console",
-      "outcome": "PASSED", "data": {"failed": "1", "executed": "20", "arch": "aarch64",
-      "executor": "beaker"}, "groups": []}'
+    body: !!python/unicode '{"note": "", "ref_url": "http://domain.local/job/package/136/console",
+      "testcase": {"name": "testcase"}, "groups": [], "outcome": "PASSED", "data":
+      {"failed": "1", "executed": "20", "arch": "aarch64", "executor": "beaker"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['211']
+      Content-Length: ['223']
       User-Agent: [python-requests/2.13.0]
       content-type: [application/json]
     method: POST
@@ -16,16 +16,16 @@ interactions:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"arch\": [\n      \"aarch64\"\
         \n    ], \n    \"executed\": [\n      \"20\"\n    ], \n    \"executor\": [\n\
         \      \"beaker\"\n    ], \n    \"failed\": [\n      \"1\"\n    ]\n  }, \n\
-        \  \"groups\": [], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/2333\"\
-        , \n  \"id\": 2333, \n  \"note\": null, \n  \"outcome\": \"PASSED\", \n  \"\
+        \  \"groups\": [], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/5648\"\
+        , \n  \"id\": 5648, \n  \"note\": \"\", \n  \"outcome\": \"PASSED\", \n  \"\
         ref_url\": \"http://domain.local/job/package/136/console\", \n  \"submit_time\"\
-        : \"2017-03-14T12:50:59.915337\", \n  \"testcase\": {\n    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/testcase\"\
+        : \"2017-04-05T19:00:34.826063\", \n  \"testcase\": {\n    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/testcase\"\
         , \n    \"name\": \"testcase\", \n    \"ref_url\": null\n  }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['606']
+      content-length: ['604']
       content-type: [application/json]
-      date: ['Tue, 14 Mar 2017 12:50:59 GMT']
+      date: ['Wed, 05 Apr 2017 19:00:34 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]

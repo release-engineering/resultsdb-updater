@@ -1,0 +1,59 @@
+{
+  "headers": {
+    "message-id": "ID:ci-msg-bus.lab.eng.rdu2.redhat.com-63709-1487212854278-2:1439:-1:1:2",
+    "CI_TYPE": "resultsdb",
+    "testcase": "dva.ami"
+  },
+  "body": {
+    "msg": {
+      "results": {
+        "dva.ami.yum_proxy": {
+          "data": {
+            "item": "ami-b63769a1"
+          },
+          "outcome": "FAILED",
+          "ref_url": "http://domain.local/path/to/test/yum_proxy",
+          "note": "Some note",
+          "testcase": {
+            "name": "dva.ami.yum_proxy",
+            "ref_url": "http://domain.local/path/to/doc/explaining/test"
+          }
+        },
+        "dva.ami.memory": {
+          "data": {
+            "item": "ami-b63769a1"
+          },
+          "outcome": "PASSED",
+          "ref_url": "http://domain.local/path/to/test/memory",
+          "testcase": {
+            "name": "dva.ami.memory",
+            "ref_url": "http://domain.local/path/to/doc/explaining/test"
+          }
+        },
+        "dva.ami.no_avc_denials": {
+          "data": {
+            "item": "ami-b63769a1"
+          },
+          "outcome": "FAILED",
+          "ref_url": "http://domain.local/path/to/test/no_avc_denials_test",
+          "testcase": {
+            "name": "dva.ami.no_avc_denials",
+            "ref_url": "http://domain.local/path/to/doc/explaining/test"
+          }
+        },
+        "dva.ami": {
+          "data": {
+            "item": "ami-b63769a1"
+          },
+          "outcome": "FAILED",
+          "ref_url": "http://domain.local/path/to/test",
+          "testcase": {
+            "name": "dva.ami",
+            "ref_url": "http://domain.local/path/to/doc/explaining/test"
+          }
+        }
+      },
+      "ref_url": "http://domain.local/path/to/test"
+    }
+  }
+}

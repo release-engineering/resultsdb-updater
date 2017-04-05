@@ -1,1 +1,1 @@
-import resultsdbupdater.consumer
+import resultsdbupdater.consumer  # noqa: F401

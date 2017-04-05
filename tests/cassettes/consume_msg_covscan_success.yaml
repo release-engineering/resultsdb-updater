@@ -7,7 +7,7 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.13.0]
     method: GET
-    uri: https://resultsdb.domain.local/api/v2.0/groups?description=http://cov01.lab.eng.brq.redhat.com/covscanhub/task/40208/
+    uri: https://resultsdb.domain.local/api/v2.0/groups?description=http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/
   response:
     body: {string: !!python/unicode "{\n  \"data\": [], \n  \"next\": null, \n  \"\
         prev\": null\n}"}
@@ -15,7 +15,7 @@ interactions:
       connection: [Keep-Alive]
       content-length: ['50']
       content-type: [application/json]
-      date: ['Mon, 20 Mar 2017 13:32:59 GMT']
+      date: ['Wed, 05 Apr 2017 19:23:56 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]
@@ -24,17 +24,18 @@ interactions:
       x-frame-options: [DENY]
     status: {code: 200, message: OK}
 - request:
-    body: !!python/unicode '{"testcase": {"ref_url": "https://url.corp.redhat.com/covscan-in-ci",
-      "name": "dist.covscan"}, "ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/40208/",
+    body: !!python/unicode '{"note": "", "ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/",
+      "testcase": {"ref_url": "https://url.corp.redhat.com/covscan-in-ci", "name":
+      "dist.covscan"}, "groups": [{"ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/",
+      "uuid": "b9f909b5-bbbd-45f5-903e-4c73d7324243", "description": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/"}],
       "outcome": "FAILED", "data": {"oldnvr": "tzdata-2017a-1.el6", "newnvr": "tzdata-2016i-1.el6",
       "scratch": true, "item": "tzdata-2016i-1.el6 tzdata-2017a-1.el6", "taskid":
-      12794223, "type": "koji_build_pair"}, "groups": [{"ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/40208/",
-      "uuid": "9cbd7f07-fa0c-4d52-8215-4f989110cdb1", "description": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/40208/"}]}'
+      12794223, "type": "koji_build_pair"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['587']
+      Content-Length: ['599']
       User-Agent: [python-requests/2.13.0]
       content-type: [application/json]
     method: POST
@@ -45,19 +46,19 @@ interactions:
         \n    ], \n    \"oldnvr\": [\n      \"tzdata-2017a-1.el6\"\n    ], \n    \"\
         scratch\": [\n      \"True\"\n    ], \n    \"taskid\": [\n      \"12794223\"\
         \n    ], \n    \"type\": [\n      \"koji_build_pair\"\n    ]\n  }, \n  \"\
-        groups\": [\n    \"9cbd7f07-fa0c-4d52-8215-4f989110cdb1\"\n  ], \n  \"href\"\
-        : \"https://resultsdb.domain.local/api/v2.0/results/3515\"\
-        , \n  \"id\": 3515, \n  \"note\": null, \n  \"outcome\": \"FAILED\", \n  \"\
-        ref_url\": \"http://cov01.lab.eng.brq.redhat.com/covscanhub/task/40208/\"\
-        , \n  \"submit_time\": \"2017-03-20T13:33:01.202666\", \n  \"testcase\": {\n\
+        groups\": [\n    \"b9f909b5-bbbd-45f5-903e-4c73d7324243\"\n  ], \n  \"href\"\
+        : \"https://resultsdb.domain.local/api/v2.0/results/5659\"\
+        , \n  \"id\": 5659, \n  \"note\": \"\", \n  \"outcome\": \"FAILED\", \n  \"\
+        ref_url\": \"http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/\"\
+        , \n  \"submit_time\": \"2017-04-05T19:23:57.888807\", \n  \"testcase\": {\n\
         \    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dist.covscan\"\
         , \n    \"name\": \"dist.covscan\", \n    \"ref_url\": \"https://url.corp.redhat.com/covscan-in-ci\"\
         \n  }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['859']
+      content-length: ['857']
       content-type: [application/json]
-      date: ['Mon, 20 Mar 2017 13:33:01 GMT']
+      date: ['Wed, 05 Apr 2017 19:23:57 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]

@@ -5,7 +5,10 @@ addons:
   apt_packages:
     - swig
 install:
+  - pip install flake8
   - pip install -r requirements.txt
   - pip install -r test-requirements.txt
+before_script:
+  - flake8 resultsdbupdater/
 script:
   - nosetests tests/

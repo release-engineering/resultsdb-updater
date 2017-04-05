@@ -19,7 +19,7 @@
         "type": "koji_build_pair"
       },
       "outcome": "FAILED",
-      "ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/40208/",
+      "ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/",
       "testcase": {
         "name": "dist.covscan",
         "ref_url": "https://url.corp.redhat.com/covscan-in-ci"

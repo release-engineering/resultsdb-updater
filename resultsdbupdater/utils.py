@@ -4,10 +4,6 @@ import logging
 import json
 import uuid
 import re
-try:
-    from urllib import quote_plus
-except ImportError:
-    from urllib.parse import quote_plus
 
 
 CONFIG = fedmsg.config.load_config()
@@ -27,16 +23,15 @@ def get_error_from_request(request):
         return request.text
 
 
-def create_result(testcase, outcome, ref_url, data, groups=None):
-    if not groups:
-        groups = []
+def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
     post_req = requests.post(
         '{0}/results'.format(RESULTSDB_API_URL),
         data=json.dumps({
             'testcase': testcase,
-            'groups': groups,
+            'groups': groups or [],
             'outcome': outcome,
             'ref_url': ref_url,
+            'note': note or '',
             'data': data}),
         headers={'content-type': 'application/json'},
         verify=TRUSTED_CA)
@@ -141,10 +136,12 @@ def ci_metrics_post_to_resultsdb(msg):
 
 
 def resultsdb_post_to_resultsdb(msg):
+    error_msg = 'A new result for message "{0}" couldn\'t be created'
     msg_id = msg['headers']['message-id']
     group_ref_url = msg['body']['msg']['ref_url']
     rpmdiff_url_regex_pattern = \
         r'^(?P<url_prefix>http.+\/run\/)(?P<run>\d+)(?:\/)?(?P<result>\d+)?$'
+
     if msg['headers']['testcase'].startswith('dist.rpmdiff'):
         rpmdiff_url_regex_match = re.match(
             rpmdiff_url_regex_pattern, msg['body']['msg']['ref_url'])
@@ -158,28 +155,49 @@ def resultsdb_post_to_resultsdb(msg):
                 'The ref_url of "{0}" did not match the rpmdiff URL scheme'
                 .format(msg['body']['msg']['ref_url']))
 
-    groups = [{
-        # Check to see if there is a group already for these sets of tests,
-        # otherwise, generate a UUID
-        'uuid': get_first_group(group_ref_url).get('uuid', str(uuid.uuid4())),
-        'ref_url': group_ref_url,
-        # Set the description to the ref_url so that we can query for the group
-        # by it later
-        'description': group_ref_url
-    }]
+    # Check if the message is in bulk format
+    if msg['body']['msg'].get('results'):
+        groups = [{
+            'uuid': str(uuid.uuid4()),
+            'ref_url': group_ref_url
+        }]
 
-    result_rv = create_result(
-        msg['body']['msg']['testcase'],
-        msg['body']['msg']['outcome'],
-        msg['body']['msg']['ref_url'],
-        msg['body']['msg']['data'],
-        groups
-    )
+        for testcase, result in msg['body']['msg']['results'].items():
+            result_rv = create_result(
+                testcase,
+                result['outcome'],
+                result.get('ref_url', ''),
+                result.get('data', {}),
+                groups,
+                result.get('note', ''),
+            )
+            if not result_rv:
+                LOGGER.error(error_msg.format(msg_id))
+                return False
 
-    if not result_rv:
-        LOGGER.error(
-            'A new result for message "{0}" couldn\'t be created'
-            .format(msg_id))
-        return False
+    else:
+        groups = [{
+            # Check to see if there is a group already for these sets of tests,
+            # otherwise, generate a UUID
+            'uuid': get_first_group(group_ref_url).get(
+                'uuid', str(uuid.uuid4())),
+            'ref_url': group_ref_url,
+            # Set the description to the ref_url so that we can query for the
+            # group by it later
+            'description': group_ref_url
+        }]
+
+        result_rv = create_result(
+            msg['body']['msg']['testcase'],
+            msg['body']['msg']['outcome'],
+            msg['body']['msg']['ref_url'],
+            msg['body']['msg']['data'],
+            groups,
+            msg['body']['msg'].get('note', '')
+        )
+
+        if not result_rv:
+            LOGGER.error(error_msg.format(msg_id))
+            return False
 
     return True
