@@ -4,10 +4,6 @@ import logging
 import json
 import uuid
 import re
-try:
-    from urllib import quote_plus
-except ImportError:
-    from urllib.parse import quote_plus
 
 
 CONFIG = fedmsg.config.load_config()
@@ -183,7 +179,8 @@ def resultsdb_post_to_resultsdb(msg):
         groups = [{
             # Check to see if there is a group already for these sets of tests,
             # otherwise, generate a UUID
-            'uuid': get_first_group(group_ref_url).get('uuid', str(uuid.uuid4())),
+            'uuid': get_first_group(group_ref_url).get(
+                'uuid', str(uuid.uuid4())),
             'ref_url': group_ref_url,
             # Set the description to the ref_url so that we can query for the
             # group by it later
