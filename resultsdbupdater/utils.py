@@ -70,7 +70,7 @@ def ci_metrics_post_to_resultsdb(msg):
             'the team namespace section of the Test Case').format(msg_id))
 
     testcase_url = msg['body']['msg']['jenkins_job_url']
-    test_name = msg['body']['msg']['job_names']
+    test_name = msg['body']['msg']['job_name']
     group_ref_url = msg['body']['msg']['jenkins_build_url']
     tests = msg['body']['msg']['tests']
     group_tests_ref_url = '{0}/console'.format(group_ref_url.rstrip('/'))
@@ -105,7 +105,7 @@ def ci_metrics_post_to_resultsdb(msg):
         test['type'] = test_type
         test['recipients'] = recipients
         test['CI_tier'] = ci_tier
-        test['job_names'] = test_name
+        test['job_name'] = test_name
 
         if not create_result(testcase, outcome, group_tests_ref_url,
                              test, groups):
@@ -124,7 +124,7 @@ def ci_metrics_post_to_resultsdb(msg):
         'type': test_type,
         'recipients': recipients,
         'CI_tier': ci_tier,
-        'job_names': test_name
+        'job_name': test_name
     }
 
     if not create_result(testcase, overall_outcome, group_tests_ref_url,

@@ -2,7 +2,7 @@ interactions:
 - request:
     body: !!python/unicode '{"note": "", "ref_url": "http://domain.local/job/package/136/console",
       "testcase": {"name": "testcase"}, "groups": [], "outcome": "PASSED", "data":
-      {"failed": "1", "executed": "20", "arch": "aarch64", "job_names": "fake-jenkins-job",
+      {"failed": "1", "executed": "20", "arch": "aarch64", "job_name": "fake-jenkins-job",
       "executor": "beaker"}}'
     headers:
       Accept: ['*/*']
@@ -17,7 +17,7 @@ interactions:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"arch\": [\n      \"aarch64\"\
         \n    ], \n    \"executed\": [\n      \"20\"\n    ], \n    \"executor\": [\n\
         \      \"beaker\"\n    ], \n    \"failed\": [\n      \"1\"\n    ], \n    \"\
-        job_names\": [\n      \"fake-jenkins-job\"\n    ]\n  }, \n  \"groups\": [],\
+        job_name\": [\n      \"fake-jenkins-job\"\n    ]\n  }, \n  \"groups\": [],\
         \ \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/5660\"\
         , \n  \"id\": 5660, \n  \"note\": \"\", \n  \"outcome\": \"PASSED\", \n  \"\
         ref_url\": \"http://domain.local/job/package/136/console\", \n  \"submit_time\"\

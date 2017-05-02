@@ -13,7 +13,7 @@
             "create_time" : "2016-08-18T20:13:51Z",
             "jenkins_build_url" : "http://domain.local/job/package-4.4.4-7.el7/136/",
             "jenkins_job_url" : " http://domain.local/job/package-4.4.4-7.el7/",
-            "job_names" : "package-rhel-7.2-candidate-runtest-fslock-func",
+            "job_name" : "package-rhel-7.2-candidate-runtest-fslock-func",
             "owner" : "some_owner",
             "recipients": ["tbrady", "jedelman"],
             "team": "someteam",
