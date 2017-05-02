@@ -84,7 +84,7 @@ class TestConsumer(unittest.TestCase):
             'arch': 'aarch64',
             'executed': '20',
             'failed': '1',
-            'job_names': "fake-jenkins-job"
+            'job_name': "fake-jenkins-job"
         }
         fake_ref_url = 'http://domain.local/job/package/136/console'
         self.assertEqual(
