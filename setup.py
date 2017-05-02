@@ -9,7 +9,7 @@ with open('test-requirements.txt', 'r') as f:
 
 setup(
     name='resultsdb-updater',
-    version='2.3.0',
+    version='2.4.0',
     description='A micro-service that listens for messages on the message bus and updates ResultsDB',
     license='GPLv2+',
     author='Matt Prahl',
