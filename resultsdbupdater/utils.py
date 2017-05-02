@@ -69,8 +69,16 @@ def ci_metrics_post_to_resultsdb(msg):
             'The message "{0}" did not contain a team. Using "unassigned" as '
             'the team namespace section of the Test Case').format(msg_id))
 
+    # We have a message format change on May 2nd.  The field used to be plural
+    # job_names but was switched to singular job_name for clarity.  Here we
+    # have a conditional for backwards compatibility, preferring the new field
+    # name if present.
+    if 'job_name' in msg['body']['msg']
+        test_name = msg['body']['msg']['job_name']
+    else:
+        test_name = msg['body']['msg']['job_names']
+
     testcase_url = msg['body']['msg']['jenkins_job_url']
-    test_name = msg['body']['msg']['job_names']
     group_ref_url = msg['body']['msg']['jenkins_build_url']
     tests = msg['body']['msg']['tests']
     group_tests_ref_url = '{0}/console'.format(group_ref_url.rstrip('/'))
