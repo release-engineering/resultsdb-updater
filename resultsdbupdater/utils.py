@@ -78,16 +78,21 @@ def ci_metrics_post_to_resultsdb(msg):
 
     testcase_url = msg['body']['msg']['jenkins_job_url']
     group_ref_url = msg['body']['msg']['jenkins_build_url']
+    build_type = msg['body']['msg'].get('build_type', 'unknown')
+    artifact = msg['body']['msg'].get('artifact', 'unknown')
+    brew_task_id = msg['body']['msg'].get('brew_task_id', 'unknown')
     tests = msg['body']['msg']['tests']
     group_tests_ref_url = '{0}/console'.format(group_ref_url.rstrip('/'))
     component = msg['body']['msg'].get('component', 'unknown')
     recipients = msg['body']['msg'].get('recipients', ['unknown'])
     ci_tier = msg['body']['msg'].get('CI_tier', ['unknown'])
+    test_type = 'unknown'
 
-    if msg['body']['msg'].get('brew_task_id'):
+    if brew_task_id != 'unknown':
         test_type = 'koji_build'
-    else:
-        test_type = 'unknown'
+
+    if build_type == 'scratch':
+        test_type += '_scratch'
 
     groups = [{
         'uuid': str(uuid.uuid4()),
@@ -112,6 +117,8 @@ def ci_metrics_post_to_resultsdb(msg):
         test['recipients'] = recipients
         test['CI_tier'] = ci_tier
         test['job_name'] = test_name
+        test['artifact'] = artifact
+        test['brew_task_id'] = brew_task_id
 
         if not create_result(testcase, outcome, group_tests_ref_url,
                              test, groups):
@@ -130,7 +137,9 @@ def ci_metrics_post_to_resultsdb(msg):
         'type': test_type,
         'recipients': recipients,
         'CI_tier': ci_tier,
-        'job_name': test_name
+        'job_name': test_name,
+        'artifact': artifact,
+        'brew_task_id': brew_task_id
     }
 
     if not create_result(testcase, overall_outcome, group_tests_ref_url,
