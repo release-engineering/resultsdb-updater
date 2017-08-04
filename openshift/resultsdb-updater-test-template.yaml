@@ -1,0 +1,93 @@
+# Resultsdb_updater template
+#
+# To create an environment from the template, process and apply it:
+#   oc process -f openshift/resultsdb-updater-test-template.yaml -p TEST_ID=123 | oc apply -f -
+# To clean up the environment, use a selector on the environment label:
+#   oc delete dc,deploy,pod,configmap,secret,svc,route -l environment=test-123
+
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: resultsdb-updater-test-template
+parameters:
+- name: TEST_ID
+  displayName: Test id
+  description: Short unique identifier for this test run (e.g. Jenkins job number)
+  required: true
+- name: RESULTSDB_UPDATER_IMAGE
+  displayName: ResultsDB Updater container image
+  description: Image to be used for ResultsDB Updater deployement
+  value: 172.30.1.1:5000/myproject/resultsdb-updater:latest
+  required: true
+- name: RESULTSDB_API_URL
+  displayname: Resultsdb API URL
+  description: API URL for Resultsdb
+  value: "http://resultsdb-test-${TEST_ID}-internal-api.myproject.svc:5001/api/v2.0"
+  required: true
+- name: RESULTSDB_UPDATER_USERNAME
+  displayName: ResultsDB updater user name
+  description: ResultsDB updater user name to connect to the message bus
+  value: resultsdb-updater
+  required: true
+- name: RESULTSDB_UPDATER_PASSWORD
+  displayName: Resultsdb updater user password
+  description: Resultsdb updater user password to connect to the message bus
+  generate: expression
+  from: "[\\w]{32}"
+- name: STOMP_URI
+  displayName: Messagebus URI
+  description: Messagebus URI
+  value: server:61613
+  required: true
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: "resultsdb-updater-test-${TEST_ID}-secret"
+    labels:
+      environment: "test-${TEST_ID}"
+  stringData:
+    resultsdb-updater.py: |-
+      import logging
+      config = {
+        'ciconsumer': True,
+        'zmq_enabled': False,
+        'endpoints': {},
+        'validate_signatures': False,
+        'stomp_heartbeat': 1000,
+        'stomp_uri': '${STOMP_URI}',
+        'stomp_user': '${RESULTSDB_UPDATER_USERNAME}',
+        'stomp_pass': '${RESULTSDB_UPDATER_PASSWORD}',
+        'resultsdb-updater.log_level': logging.INFO,
+        'resultsdb-updater.resultsdb_api_url': '${RESULTSDB_API_URL}',
+        'resultsdb-updater.resultsdb_api_ca': None
+      }
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: "resultdb-updater-test-${TEST_ID}"
+    labels:
+      environment: "test-${TEST_ID}"
+  spec:
+    replicas: 1
+    selector:
+      environment: "test-${TEST_ID}"
+    template:
+      metadata:
+        labels:
+          environment: "test-${TEST_ID}"
+      spec:
+        containers:
+        - name: resultsdb-updater
+          image: "${RESULTSDB_UPDATER_IMAGE}"
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: resultsdb-updater-config-volume
+            mountPath: /etc/resultsdb-updater
+            readOnly: true
+          # TODO: readinessProbe and livenessProbe (is it possible?)
+        volumes:
+        - name: resultsdb-updater-config-volume
+          secret:
+            secretName: "resultsdb-updater-test-${TEST_ID}-secret"
