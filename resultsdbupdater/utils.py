@@ -154,13 +154,12 @@ def ci_metrics_post_to_resultsdb(msg):
 
 def tps_post_to_resultsdb(msg):
 
-    #define variables from tps.json
+    # define variables from tps.json
     ci_type = msg['headers']['ci_type']
     component = msg['headers']['component']
     brew_task_id = msg['headers']['brew_task_id']
 
     tests = msg['body']['tests']
-
 
     arch = msg['body']['environment']['arch']
     brew_tag = msg['body']['environment']['brew_tag']
@@ -174,7 +173,7 @@ def tps_post_to_resultsdb(msg):
 
     testcase_url = jenkins_job_url
 
-    #variables to be passed to create_result
+    # variables to be passed to create_result
     groups = [{
         'uuid': str(uuid.uuid4()),
         'ref_url': jenkins_build_url
@@ -185,7 +184,6 @@ def tps_post_to_resultsdb(msg):
     result_data = {
         'item': component,
         'ci_type': ci_type,
-        'job_name': test_name,
         'brew_task_id': brew_task_id,
         'brew_tag': brew_tag,
         'arch': arch,
@@ -196,16 +194,12 @@ def tps_post_to_resultsdb(msg):
         'testcase_url': testcase_url,
     }
 
-    for test, result in tests.items():
-        testcases = {
-        'name': '{}-{}-{}'.format(test, component, result),
-        'ref_url': testcase_url
-        }
-        if not create_result(testcases, outcome, ref_url,
-                         result_data, groups):
-            LOGGER.error(
-                'A new result for message "{0}" couldn\'t be created'
-                    .format(msg_id))
+    for test in tests.keys():
+        testcase = {'name': 'team.tps.{}.{}'.format(test, component),
+                    'ref_url': testcase_url
+                    }
+        if not create_result(testcase, outcome, ref_url, result_data, groups):
+            LOGGER.error('A new result for message couldn\'t be created')
             return False
         return True
 

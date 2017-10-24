@@ -1,7 +1,8 @@
 import fedmsg.consumers
 
 from utils import (
-    LOGGER, ci_metrics_post_to_resultsdb, resultsdb_post_to_resultsdb)
+    LOGGER, ci_metrics_post_to_resultsdb, resultsdb_post_to_resultsdb,
+    tps_post_to_resultsdb)
 
 
 class CIConsumer(fedmsg.consumers.FedmsgConsumer):
