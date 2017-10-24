@@ -24,3 +24,6 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             elif msg['headers']['CI_TYPE'] == 'resultsdb':
                 self.debug_log_msg(msg)
                 return resultsdb_post_to_resultsdb(msg)
+            elif msg['headers']['ci_type'] == 'ci-tps':
+                self.debug_log_msg(msg)
+                return tps_post_to_resultsdb(msg)

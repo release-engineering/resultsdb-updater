@@ -1,0 +1,31 @@
+{
+  "headers": {
+    "ci_type": "ci-tps",
+    "component": "setup-2.8.71-7.el7_4",
+    "brew_task_id": 14258622
+  },
+  "body": {
+    "environment": {
+      "arch": "x86_64",
+      "brew_tag": "rhel-7.4-z-candidate",
+      "build_type": "scratch",
+      "resource_group_type": "openstack",
+      "resource_base_image": "rhel-7.4-server-x86_64-updated"
+    },
+    "tests": {
+      "install": "PASSED",
+      "update": "PASSED",
+      "remove": "SKIPPED"
+    },
+    "infrastructure": {
+      "jenkins_job_url": "https://rpm-factory-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/",
+      "jenkins_build_url": "https://rpm-factory-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/734/"
+    },
+    "results": {
+      "tps_report": "https://rpm-factory-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/734//artifact/tps-next/reports/results.html",
+      "start_time": "2017-10-12T23:44:34+00:00",
+      "end_time": "2017-10-12T23:47:10+00:00",
+      "tps_status": "PASSED"
+    }
+  }
+}
