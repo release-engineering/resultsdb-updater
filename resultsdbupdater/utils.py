@@ -195,9 +195,8 @@ def tps_post_to_resultsdb(msg):
     }
 
     for test in tests.keys():
-        testcase = {'name': 'team.tps.{}.{}'.format(test, component),
-                    'ref_url': testcase_url
-                    }
+        testcase = {'name': 'rpm-factory.tps.{}'.format(test),
+                    'ref_url': testcase_url}
         if not create_result(testcase, outcome, ref_url, result_data, groups):
             LOGGER.error('A new result for message couldn\'t be created')
             return False
