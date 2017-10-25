@@ -52,6 +52,15 @@ class TestConsumer(unittest.TestCase):
         self.assertEqual(self.consumer.consume(fake_msg), True)
 
     @vcr.use_cassette(
+        path.join(CASSETTES_DIR, 'consume_msg_tps_success.yaml'))
+    def test_full_consume_tps_msg(self):
+        fake_msg_path = path.join(self.json_dir, 'tps_message.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        self.assertEqual(self.consumer.consume(fake_msg), True)
+
+    @vcr.use_cassette(
         path.join(CASSETTES_DIR, 'consume_msg_rpmdiff_success.yaml'))
     def test_full_consume_rpmdiff_msg(self):
         fake_msg_path = path.join(self.json_dir, 'rpmdiff_message_two.json')

@@ -2,7 +2,8 @@
   "headers": {
     "ci_type": "ci-tps",
     "component": "setup-2.8.71-7.el7_4",
-    "brew_task_id": 14258622
+    "brew_task_id": 14258622,
+    "message-id": "ID:ci-msg-bus.lab.eng.rdu2.redhat.com-53709-1487212854278-2:1439:-1:1:1"
   },
   "body": {
     "environment": {
