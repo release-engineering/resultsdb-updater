@@ -18,13 +18,15 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
         LOGGER.debug(str(msg))
 
     def consume(self, msg):
-        if 'headers' in msg and 'CI_TYPE' in msg['headers']:
-            if msg['headers']['CI_TYPE'] == 'ci-metricsdata':
-                self.debug_log_msg(msg)
-                return ci_metrics_post_to_resultsdb(msg)
-            elif msg['headers']['CI_TYPE'] == 'resultsdb':
-                self.debug_log_msg(msg)
-                return resultsdb_post_to_resultsdb(msg)
-            elif msg['headers']['ci_type'] == 'ci-tps':
-                self.debug_log_msg(msg)
-                return tps_post_to_resultsdb(msg)
+        if 'headers' in msg:
+            if 'CI_TYPE' in msg['headers']:
+                if msg['headers']['CI_TYPE'] == 'ci-metricsdata':
+                    self.debug_log_msg(msg)
+                    return ci_metrics_post_to_resultsdb(msg)
+                elif msg['headers']['CI_TYPE'] == 'resultsdb':
+                    self.debug_log_msg(msg)
+                    return resultsdb_post_to_resultsdb(msg)
+            elif 'ci_type' in msg['headers']:
+                if msg['headers']['ci_type'] == 'ci-tps':
+                    self.debug_log_msg(msg)
+                    return tps_post_to_resultsdb(msg)
