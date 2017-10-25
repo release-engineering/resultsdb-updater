@@ -1,7 +1,8 @@
 import fedmsg.consumers
 
 from utils import (
-    LOGGER, ci_metrics_post_to_resultsdb, resultsdb_post_to_resultsdb)
+    LOGGER, ci_metrics_post_to_resultsdb, resultsdb_post_to_resultsdb,
+    tps_post_to_resultsdb)
 
 
 class CIConsumer(fedmsg.consumers.FedmsgConsumer):
@@ -24,3 +25,6 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             elif msg['headers']['CI_TYPE'] == 'resultsdb':
                 self.debug_log_msg(msg)
                 return resultsdb_post_to_resultsdb(msg)
+            elif msg['headers']['ci_type'] == 'ci-tps':
+                self.debug_log_msg(msg)
+                return tps_post_to_resultsdb(msg)

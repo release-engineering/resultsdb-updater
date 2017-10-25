@@ -152,6 +152,57 @@ def ci_metrics_post_to_resultsdb(msg):
     return True
 
 
+def tps_post_to_resultsdb(msg):
+
+    # define variables from tps.json
+    ci_type = msg['headers']['ci_type']
+    component = msg['headers']['component']
+    brew_task_id = msg['headers']['brew_task_id']
+
+    tests = msg['body']['tests']
+
+    arch = msg['body']['environment']['arch']
+    brew_tag = msg['body']['environment']['brew_tag']
+    build_type = msg['body']['environment']['build_type']
+
+    jenkins_job_url = msg['body']['infrastructure']['jenkins_job_url']
+    jenkins_build_url = msg['body']['infrastructure']['jenkins_build_url']
+
+    tps_report = msg['body']['results']['tps_report']
+    tps_status = msg['body']['results']['tps_status']
+
+    testcase_url = jenkins_job_url
+
+    # variables to be passed to create_result
+    groups = [{
+        'uuid': str(uuid.uuid4()),
+        'ref_url': jenkins_build_url
+    }]
+    outcome = tps_status
+    ref_url = jenkins_build_url
+
+    result_data = {
+        'item': component,
+        'ci_type': ci_type,
+        'brew_task_id': brew_task_id,
+        'brew_tag': brew_tag,
+        'arch': arch,
+        'component': component,
+        'build_type': build_type,
+        'tps_report': tps_report,
+        'tps_status': tps_status,
+        'testcase_url': testcase_url,
+    }
+
+    for test in tests.keys():
+        testcase = {'name': 'rpm-factory.tps.{}'.format(test),
+                    'ref_url': testcase_url}
+        if not create_result(testcase, outcome, ref_url, result_data, groups):
+            LOGGER.error('A new result for message couldn\'t be created')
+            return False
+        return True
+
+
 def resultsdb_post_to_resultsdb(msg):
     error_msg = 'A new result for message "{0}" couldn\'t be created'
     msg_id = msg['headers']['message-id']
