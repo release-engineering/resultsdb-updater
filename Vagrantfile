@@ -20,7 +20,7 @@ $script = <<SCRIPT
 SCRIPT
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "fedora/24-cloud-base"
+  config.vm.box = "fedora/26-cloud-base"
   config.vm.synced_folder "./", "/opt/resultsdb-updater/src"
   config.vm.provision "shell", inline: $script
 end

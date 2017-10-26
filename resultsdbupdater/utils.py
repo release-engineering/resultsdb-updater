@@ -200,7 +200,8 @@ def tps_post_to_resultsdb(msg):
         if not create_result(testcase, outcome, ref_url, result_data, groups):
             LOGGER.error('A new result for message couldn\'t be created')
             return False
-        return True
+
+    return True
 
 
 def resultsdb_post_to_resultsdb(msg):

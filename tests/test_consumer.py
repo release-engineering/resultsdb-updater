@@ -28,7 +28,8 @@ class TestConsumer(unittest.TestCase):
         fake_msg_path = path.join(self.json_dir, 'message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
-        with mock.patch('resultsdbupdater.consumer.ci_metrics_post_to_resultsdb') as ci_metrics_post_to_resultsdb:
+        func_name = 'resultsdbupdater.consumer.ci_metrics_post_to_resultsdb'
+        with mock.patch(func_name) as ci_metrics_post_to_resultsdb:
             self.consumer.consume(fake_msg)
             ci_metrics_post_to_resultsdb.assert_called_once_with(fake_msg)
 
@@ -45,6 +46,15 @@ class TestConsumer(unittest.TestCase):
         path.join(CASSETTES_DIR, 'consume_msg_overall_rpmdiff_success.yaml'))
     def test_full_consume_overall_rpmdiff_msg(self):
         fake_msg_path = path.join(self.json_dir, 'rpmdiff_message.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        self.assertEqual(self.consumer.consume(fake_msg), True)
+
+    @vcr.use_cassette(
+        path.join(CASSETTES_DIR, 'consume_msg_tps_success.yaml'))
+    def test_full_consume_tps_msg(self):
+        fake_msg_path = path.join(self.json_dir, 'tps_message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
 
