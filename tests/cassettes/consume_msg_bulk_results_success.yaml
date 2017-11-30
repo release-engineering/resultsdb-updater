@@ -2,30 +2,30 @@ interactions:
 - request:
     body: !!python/unicode '{"note": "", "ref_url": "http://domain.local/path/to/test/memory",
       "testcase": "dva.ami.memory", "groups": [{"ref_url": "http://domain.local/path/to/test",
-      "uuid": "32c7cad1-204b-4a23-8747-d11730ec7fe8"}], "outcome": "PASSED", "data":
+      "uuid": "f584689d-f567-4839-9bc8-6123bfad7048"}], "outcome": "PASSED", "data":
       {"item": "ami-b63769a1"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['260']
-      User-Agent: [python-requests/2.13.0]
+      User-Agent: [python-requests/2.18.4]
       content-type: [application/json]
     method: POST
     uri: https://resultsdb.domain.local/api/v2.0/results
   response:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"item\": [\n      \"ami-b63769a1\"\
-        \n    ]\n  }, \n  \"groups\": [\n    \"32c7cad1-204b-4a23-8747-d11730ec7fe8\"\
-        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/5654\"\
-        , \n  \"id\": 5654, \n  \"note\": \"\", \n  \"outcome\": \"PASSED\", \n  \"\
-        ref_url\": \"http://domain.local/path/to/test/memory\", \n  \"submit_time\"\
-        : \"2017-04-05T19:06:24.423800\", \n  \"testcase\": {\n    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dva.ami.memory\"\
+        \n    ]\n  }, \n  \"groups\": [\n    \"f584689d-f567-4839-9bc8-6123bfad7048\"\
+        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/2460504\"\
+        , \n  \"id\": 2460504, \n  \"note\": \"\", \n  \"outcome\": \"PASSED\", \n\
+        \  \"ref_url\": \"http://domain.local/path/to/test/memory\", \n  \"submit_time\"\
+        : \"2017-12-01T16:24:27.105551\", \n  \"testcase\": {\n    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dva.ami.memory\"\
         , \n    \"name\": \"dva.ami.memory\", \n    \"ref_url\": null\n  }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['551']
+      content-length: ['557']
       content-type: [application/json]
-      date: ['Wed, 05 Apr 2017 19:06:24 GMT']
+      date: ['Fri, 01 Dec 2017 16:24:27 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]
@@ -36,30 +36,30 @@ interactions:
 - request:
     body: !!python/unicode '{"note": "", "ref_url": "http://domain.local/path/to/test",
       "testcase": "dva.ami", "groups": [{"ref_url": "http://domain.local/path/to/test",
-      "uuid": "32c7cad1-204b-4a23-8747-d11730ec7fe8"}], "outcome": "FAILED", "data":
+      "uuid": "f584689d-f567-4839-9bc8-6123bfad7048"}], "outcome": "FAILED", "data":
       {"item": "ami-b63769a1"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['246']
-      User-Agent: [python-requests/2.13.0]
+      User-Agent: [python-requests/2.18.4]
       content-type: [application/json]
     method: POST
     uri: https://resultsdb.domain.local/api/v2.0/results
   response:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"item\": [\n      \"ami-b63769a1\"\
-        \n    ]\n  }, \n  \"groups\": [\n    \"32c7cad1-204b-4a23-8747-d11730ec7fe8\"\
-        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/5655\"\
-        , \n  \"id\": 5655, \n  \"note\": \"\", \n  \"outcome\": \"FAILED\", \n  \"\
-        ref_url\": \"http://domain.local/path/to/test\", \n  \"submit_time\": \"2017-04-05T19:06:25.884552\"\
-        , \n  \"testcase\": {\n    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dva.ami\"\
+        \n    ]\n  }, \n  \"groups\": [\n    \"f584689d-f567-4839-9bc8-6123bfad7048\"\
+        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/2460505\"\
+        , \n  \"id\": 2460505, \n  \"note\": \"\", \n  \"outcome\": \"FAILED\", \n\
+        \  \"ref_url\": \"http://domain.local/path/to/test\", \n  \"submit_time\"\
+        : \"2017-12-01T16:24:28.947782\", \n  \"testcase\": {\n    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dva.ami\"\
         , \n    \"name\": \"dva.ami\", \n    \"ref_url\": null\n  }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['530']
+      content-length: ['536']
       content-type: [application/json]
-      date: ['Wed, 05 Apr 2017 19:06:25 GMT']
+      date: ['Fri, 01 Dec 2017 16:24:28 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]
@@ -70,31 +70,31 @@ interactions:
 - request:
     body: !!python/unicode '{"note": "Some note", "ref_url": "http://domain.local/path/to/test/yum_proxy",
       "testcase": "dva.ami.yum_proxy", "groups": [{"ref_url": "http://domain.local/path/to/test",
-      "uuid": "32c7cad1-204b-4a23-8747-d11730ec7fe8"}], "outcome": "FAILED", "data":
+      "uuid": "f584689d-f567-4839-9bc8-6123bfad7048"}], "outcome": "FAILED", "data":
       {"item": "ami-b63769a1"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['275']
-      User-Agent: [python-requests/2.13.0]
+      User-Agent: [python-requests/2.18.4]
       content-type: [application/json]
     method: POST
     uri: https://resultsdb.domain.local/api/v2.0/results
   response:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"item\": [\n      \"ami-b63769a1\"\
-        \n    ]\n  }, \n  \"groups\": [\n    \"32c7cad1-204b-4a23-8747-d11730ec7fe8\"\
-        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/5656\"\
-        , \n  \"id\": 5656, \n  \"note\": \"Some note\", \n  \"outcome\": \"FAILED\"\
+        \n    ]\n  }, \n  \"groups\": [\n    \"f584689d-f567-4839-9bc8-6123bfad7048\"\
+        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/2460506\"\
+        , \n  \"id\": 2460506, \n  \"note\": \"Some note\", \n  \"outcome\": \"FAILED\"\
         , \n  \"ref_url\": \"http://domain.local/path/to/test/yum_proxy\", \n  \"\
-        submit_time\": \"2017-04-05T19:06:27.370860\", \n  \"testcase\": {\n    \"\
+        submit_time\": \"2017-12-01T16:24:30.996165\", \n  \"testcase\": {\n    \"\
         href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dva.ami.yum_proxy\"\
         , \n    \"name\": \"dva.ami.yum_proxy\", \n    \"ref_url\": null\n  }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['569']
+      content-length: ['575']
       content-type: [application/json]
-      date: ['Wed, 05 Apr 2017 19:06:27 GMT']
+      date: ['Fri, 01 Dec 2017 16:24:30 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]
@@ -105,32 +105,32 @@ interactions:
 - request:
     body: !!python/unicode '{"note": "", "ref_url": "http://domain.local/path/to/test/no_avc_denials_test",
       "testcase": "dva.ami.no_avc_denials", "groups": [{"ref_url": "http://domain.local/path/to/test",
-      "uuid": "32c7cad1-204b-4a23-8747-d11730ec7fe8"}], "outcome": "FAILED", "data":
+      "uuid": "f584689d-f567-4839-9bc8-6123bfad7048"}], "outcome": "FAILED", "data":
       {"item": "ami-b63769a1"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['281']
-      User-Agent: [python-requests/2.13.0]
+      User-Agent: [python-requests/2.18.4]
       content-type: [application/json]
     method: POST
     uri: https://resultsdb.domain.local/api/v2.0/results
   response:
     body: {string: !!python/unicode "{\n  \"data\": {\n    \"item\": [\n      \"ami-b63769a1\"\
-        \n    ]\n  }, \n  \"groups\": [\n    \"32c7cad1-204b-4a23-8747-d11730ec7fe8\"\
-        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/5657\"\
-        , \n  \"id\": 5657, \n  \"note\": \"\", \n  \"outcome\": \"FAILED\", \n  \"\
-        ref_url\": \"http://domain.local/path/to/test/no_avc_denials_test\", \n  \"\
-        submit_time\": \"2017-04-05T19:06:28.927136\", \n  \"testcase\": {\n    \"\
-        href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dva.ami.no_avc_denials\"\
+        \n    ]\n  }, \n  \"groups\": [\n    \"f584689d-f567-4839-9bc8-6123bfad7048\"\
+        \n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/2460507\"\
+        , \n  \"id\": 2460507, \n  \"note\": \"\", \n  \"outcome\": \"FAILED\", \n\
+        \  \"ref_url\": \"http://domain.local/path/to/test/no_avc_denials_test\",\
+        \ \n  \"submit_time\": \"2017-12-01T16:24:32.840626\", \n  \"testcase\": {\n\
+        \    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dva.ami.no_avc_denials\"\
         , \n    \"name\": \"dva.ami.no_avc_denials\", \n    \"ref_url\": null\n  }\n\
         }"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['580']
+      content-length: ['586']
       content-type: [application/json]
-      date: ['Wed, 05 Apr 2017 19:06:28 GMT']
+      date: ['Fri, 01 Dec 2017 16:24:32 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]

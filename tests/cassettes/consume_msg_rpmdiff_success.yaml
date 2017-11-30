@@ -5,22 +5,21 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.13.0]
+      User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: https://resultsdb.domain.local/api/v2.0/groups?description=https://rpmdiff.engineering.redhat.com/run/12345
+    uri: https://resultsdb.domain.local/api/v2.0/groups?description=https://domain.local/run/12345
   response:
     body: {string: !!python/unicode "{\n  \"data\": [\n    {\n      \"description\"\
-        : \"https://rpmdiff.engineering.redhat.com/run/12345\", \n      \"href\":\
-        \ \"https://resultsdb.domain.local/api/v2.0/groups/454fbcda-3fa7-4aed-ae3b-a3921a35098b\"\
-        , \n      \"ref_url\": \"https://rpmdiff.engineering.redhat.com/run/12345\"\
-        , \n      \"results\": \"https://resultsdb.domain.local/api/v2.0/results?groups=454fbcda-3fa7-4aed-ae3b-a3921a35098b\"\
-        , \n      \"results_count\": 3, \n      \"uuid\": \"454fbcda-3fa7-4aed-ae3b-a3921a35098b\"\
+        : \"https://domain.local/run/12345\", \n      \"href\": \"https://resultsdb.domain.local/api/v2.0/groups/abc71217-7b4d-433e-9dad-457b133ac917\"\
+        , \n      \"ref_url\": \"https://domain.local/run/12345\", \n      \"results\"\
+        : \"https://resultsdb.domain.local/api/v2.0/results?groups=abc71217-7b4d-433e-9dad-457b133ac917\"\
+        , \n      \"results_count\": 13, \n      \"uuid\": \"abc71217-7b4d-433e-9dad-457b133ac917\"\
         \n    }\n  ], \n  \"next\": null, \n  \"prev\": null\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['552']
+      content-length: ['517']
       content-type: [application/json]
-      date: ['Wed, 05 Apr 2017 19:00:44 GMT']
+      date: ['Fri, 01 Dec 2017 16:21:36 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]
@@ -29,10 +28,10 @@ interactions:
       x-frame-options: [DENY]
     status: {code: 200, message: OK}
 - request:
-    body: !!python/unicode '{"note": "", "ref_url": "https://rpmdiff.engineering.redhat.com/run/12345/13",
-      "testcase": {"ref_url": "https://docs.engineering.redhat.com/display/HTD/rpmdiff-abi-symbols",
-      "name": "dist.rpmdiff.comparison.abi_symbols"}, "groups": [{"ref_url": "https://rpmdiff.engineering.redhat.com/run/12345",
-      "uuid": "454fbcda-3fa7-4aed-ae3b-a3921a35098b", "description": "https://rpmdiff.engineering.redhat.com/run/12345"}],
+    body: !!python/unicode '{"note": "", "ref_url": "https://domain.local/run/12345/13",
+      "testcase": {"ref_url": "https://domain.local/display/HTD/rpmdiff-abi-symbols",
+      "name": "dist.rpmdiff.comparison.abi_symbols"}, "groups": [{"ref_url": "https://domain.local/run/12345",
+      "uuid": "abc71217-7b4d-433e-9dad-457b133ac917", "description": "https://domain.local/run/12345"}],
       "outcome": "PASSED", "data": {"oldnvr": "lapack-3.4.2-7.el7", "newnvr": "lapack-3.4.2-8.el7",
       "scratch": false, "item": "lapack-3.4.2-8.el7 lapack-3.4.2-7.el7", "taskid":
       12665429, "type": "koji_build_pair"}}'
@@ -40,8 +39,8 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['622']
-      User-Agent: [python-requests/2.13.0]
+      Content-Length: ['553']
+      User-Agent: [python-requests/2.18.4]
       content-type: [application/json]
     method: POST
     uri: https://resultsdb.domain.local/api/v2.0/results
@@ -51,20 +50,18 @@ interactions:
         \n    ], \n    \"oldnvr\": [\n      \"lapack-3.4.2-7.el7\"\n    ], \n    \"\
         scratch\": [\n      \"False\"\n    ], \n    \"taskid\": [\n      \"12665429\"\
         \n    ], \n    \"type\": [\n      \"koji_build_pair\"\n    ]\n  }, \n  \"\
-        groups\": [\n    \"454fbcda-3fa7-4aed-ae3b-a3921a35098b\"\n  ], \n  \"href\"\
-        : \"https://resultsdb.domain.local/api/v2.0/results/5653\"\
-        , \n  \"id\": 5653, \n  \"note\": \"\", \n  \"outcome\": \"PASSED\", \n  \"\
-        ref_url\": \"https://rpmdiff.engineering.redhat.com/run/12345/13\", \n  \"\
-        submit_time\": \"2017-04-05T19:00:46.324552\", \n  \"testcase\": {\n    \"\
-        href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dist.rpmdiff.comparison.abi_symbols\"\
+        groups\": [\n    \"abc71217-7b4d-433e-9dad-457b133ac917\"\n  ], \n  \"href\"\
+        : \"https://resultsdb.domain.local/api/v2.0/results/2460500\"\
+        , \n  \"id\": 2460500, \n  \"note\": \"\", \n  \"outcome\": \"PASSED\", \n\
+        \  \"ref_url\": \"https://domain.local/run/12345/13\", \n  \"submit_time\"\
+        : \"2017-12-01T16:21:38.355944\", \n  \"testcase\": {\n    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dist.rpmdiff.comparison.abi_symbols\"\
         , \n    \"name\": \"dist.rpmdiff.comparison.abi_symbols\", \n    \"ref_url\"\
-        : \"https://docs.engineering.redhat.com/display/HTD/rpmdiff-abi-symbols\"\n\
-        \  }\n}"}
+        : \"https://domain.local/display/HTD/rpmdiff-abi-symbols\"\n  }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['923']
+      content-length: ['896']
       content-type: [application/json]
-      date: ['Wed, 05 Apr 2017 19:00:46 GMT']
+      date: ['Fri, 01 Dec 2017 16:21:38 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]

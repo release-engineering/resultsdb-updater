@@ -84,7 +84,8 @@ def ci_metrics_post_to_resultsdb(msg):
     tests = msg['body']['msg']['tests']
     group_tests_ref_url = '{0}/console'.format(group_ref_url.rstrip('/'))
     component = msg['body']['msg'].get('component', 'unknown')
-    recipients = msg['body']['msg'].get('recipients', ['unknown'])
+    # This comes as a string of comma separated names
+    recipients = msg['body']['msg'].get('recipients', 'unknown').split(',')
     ci_tier = msg['body']['msg'].get('CI_tier', ['unknown'])
     test_type = 'unknown'
 
@@ -158,18 +159,18 @@ def tps_post_to_resultsdb(msg):
     ci_type = msg['headers']['ci_type']
     component = msg['headers']['component']
     brew_task_id = msg['headers']['brew_task_id']
+    msg_body = msg['body']['msg']
+    tests = msg_body['tests']
 
-    tests = msg['body']['tests']
+    arch = msg_body['environment']['arch']
+    brew_tag = msg_body['environment']['brew_tag']
+    build_type = msg_body['environment']['build_type']
 
-    arch = msg['body']['environment']['arch']
-    brew_tag = msg['body']['environment']['brew_tag']
-    build_type = msg['body']['environment']['build_type']
+    jenkins_job_url = msg_body['infrastructure']['jenkins_job_url']
+    jenkins_build_url = msg_body['infrastructure']['jenkins_build_url']
 
-    jenkins_job_url = msg['body']['infrastructure']['jenkins_job_url']
-    jenkins_build_url = msg['body']['infrastructure']['jenkins_build_url']
-
-    tps_report = msg['body']['results']['tps_report']
-    tps_status = msg['body']['results']['tps_status']
+    tps_report = msg_body['results']['tps_report']
+    tps_status = msg_body['results']['tps_status']
 
     testcase_url = jenkins_job_url
 
@@ -207,13 +208,14 @@ def tps_post_to_resultsdb(msg):
 def resultsdb_post_to_resultsdb(msg):
     error_msg = 'A new result for message "{0}" couldn\'t be created'
     msg_id = msg['headers']['message-id']
-    group_ref_url = msg['body']['msg']['ref_url']
+    msg_body = msg['body']['msg']
+    group_ref_url = msg_body['ref_url']
     rpmdiff_url_regex_pattern = \
         r'^(?P<url_prefix>http.+\/run\/)(?P<run>\d+)(?:\/)?(?P<result>\d+)?$'
 
-    if msg['headers']['testcase'].startswith('dist.rpmdiff'):
+    if msg_body.get('testcase', {}).get('name', '').startswith('dist.rpmdiff'):
         rpmdiff_url_regex_match = re.match(
-            rpmdiff_url_regex_pattern, msg['body']['msg']['ref_url'])
+            rpmdiff_url_regex_pattern, msg_body['ref_url'])
 
         if rpmdiff_url_regex_match:
             group_ref_url = '{0}{1}'.format(
@@ -222,16 +224,16 @@ def resultsdb_post_to_resultsdb(msg):
         else:
             raise ValueError(
                 'The ref_url of "{0}" did not match the rpmdiff URL scheme'
-                .format(msg['body']['msg']['ref_url']))
+                .format(msg_body['ref_url']))
 
     # Check if the message is in bulk format
-    if msg['body']['msg'].get('results'):
+    if msg_body.get('results'):
         groups = [{
             'uuid': str(uuid.uuid4()),
             'ref_url': group_ref_url
         }]
 
-        for testcase, result in msg['body']['msg']['results'].items():
+        for testcase, result in msg_body['results'].items():
             result_rv = create_result(
                 testcase,
                 result['outcome'],
@@ -257,12 +259,12 @@ def resultsdb_post_to_resultsdb(msg):
         }]
 
         result_rv = create_result(
-            msg['body']['msg']['testcase'],
-            msg['body']['msg']['outcome'],
-            msg['body']['msg']['ref_url'],
-            msg['body']['msg']['data'],
+            msg_body['testcase'],
+            msg_body['outcome'],
+            msg_body['ref_url'],
+            msg_body['data'],
             groups,
-            msg['body']['msg'].get('note', '')
+            msg_body.get('note', '')
         )
 
         if not result_rv:
