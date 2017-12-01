@@ -2,18 +2,6 @@
   "body": {
     "msg": {
       "results": {
-        "dva.ami.yum_proxy": {
-          "data": {
-            "item": "ami-b63769a1"
-          },
-          "outcome": "FAILED",
-          "ref_url": "http://domain.local/path/to/test/yum_proxy",
-          "note": "Some note",
-          "testcase": {
-            "name": "dva.ami.yum_proxy",
-            "ref_url": "http://domain.local/path/to/doc/explaining/test"
-          }
-        },
         "dva.ami.memory": {
           "data": {
             "item": "ami-b63769a1"
@@ -29,7 +17,7 @@
           "data": {
             "item": "ami-b63769a1"
           },
-          "outcome": "FAILED",
+          "outcome": "PASSED",
           "ref_url": "http://domain.local/path/to/test/no_avc_denials_test",
           "testcase": {
             "name": "dva.ami.no_avc_denials",
@@ -40,7 +28,7 @@
           "data": {
             "item": "ami-b63769a1"
           },
-          "outcome": "FAILED",
+          "outcome": "PASSED",
           "ref_url": "http://domain.local/path/to/test",
           "testcase": {
             "name": "dva.ami",

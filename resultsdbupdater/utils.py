@@ -154,8 +154,8 @@ def ci_metrics_post_to_resultsdb(msg):
 
 
 def tps_post_to_resultsdb(msg):
-
     # define variables from tps.json
+    msg_id = msg['headers']['message-id']
     ci_type = msg['headers']['ci_type']
     component = msg['headers']['component']
     brew_task_id = msg['headers']['brew_task_id']
@@ -195,12 +195,29 @@ def tps_post_to_resultsdb(msg):
         'testcase_url': testcase_url,
     }
 
-    for test in tests.keys():
-        testcase = {'name': 'rpm-factory.tps.{}'.format(test),
-                    'ref_url': testcase_url}
-        if not create_result(testcase, outcome, ref_url, result_data, groups):
-            LOGGER.error('A new result for message couldn\'t be created')
+    # Create individual test results for each test in the message
+    for test_name, test_outcome in tests.items():
+        testcase = {
+            'name': 'rpm-factory.tps.{}'.format(test_name),
+            'ref_url': testcase_url
+        }
+        if not create_result(
+                testcase, test_outcome, ref_url, result_data, groups):
+            LOGGER.error(
+                'A new result for message "{0}" couldn\'t be created'
+                .format(msg_id))
             return False
+
+    # Create the overall test result
+    testcase = {
+        'name': 'rpm-factory.tps',
+        'ref_url': testcase_url
+    }
+    if not create_result(testcase, outcome, ref_url, result_data, groups):
+        LOGGER.error(
+            'An overall result for message "{0}" couldn\'t be created'
+            .format(msg_id))
+        return False
 
     return True
 
