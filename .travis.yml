@@ -11,4 +11,4 @@ install:
 before_script:
   - flake8 resultsdbupdater/
 script:
-  - nosetests tests/
+  - pytest tests/
