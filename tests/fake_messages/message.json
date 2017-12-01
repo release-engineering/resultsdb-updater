@@ -1,39 +1,53 @@
 {
-    "body": {
-        "msg": {
-            "CI_infra_failure" : "DNS",
-            "CI_infra_failure_desc" : "Can't resolve name to IP address",
-            "CI_tier" : "1",
-            "base_distro" : "RHEL 7.2+updates",
-            "brew_task_id" : "11610935",
-            "build_type" : "official",
-            "completion_time" : "2016-08-18T20:55:10Z",
-            "component" : "package-4.4.4-7.el7",
-            "compose_id" : "NULL",
-            "create_time" : "2016-08-18T20:13:51Z",
-            "jenkins_build_url" : "http://domain.local/job/package-4.4.4-7.el7/136/",
-            "jenkins_job_url" : " http://domain.local/job/package-4.4.4-7.el7/",
-            "job_name" : "package-rhel-7.2-candidate-runtest-fslock-func",
-            "owner" : "some_owner",
-            "recipients": ["tbrady", "jedelman"],
-            "team": "someteam",
-            "tests" : [
-                { "executor" : "beaker" , "arch" : "aarch64" , "executed" : "25", "failed" : "0" },
-                { "executor" : "CI-OSP" , "arch" : "x86_64" , "executed" : "1000",   "failed" : "0" }
-            ],
-            "trigger" : "git push"
-        },
-        "topic": "/topic/CI"
-    },
+  "body": {
     "headers": {
-        "CI_TYPE": "ci-metricsdata",
-        "content-length": "433",
-        "destination": "/topic/CI",
-        "expires": "0",
-        "message-id": "ID\\ci-hub.domain.local-37141-1460606438905-1\\1\\1\\1\\6641",
-        "priority": "4",
-        "subscription": "/topic/CI",
-        "timestamp": "1460652076192"
+      "content-length": "433",
+      "expires": "0",
+      "JMS_AMQP_MESSAGE_FORMAT": "0",
+      "JMS_AMQP_NATIVE": "false",
+      "destination": "/topic/VirtualTopic.eng.platformci.tier1.result",
+      "priority": "4",
+      "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
+      "timestamp": "0",
+      "JMS_AMQP_ContentType": "text/json",
+      "JMS_AMQP_FirstAcquirer": "false",
+      "subscription": "/queue/Consumer.client-resultsdb-updater.VirtualTopic.eng.>"
     },
-    "topic": "/topic/CI"
+    "msg": {
+      "tests": [
+        {
+          "failed": 2,
+          "executed": 6,
+          "executor": "CI_OSP"
+        }
+      ],
+      "brew_task_id": 14655525,
+      "recipients": "tbrady,rgronkowski",
+      "CI_tier": 1,
+      "component": "libreswan-3.23-0.1.rc1.el6_9",
+      "job_name": "ci-libreswan-brew-rhel-6.9-z-candidate-2-runtest",
+      "trigger": "brew build",
+      "base_distro": "RHEL-6.9-updates-20171108.0",
+      "team": "baseos",
+      "build_number": "5154",
+      "jenkins_job_url": "https://domain.local/job/ci-openstack/",
+      "jenkins_build_url": "https://domain.local/job/ci-openstack/5154/",
+      "build_type": "unknown"
+    },
+    "topic": "/topic/VirtualTopic.eng.platformci.tier1.result"
+  },
+  "headers": {
+    "content-length": "433",
+    "expires": "0",
+    "JMS_AMQP_MESSAGE_FORMAT": "0",
+    "JMS_AMQP_NATIVE": "false",
+    "destination": "/topic/VirtualTopic.eng.platformci.tier1.result",
+    "priority": "4",
+    "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
+    "timestamp": "0",
+    "JMS_AMQP_ContentType": "text/json",
+    "JMS_AMQP_FirstAcquirer": "false",
+    "subscription": "/queue/Consumer.client-resultsdb-updater.VirtualTopic.eng.>"
+  },
+  "topic": "/topic/VirtualTopic.eng.platformci.tier1.result"
 }

@@ -1,9 +1,4 @@
 {
-  "headers": {
-    "message-id": "ID:ci-msg-bus.lab.eng.rdu2.redhat.com-63709-1487212854278-2:1439:-1:1:2",
-    "CI_TYPE": "resultsdb",
-    "testcase": "dva.ami"
-  },
   "body": {
     "msg": {
       "results": {
@@ -54,6 +49,14 @@
         }
       },
       "ref_url": "http://domain.local/path/to/test"
-    }
-  }
+    },
+    "headers": {
+      "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1"
+    },
+    "topic": "/topic/VirtualTopic.qe.ci.jenkins"
+  },
+  "headers": {
+    "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1"
+  },
+  "topic": "/topic/VirtualTopic.qe.ci.jenkins"
 }

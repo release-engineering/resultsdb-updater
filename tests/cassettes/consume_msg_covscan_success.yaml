@@ -5,17 +5,22 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.13.0]
+      User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: https://resultsdb.domain.local/api/v2.0/groups?description=http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/
+    uri: https://resultsdb.domain.local/api/v2.0/groups?description=http://domain.local/covscanhub/task/64208/log/added.html
   response:
-    body: {string: !!python/unicode "{\n  \"data\": [], \n  \"next\": null, \n  \"\
-        prev\": null\n}"}
+    body: {string: !!python/unicode "{\n  \"data\": [\n    {\n      \"description\"\
+        : \"http://domain.local/covscanhub/task/64208/log/added.html\", \n      \"\
+        href\": \"https://resultsdb.domain.local/api/v2.0/groups/cfa12ce6-aecf-4206-8770-fca4e82335b8\"\
+        , \n      \"ref_url\": \"http://domain.local/covscanhub/task/64208/log/added.html\"\
+        , \n      \"results\": \"https://resultsdb.domain.local/api/v2.0/results?groups=cfa12ce6-aecf-4206-8770-fca4e82335b8\"\
+        , \n      \"results_count\": 5, \n      \"uuid\": \"cfa12ce6-aecf-4206-8770-fca4e82335b8\"\
+        \n    }\n  ], \n  \"next\": null, \n  \"prev\": null\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['50']
+      content-length: ['568']
       content-type: [application/json]
-      date: ['Wed, 05 Apr 2017 19:23:56 GMT']
+      date: ['Fri, 01 Dec 2017 16:21:22 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]
@@ -24,41 +29,40 @@ interactions:
       x-frame-options: [DENY]
     status: {code: 200, message: OK}
 - request:
-    body: !!python/unicode '{"note": "", "ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/",
-      "testcase": {"ref_url": "https://url.corp.redhat.com/covscan-in-ci", "name":
-      "dist.covscan"}, "groups": [{"ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/",
-      "uuid": "b9f909b5-bbbd-45f5-903e-4c73d7324243", "description": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/"}],
-      "outcome": "FAILED", "data": {"oldnvr": "tzdata-2017a-1.el6", "newnvr": "tzdata-2016i-1.el6",
-      "scratch": true, "item": "tzdata-2016i-1.el6 tzdata-2017a-1.el6", "taskid":
-      12794223, "type": "koji_build_pair"}}'
+    body: !!python/unicode '{"note": "", "ref_url": "http://domain.local/covscanhub/task/64208/log/added.html",
+      "testcase": {"ref_url": "https://domain.local/covscan-in-ci", "name": "dist.covscan"},
+      "groups": [{"ref_url": "http://domain.local/covscanhub/task/64208/log/added.html",
+      "uuid": "cfa12ce6-aecf-4206-8770-fca4e82335b8", "description": "http://domain.local/covscanhub/task/64208/log/added.html"}],
+      "outcome": "PASSED", "data": {"oldnvr": "ipa-4.5.4-4.el7", "newnvr": "ipa-4.5.4-5.el7",
+      "scratch": true, "item": "ipa-4.5.4-5.el7 ipa-4.5.4-4.el7", "taskid": 14655680,
+      "type": "koji_build_pair"}}'
     headers:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['599']
-      User-Agent: [python-requests/2.13.0]
+      Content-Length: ['574']
+      User-Agent: [python-requests/2.18.4]
       content-type: [application/json]
     method: POST
     uri: https://resultsdb.domain.local/api/v2.0/results
   response:
-    body: {string: !!python/unicode "{\n  \"data\": {\n    \"item\": [\n      \"tzdata-2016i-1.el6\
-        \ tzdata-2017a-1.el6\"\n    ], \n    \"newnvr\": [\n      \"tzdata-2016i-1.el6\"\
-        \n    ], \n    \"oldnvr\": [\n      \"tzdata-2017a-1.el6\"\n    ], \n    \"\
-        scratch\": [\n      \"True\"\n    ], \n    \"taskid\": [\n      \"12794223\"\
-        \n    ], \n    \"type\": [\n      \"koji_build_pair\"\n    ]\n  }, \n  \"\
-        groups\": [\n    \"b9f909b5-bbbd-45f5-903e-4c73d7324243\"\n  ], \n  \"href\"\
-        : \"https://resultsdb.domain.local/api/v2.0/results/5659\"\
-        , \n  \"id\": 5659, \n  \"note\": \"\", \n  \"outcome\": \"FAILED\", \n  \"\
-        ref_url\": \"http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/\"\
-        , \n  \"submit_time\": \"2017-04-05T19:23:57.888807\", \n  \"testcase\": {\n\
+    body: {string: !!python/unicode "{\n  \"data\": {\n    \"item\": [\n      \"ipa-4.5.4-5.el7\
+        \ ipa-4.5.4-4.el7\"\n    ], \n    \"newnvr\": [\n      \"ipa-4.5.4-5.el7\"\
+        \n    ], \n    \"oldnvr\": [\n      \"ipa-4.5.4-4.el7\"\n    ], \n    \"scratch\"\
+        : [\n      \"True\"\n    ], \n    \"taskid\": [\n      \"14655680\"\n    ],\
+        \ \n    \"type\": [\n      \"koji_build_pair\"\n    ]\n  }, \n  \"groups\"\
+        : [\n    \"cfa12ce6-aecf-4206-8770-fca4e82335b8\"\n  ], \n  \"href\": \"https://resultsdb.domain.local/api/v2.0/results/2460496\"\
+        , \n  \"id\": 2460496, \n  \"note\": \"\", \n  \"outcome\": \"PASSED\", \n\
+        \  \"ref_url\": \"http://domain.local/covscanhub/task/64208/log/added.html\"\
+        , \n  \"submit_time\": \"2017-12-01T16:21:25.856785\", \n  \"testcase\": {\n\
         \    \"href\": \"https://resultsdb.domain.local/api/v2.0/testcases/dist.covscan\"\
-        , \n    \"name\": \"dist.covscan\", \n    \"ref_url\": \"https://url.corp.redhat.com/covscan-in-ci\"\
+        , \n    \"name\": \"dist.covscan\", \n    \"ref_url\": \"https://domain.local/covscan-in-ci\"\
         \n  }\n}"}
     headers:
       connection: [Keep-Alive]
-      content-length: ['857']
+      content-length: ['842']
       content-type: [application/json]
-      date: ['Wed, 05 Apr 2017 19:23:57 GMT']
+      date: ['Fri, 01 Dec 2017 16:21:25 GMT']
       keep-alive: ['timeout=5, max=100']
       server: [Apache/2.4.6 (Red Hat Enterprise Linux) OpenSSL/1.0.1e-fips mod_wsgi/3.4
           Python/2.7.5]

@@ -1,29 +1,49 @@
 {
-  "headers": {
-    "message-id": "ID:ci-msg-bus.lab.eng.rdu2.redhat.com-63709-1487212854278-2:1439:-1:1:2",
-    "CI_TYPE": "resultsdb",
-    "item": "tzdata-2016i-1.el6 tzdata-2017a-1.el6",
-    "scratch": true,
-    "taskid": 12794223,
-    "testcase": "dist.covscan",
-    "type": "koji_build_pair"
-  },
   "body": {
+    "msg_id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
+    "topic": "/topic/VirtualTopic.eng.platformci.covscan.result",
+    "headers": {
+      "content-length": "471",
+      "expires": "0",
+      "JMS_AMQP_MESSAGE_FORMAT": "0",
+      "JMS_AMQP_NATIVE": "false",
+      "destination": "/topic/VirtualTopic.eng.platformci.covscan.result",
+      "priority": "4",
+      "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
+      "timestamp": "0",
+      "JMS_AMQP_ContentType": "text/json",
+      "JMS_AMQP_FirstAcquirer": "false",
+      "subscription": "/queue/Consumer.client-resultsdb-uodater.VirtualTopic.eng.>"
+    },
     "msg": {
-      "data": {
-        "item": "tzdata-2016i-1.el6 tzdata-2017a-1.el6",
-        "newnvr": "tzdata-2016i-1.el6",
-        "oldnvr": "tzdata-2017a-1.el6",
-        "scratch": true,
-        "taskid": 12794223,
-        "type": "koji_build_pair"
-      },
-      "outcome": "FAILED",
-      "ref_url": "http://cov01.lab.eng.brq.redhat.com/covscanhub/task/12345/",
       "testcase": {
-        "name": "dist.covscan",
-        "ref_url": "https://url.corp.redhat.com/covscan-in-ci"
+        "ref_url": "https://domain.local/covscan-in-ci",
+        "name": "dist.covscan"
+      },
+      "ref_url": "http://domain.local/covscanhub/task/64208/log/added.html",
+      "outcome": "PASSED",
+      "data": {
+        "oldnvr": "ipa-4.5.4-4.el7",
+        "newnvr": "ipa-4.5.4-5.el7",
+        "scratch": true,
+        "item": "ipa-4.5.4-5.el7 ipa-4.5.4-4.el7",
+        "taskid": 14655680,
+        "type": "koji_build_pair"
       }
     }
-  }
+  },
+  "headers": {
+    "content-length": "471",
+    "expires": "0",
+    "JMS_AMQP_MESSAGE_FORMAT": "0",
+    "JMS_AMQP_NATIVE": "false",
+    "destination": "/topic/VirtualTopic.eng.platformci.covscan.result",
+    "priority": "4",
+    "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
+    "timestamp": "0",
+    "JMS_AMQP_ContentType": "text/json",
+    "JMS_AMQP_FirstAcquirer": "false",
+    "subscription": "/queue/Consumer.client-resultsdb-uodater.VirtualTopic.eng.>"
+  },
+  "topic": "/topic/VirtualTopic.eng.platformci.covscan.result"
 }
