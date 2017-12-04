@@ -43,3 +43,5 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             if result_keys and result_keys[0].startswith('dva.ami'):
                 self.debug_log_msg(msg)
                 return resultsdb_post_to_resultsdb(msg)
+        else:
+            LOGGER.warn("Received unhandled message topic %r" % msg['topic'])
