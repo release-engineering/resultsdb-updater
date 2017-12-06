@@ -37,11 +37,14 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             self.debug_log_msg(msg)
             return resultsdb_post_to_resultsdb(msg)
         elif msg['topic'] == '/topic/VirtualTopic.qe.ci.jenkins':
-            result_keys = msg['body']['msg'].get('results', {}).keys()
-            # From our understanding, we are only interested in the AMI test
-            # results in this topic
-            if result_keys and result_keys[0].startswith('dva.ami'):
-                self.debug_log_msg(msg)
-                return resultsdb_post_to_resultsdb(msg)
+            # Some of the messages here can be empty strings, so only process
+            # them if they are dicts to avoid tracebacks
+            if isinstance(msg['body']['msg'], dict):
+                result_keys = msg['body']['msg'].get('results', {}).keys()
+                # From our understanding, we are only interested in the AMI
+                # test results in this topic
+                if result_keys and result_keys[0].startswith('dva.ami'):
+                    self.debug_log_msg(msg)
+                    return resultsdb_post_to_resultsdb(msg)
         else:
             LOGGER.warn("Received unhandled message topic %r" % msg['topic'])
