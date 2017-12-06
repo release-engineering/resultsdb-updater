@@ -9,7 +9,7 @@ class FakeHub(object):
     config = {}
 
 
-@mock.patch('resultsdbupdater.utils.requests')
+@mock.patch('resultsdbupdater.utils.retry_session')
 class TestConsumer(unittest.TestCase):
     def setUp(self):
         self.json_dir = path.join(path.abspath(path.dirname(__file__)),
@@ -23,10 +23,12 @@ class TestConsumer(unittest.TestCase):
     def tearDown(self):
         self.uuid_patcher.stop()
 
-    def test_full_consume_msg(self, mock_requests):
+    def test_full_consume_msg(self, mock_get_session):
         mock_rv = mock.Mock()
         mock_rv.status_code = 201
+        mock_requests = mock.Mock()
         mock_requests.post.return_value = mock_rv
+        mock_get_session.return_value = mock_requests
         fake_msg_path = path.join(self.json_dir, 'message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
@@ -95,7 +97,7 @@ class TestConsumer(unittest.TestCase):
         assert expected_data_one == actual_data_one, actual_data_one
         assert expected_data_two == actual_data_two, actual_data_two
 
-    def test_full_consume_overall_rpmdiff_msg(self, mock_requests):
+    def test_full_consume_overall_rpmdiff_msg(self, mock_get_session):
         mock_post_rv = mock.Mock()
         mock_post_rv.status_code = 201
         mock_get_rv = mock.Mock()
@@ -106,8 +108,10 @@ class TestConsumer(unittest.TestCase):
                 'uuid': '529da400-fc74-4b28-af81-52f56816a2cb'
             }]
         }
+        mock_requests = mock.Mock()
         mock_requests.post.return_value = mock_post_rv
         mock_requests.get.return_value = mock_get_rv
+        mock_get_session.return_value = mock_requests
         fake_msg_path = path.join(self.json_dir, 'rpmdiff_message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
@@ -150,14 +154,16 @@ class TestConsumer(unittest.TestCase):
         assert expected_data == \
             json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
-    def test_full_consume_rpmdiff_msg(self, mock_requests):
+    def test_full_consume_rpmdiff_msg(self, mock_get_session):
         mock_post_rv = mock.Mock()
         mock_post_rv.status_code = 201
         mock_get_rv = mock.Mock()
         mock_get_rv.status_code = 200
         mock_get_rv.json.return_value = {'data': []}
+        mock_requests = mock.Mock()
         mock_requests.post.return_value = mock_post_rv
         mock_requests.get.return_value = mock_get_rv
+        mock_get_session.return_value = mock_requests
         fake_msg_path = path.join(self.json_dir, 'rpmdiff_message_two.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
@@ -199,10 +205,12 @@ class TestConsumer(unittest.TestCase):
         assert expected_data == \
             json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
-    def test_full_consume_tps_msg(self, mock_requests):
+    def test_full_consume_tps_msg(self, mock_get_session):
         mock_post_rv = mock.Mock()
         mock_post_rv.status_code = 201
+        mock_requests = mock.Mock()
         mock_requests.post.return_value = mock_post_rv
+        mock_get_session.return_value = mock_requests
         fake_msg_path = path.join(self.json_dir, 'tps_message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
@@ -269,14 +277,16 @@ class TestConsumer(unittest.TestCase):
         msg = 'Not all the expected testcases were processed'
         assert len(testcase_names) == 0, msg
 
-    def test_full_consume_covscan_msg(self, mock_requests):
+    def test_full_consume_covscan_msg(self, mock_get_session):
         mock_post_rv = mock.Mock()
         mock_post_rv.status_code = 201
         mock_get_rv = mock.Mock()
         mock_get_rv.status_code = 200
         mock_get_rv.json.return_value = {'data': []}
+        mock_requests = mock.Mock()
         mock_requests.post.return_value = mock_post_rv
         mock_requests.get.return_value = mock_get_rv
+        mock_get_session.return_value = mock_requests
         fake_msg_path = path.join(self.json_dir, 'covscan_message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
@@ -322,10 +332,12 @@ class TestConsumer(unittest.TestCase):
         assert expected_data == \
             json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
-    def test_full_consume_bulk_results_msg(self, mock_requests):
+    def test_full_consume_bulk_results_msg(self, mock_get_session):
         mock_post_rv = mock.Mock()
         mock_post_rv.status_code = 201
+        mock_requests = mock.Mock()
         mock_requests.post.return_value = mock_post_rv
+        mock_get_session.return_value = mock_requests
         fake_msg_path = path.join(self.json_dir, 'bulk_results_message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
