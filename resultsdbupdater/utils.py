@@ -1,9 +1,12 @@
-import requests
-import fedmsg
 import logging
 import json
 import uuid
 import re
+
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+import fedmsg
 
 
 CONFIG = fedmsg.config.load_config()
@@ -16,6 +19,28 @@ logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
 
 
+def retry_session():
+    # This will give the total wait time in minutes:
+    # >>> sum([min((0.3 * (2 ** (i - 1))), 120) / 60 for i in range(24)])
+    # >>> 30.5575
+    # This works by the using the minimum time in seconds of the backoff time
+    # and the max back off time which defaults to 120 seconds. The backoff time
+    # increases after every failed attempt.
+    session = requests.Session()
+    retry = Retry(
+        total=24,
+        read=5,
+        connect=24,
+        backoff_factor=0.3,
+        status_forcelist=(500, 502, 504),
+        method_whitelist=('GET', 'POST'),
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+
+
 def get_error_from_request(request):
     try:
         return request.json().get('message')
@@ -23,8 +48,9 @@ def get_error_from_request(request):
         return request.text
 
 
-def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
-    post_req = requests.post(
+def create_result(session, testcase, outcome, ref_url, data, groups=None,
+                  note=None):
+    post_req = session.post(
         '{0}/results'.format(RESULTSDB_API_URL),
         data=json.dumps({
             'testcase': testcase,
@@ -44,8 +70,8 @@ def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
         return False
 
 
-def get_first_group(description):
-    get_req = requests.get(
+def get_first_group(session, description):
+    get_req = session.get(
         '{0}/groups?description={1}'.format(RESULTSDB_API_URL, description),
         verify=TRUSTED_CA
     )
@@ -62,6 +88,7 @@ def get_first_group(description):
 
 
 def ci_metrics_post_to_resultsdb(msg):
+    session = retry_session()
     msg_id = msg['headers']['message-id']
     team = msg['body']['msg'].get('team', 'unassigned')
     if team == 'unassigned':
@@ -121,7 +148,7 @@ def ci_metrics_post_to_resultsdb(msg):
         test['artifact'] = artifact
         test['brew_task_id'] = brew_task_id
 
-        if not create_result(testcase, outcome, group_tests_ref_url,
+        if not create_result(session, testcase, outcome, group_tests_ref_url,
                              test, groups):
             LOGGER.error(
                 'A new result for message "{0}" couldn\'t be created'
@@ -143,8 +170,8 @@ def ci_metrics_post_to_resultsdb(msg):
         'brew_task_id': brew_task_id
     }
 
-    if not create_result(testcase, overall_outcome, group_tests_ref_url,
-                         result_data, groups):
+    if not create_result(session, testcase, overall_outcome,
+                         group_tests_ref_url, result_data, groups):
         LOGGER.error(
             'An overall result for message "{0}" couldn\'t be created'
             .format(msg_id))
@@ -154,6 +181,7 @@ def ci_metrics_post_to_resultsdb(msg):
 
 
 def tps_post_to_resultsdb(msg):
+    session = retry_session()
     # define variables from tps.json
     msg_id = msg['headers']['message-id']
     ci_type = msg['headers']['ci_type']
@@ -202,7 +230,7 @@ def tps_post_to_resultsdb(msg):
             'ref_url': testcase_url
         }
         if not create_result(
-                testcase, test_outcome, ref_url, result_data, groups):
+                session, testcase, test_outcome, ref_url, result_data, groups):
             LOGGER.error(
                 'A new result for message "{0}" couldn\'t be created'
                 .format(msg_id))
@@ -213,7 +241,8 @@ def tps_post_to_resultsdb(msg):
         'name': 'rpm-factory.tps',
         'ref_url': testcase_url
     }
-    if not create_result(testcase, outcome, ref_url, result_data, groups):
+    if not create_result(session, testcase, outcome, ref_url, result_data,
+                         groups):
         LOGGER.error(
             'An overall result for message "{0}" couldn\'t be created'
             .format(msg_id))
@@ -223,6 +252,7 @@ def tps_post_to_resultsdb(msg):
 
 
 def resultsdb_post_to_resultsdb(msg):
+    session = retry_session()
     error_msg = 'A new result for message "{0}" couldn\'t be created'
     msg_id = msg['headers']['message-id']
     msg_body = msg['body']['msg']
@@ -252,6 +282,7 @@ def resultsdb_post_to_resultsdb(msg):
 
         for testcase, result in msg_body['results'].items():
             result_rv = create_result(
+                session,
                 testcase,
                 result['outcome'],
                 result.get('ref_url', ''),
@@ -267,7 +298,7 @@ def resultsdb_post_to_resultsdb(msg):
         groups = [{
             # Check to see if there is a group already for these sets of tests,
             # otherwise, generate a UUID
-            'uuid': get_first_group(group_ref_url).get(
+            'uuid': get_first_group(session, group_ref_url).get(
                 'uuid', str(uuid.uuid4())),
             'ref_url': group_ref_url,
             # Set the description to the ref_url so that we can query for the
@@ -276,6 +307,7 @@ def resultsdb_post_to_resultsdb(msg):
         }]
 
         result_rv = create_result(
+            session,
             msg_body['testcase'],
             msg_body['outcome'],
             msg_body['ref_url'],
