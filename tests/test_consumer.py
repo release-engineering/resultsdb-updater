@@ -211,7 +211,7 @@ class TestConsumer(unittest.TestCase):
         mock_requests = mock.Mock()
         mock_requests.post.return_value = mock_post_rv
         mock_get_session.return_value = mock_requests
-        fake_msg_path = path.join(self.json_dir, 'tps_message.json')
+        fake_msg_path = path.join(self.json_dir, 'cips_message.json')
         with open(fake_msg_path) as fake_msg_file:
             fake_msg = json.load(fake_msg_file)
 
@@ -223,10 +223,10 @@ class TestConsumer(unittest.TestCase):
         assert mock_requests.post.call_count == 4
         all_expected_data = {}
         testcase_to_outcome = {
-            'rpm-factory.tps.install': 'PASSED',
-            'rpm-factory.tps.remove': 'PASSED',
-            'rpm-factory.tps.update': 'SKIPPED',
-            'rpm-factory.tps': 'PASSED'
+            'rpm-factory.cips.install': 'PASSED',
+            'rpm-factory.cips.remove': 'PASSED',
+            'rpm-factory.cips.update': 'SKIPPED',
+            'rpm-factory.cips': 'PASSED'
         }
         for testcase, outcome in testcase_to_outcome.items():
             all_expected_data[testcase] = {
@@ -235,32 +235,31 @@ class TestConsumer(unittest.TestCase):
                     'brew_tag': 'rhel-7.5-candidate',
                     'brew_task_id': '14645871',
                     'build_type': 'scratch',
-                    'ci_type': 'ci-tps',
+                    'ci_type': 'ci-cips',
                     'component': 'golang-1.9.2-4.bz1505967.el7',
                     'item': 'golang-1.9.2-4.bz1505967.el7',
-                    'testcase_url': ('https://server.domain.local/job/test-'
+                    'testcase_url': ('https://server.domain.local/job/ci-'
                                      'package-sanity-development/label=ose-'
                                      'slave-tps,provision_arch=x86_64/'),
-                    'tps_report': ('https://server.domain.local/job/test-'
-                                   'package-sanity-development/label=ose-slave'
-                                   '-tps,provision_arch=x86_64/734//artifact/'
-                                   'tps-next/reports/results.html'),
-                    'tps_status': 'PASSED'
+                    'cips_report': ('https://server.domain.local/job/ci-'
+                                   'package-sanity-development/850/label=ose-slave'
+                                   '-tps,provision_arch=x86_64/artifact/cips/logs/index.html'),
+                    'cips_status': 'PASSED'
                 },
                 'groups': [{
-                    'ref_url': ('https://server.domain.local/job/test-package-'
+                    'ref_url': ('https://server.domain.local/job/ci-package-'
                                 'sanity-development/label=ose-slave-tps,'
-                                'provision_arch=x86_64/3921/'),
+                                'provision_arch=x86_64/850/'),
                     'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
                 }],
                 'note': '',
                 'outcome': outcome,
-                'ref_url': ('https://server.domain.local/job/test-package-'
+                'ref_url': ('https://server.domain.local/job/ci-package-'
                             'sanity-development/label=ose-slave-tps,'
-                            'provision_arch=x86_64/3921/'),
+                            'provision_arch=x86_64/850/'),
                 'testcase': {
                     'name': testcase,
-                    'ref_url': ('https://server.domain.local/job/test-package-'
+                    'ref_url': ('https://server.domain.local/job/ci-package-'
                                 'sanity-development/label=ose-slave-tps,'
                                 'provision_arch=x86_64/')
                 }
