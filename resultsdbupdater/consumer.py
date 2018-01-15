@@ -1,9 +1,8 @@
-import fedmsg.consumers
 import fedmsg.config
 
 from utils import (
     LOGGER, ci_metrics_post_to_resultsdb, resultsdb_post_to_resultsdb,
-    tps_post_to_resultsdb)
+    cips_post_to_resultsdb)
 
 CONFIG = fedmsg.config.load_config()
 TOPICS = CONFIG.get('resultsdb-updater.topics', [])
@@ -30,9 +29,9 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
         if msg['topic'] == '/topic/VirtualTopic.eng.platformci.tier1.result':
             self.debug_log_msg(msg)
             return ci_metrics_post_to_resultsdb(msg)
-        elif msg['topic'] == '/topic/VirtualTopic.eng.tps':
+        elif msg['topic'] == '/topic/VirtualTopic.eng.cips':
             self.debug_log_msg(msg)
-            return tps_post_to_resultsdb(msg)
+            return cips_post_to_resultsdb(msg)
         elif msg['topic'] in resultsdb_style_topics:
             self.debug_log_msg(msg)
             return resultsdb_post_to_resultsdb(msg)
