@@ -238,29 +238,29 @@ class TestConsumer(unittest.TestCase):
                     'ci_type': 'ci-cips',
                     'component': 'golang-1.9.2-4.bz1505967.el7',
                     'item': 'golang-1.9.2-4.bz1505967.el7',
-                    'testcase_url': ('https://server.domain.local/job/test-'
+                    'testcase_url': ('https://server.domain.local/job/ci-'
                                      'package-sanity-development/label=ose-'
                                      'slave-tps,provision_arch=x86_64/'),
-                    'cips_report': ('https://server.domain.local/job/test-'
+                    'cips_report': ('https://server.domain.local/job/ci-'
                                    'package-sanity-development/label=ose-slave'
                                    '-tps,provision_arch=x86_64/734//artifact/'
                                    'tps-next/reports/results.html'),
                     'cips_status': 'PASSED'
                 },
                 'groups': [{
-                    'ref_url': ('https://server.domain.local/job/test-package-'
+                    'ref_url': ('https://server.domain.local/job/ci-package-'
                                 'sanity-development/label=ose-slave-tps,'
                                 'provision_arch=x86_64/3921/'),
                     'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
                 }],
                 'note': '',
                 'outcome': outcome,
-                'ref_url': ('https://server.domain.local/job/test-package-'
+                'ref_url': ('https://server.domain.local/job/ci-package-'
                             'sanity-development/label=ose-slave-tps,'
                             'provision_arch=x86_64/3921/'),
                 'testcase': {
                     'name': testcase,
-                    'ref_url': ('https://server.domain.local/job/test-package-'
+                    'ref_url': ('https://server.domain.local/job/ci-package-'
                                 'sanity-development/label=ose-slave-tps,'
                                 'provision_arch=x86_64/')
                 }
