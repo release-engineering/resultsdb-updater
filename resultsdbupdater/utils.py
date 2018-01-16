@@ -1,12 +1,13 @@
-import json
 import logging
-import re
+import json
 import uuid
+import re
 
-import fedmsg
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+import fedmsg
+
 
 CONFIG = fedmsg.config.load_config()
 RESULTSDB_API_URL = CONFIG.get('resultsdb-updater.resultsdb_api_url')

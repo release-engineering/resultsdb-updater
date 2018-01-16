@@ -14,13 +14,13 @@
         "update": "SKIPPED"
       },
       "infrastructure": {
-        "jenkins_job_url": "https://server.domain.local/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/",
-        "jenkins_build_url": "https://server.domain.local/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/3921/"
+        "jenkins_job_url": "https://server.domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/",
+        "jenkins_build_url": "https://server.domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/850/"
       },
       "results": {
         "start_time": "2017-11-29T08:53:40+00:00",
         "end_time": "2017-11-29T08:58:19+00:00",
-        "cips_report": "https://server.domain.local/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/734//artifact/tps-next/reports/results.html",
+        "cips_report": "https://server.domain.local/job/ci-package-sanity-development/850/label=ose-slave-tps,provision_arch=x86_64/artifact/cips/logs/index.html",
         "cips_status": "PASSED"
       }
     },

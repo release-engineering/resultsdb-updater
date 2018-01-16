@@ -1,4 +1,5 @@
-import fedmsg
+import fedmsg.consumers
+import fedmsg.config
 
 from utils import (
     LOGGER, ci_metrics_post_to_resultsdb, resultsdb_post_to_resultsdb,
