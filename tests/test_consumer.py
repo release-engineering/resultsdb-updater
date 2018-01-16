@@ -250,14 +250,14 @@ class TestConsumer(unittest.TestCase):
                 'groups': [{
                     'ref_url': ('https://server.domain.local/job/ci-package-'
                                 'sanity-development/label=ose-slave-tps,'
-                                'provision_arch=x86_64/3921/'),
+                                'provision_arch=x86_64/850/'),
                     'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
                 }],
                 'note': '',
                 'outcome': outcome,
                 'ref_url': ('https://server.domain.local/job/ci-package-'
                             'sanity-development/label=ose-slave-tps,'
-                            'provision_arch=x86_64/3921/'),
+                            'provision_arch=x86_64/850/'),
                 'testcase': {
                     'name': testcase,
                     'ref_url': ('https://server.domain.local/job/ci-package-'
