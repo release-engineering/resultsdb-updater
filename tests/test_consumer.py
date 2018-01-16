@@ -1,10 +1,8 @@
-import json
 import unittest
-from os import path
-
-import mock
-
 from resultsdbupdater import consumer as ciconsumer
+from os import path
+import json
+import mock
 
 
 class FakeHub(object):
