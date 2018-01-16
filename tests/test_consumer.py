@@ -242,9 +242,8 @@ class TestConsumer(unittest.TestCase):
                                      'package-sanity-development/label=ose-'
                                      'slave-tps,provision_arch=x86_64/'),
                     'cips_report': ('https://server.domain.local/job/ci-'
-                                   'package-sanity-development/label=ose-slave'
-                                   '-tps,provision_arch=x86_64/734//artifact/'
-                                   'tps-next/reports/results.html'),
+                                   'package-sanity-development/850/label=ose-slave'
+                                   '-tps,provision_arch=x86_64/artifact/cips/logs/index.html'),
                     'cips_status': 'PASSED'
                 },
                 'groups': [{
