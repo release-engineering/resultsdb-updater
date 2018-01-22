@@ -180,9 +180,9 @@ def ci_metrics_post_to_resultsdb(msg):
     return True
 
 
-def tps_post_to_resultsdb(msg):
+def cips_post_to_resultsdb(msg):
     session = retry_session()
-    # define variables from tps.json
+    # define variables from cips.json
     msg_id = msg['headers']['message-id']
     ci_type = msg['headers']['ci_type']
     component = msg['headers']['component']
@@ -197,8 +197,8 @@ def tps_post_to_resultsdb(msg):
     jenkins_job_url = msg_body['infrastructure']['jenkins_job_url']
     jenkins_build_url = msg_body['infrastructure']['jenkins_build_url']
 
-    tps_report = msg_body['results']['tps_report']
-    tps_status = msg_body['results']['tps_status']
+    cips_report = msg_body['results']['cips_report']
+    cips_status = msg_body['results']['cips_status']
 
     testcase_url = jenkins_job_url
 
@@ -207,7 +207,7 @@ def tps_post_to_resultsdb(msg):
         'uuid': str(uuid.uuid4()),
         'ref_url': jenkins_build_url
     }]
-    outcome = tps_status
+    outcome = cips_status
     ref_url = jenkins_build_url
 
     result_data = {
@@ -218,15 +218,15 @@ def tps_post_to_resultsdb(msg):
         'arch': arch,
         'component': component,
         'build_type': build_type,
-        'tps_report': tps_report,
-        'tps_status': tps_status,
+        'cips_report': cips_report,
+        'cips_status': cips_status,
         'testcase_url': testcase_url,
     }
 
     # Create individual test results for each test in the message
     for test_name, test_outcome in tests.items():
         testcase = {
-            'name': 'rpm-factory.tps.{}'.format(test_name),
+            'name': 'rpm-factory.cips.{}'.format(test_name),
             'ref_url': testcase_url
         }
         if not create_result(
@@ -238,7 +238,7 @@ def tps_post_to_resultsdb(msg):
 
     # Create the overall test result
     testcase = {
-        'name': 'rpm-factory.tps',
+        'name': 'rpm-factory.cips',
         'ref_url': testcase_url
     }
     if not create_result(session, testcase, outcome, ref_url, result_data,

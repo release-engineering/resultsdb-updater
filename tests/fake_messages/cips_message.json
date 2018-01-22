@@ -14,24 +14,24 @@
         "update": "SKIPPED"
       },
       "infrastructure": {
-        "jenkins_job_url": "https://server.domain.local/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/",
-        "jenkins_build_url": "https://server.domain.local/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/3921/"
+        "jenkins_job_url": "https://server.domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/",
+        "jenkins_build_url": "https://server.domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/850/"
       },
       "results": {
         "start_time": "2017-11-29T08:53:40+00:00",
         "end_time": "2017-11-29T08:58:19+00:00",
-        "tps_report": "https://server.domain.local/job/test-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/734//artifact/tps-next/reports/results.html",
-        "tps_status": "PASSED"
+        "cips_report": "https://server.domain.local/job/ci-package-sanity-development/850/label=ose-slave-tps,provision_arch=x86_64/artifact/cips/logs/index.html",
+        "cips_status": "PASSED"
       }
     },
     "headers": {
-      "ci_type": "ci-tps",
+      "ci_type": "ci-cips",
       "content-length": "929",
       "expires": "0",
       "brew_task_id": "14645871",
       "JMS_AMQP_MESSAGE_FORMAT": "0",
       "JMS_AMQP_NATIVE": "false",
-      "destination": "/topic/VirtualTopic.eng.tps",
+      "destination": "/topic/VirtualTopic.eng.cips",
       "component": "golang-1.9.2-4.bz1505967.el7",
       "priority": "4",
       "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
@@ -39,16 +39,16 @@
       "JMS_AMQP_FirstAcquirer": "false",
       "subscription": "/queue/Consumer.client-resultsdb-updater.local.VirtualTopic.eng.>"
     },
-    "topic": "/topic/VirtualTopic.eng.tps"
+    "topic": "/topic/VirtualTopic.eng.cips"
   },
   "headers": {
-    "ci_type": "ci-tps",
+    "ci_type": "ci-cips",
     "content-length": "929",
     "expires": "0",
     "brew_task_id": "14645871",
     "JMS_AMQP_MESSAGE_FORMAT": "0",
     "JMS_AMQP_NATIVE": "false",
-    "destination": "/topic/VirtualTopic.eng.tps",
+    "destination": "/topic/VirtualTopic.eng.cips",
     "component": "golang-1.9.2-4.bz1505967.el7",
     "priority": "4",
     "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
@@ -56,5 +56,5 @@
     "JMS_AMQP_FirstAcquirer": "false",
     "subscription": "/queue/Consumer.client-resultsdb-updater.local.VirtualTopic.eng.>"
   },
-  "topic": "/topic/VirtualTopic.eng.tps"
+  "topic": "/topic/VirtualTopic.eng.cips"
 }
