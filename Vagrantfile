@@ -17,6 +17,7 @@ $script = <<SCRIPT
     pip install tox
     cd /opt/resultsdb-updater/src
     python setup.py egg_info
+    echo 'source /opt/resultsdb-updater/env/bin/activate' >> /home/vagrant/.bashrc
 SCRIPT
 
 Vagrant.configure("2") do |config|
