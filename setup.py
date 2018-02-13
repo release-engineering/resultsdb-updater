@@ -6,7 +6,8 @@ with open('requirements.txt', 'r') as f:
 setup(
     name='resultsdb-updater',
     version='3.0.0',
-    description='A micro-service that listens for messages on the message bus and updates ResultsDB',
+    description=('A micro-service that listens for messages on the message '
+                 'bus and updates ResultsDB'),
     license='GPLv2+',
     author='Matt Prahl',
     author_email='mprahl@redhat.com',
