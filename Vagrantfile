@@ -13,8 +13,8 @@ $script = <<SCRIPT
         swig
     virtualenv /opt/resultsdb-updater/env
     source /opt/resultsdb-updater/env/bin/activate
-    pip install -r /opt/resultsdb-updater/src/requirements.txt
     pip install -r /opt/resultsdb-updater/src/test-requirements.txt
+    pip install tox
     cd /opt/resultsdb-updater/src
     python setup.py egg_info
 SCRIPT
