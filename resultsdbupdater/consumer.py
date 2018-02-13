@@ -16,8 +16,8 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
     def __init__(self, *args, **kw):
         super(CIConsumer, self).__init__(*args, **kw)
 
-    def debug_log_msg(self, msg):
-        LOGGER.debug('Processing message "{0}"'.format(
+    def log_msg(self, msg):
+        LOGGER.info('Processing message: "{0}"'.format(
             msg['headers']['message-id']))
         LOGGER.debug(str(msg))
 
@@ -28,13 +28,13 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             '/topic/VirtualTopic.eng.platformci.rpmdiff.comparison.result'
         ]
         if msg['topic'] == '/topic/VirtualTopic.eng.platformci.tier1.result':
-            self.debug_log_msg(msg)
+            self.log_msg(msg)
             return ci_metrics_post_to_resultsdb(msg)
         elif msg['topic'] == '/topic/VirtualTopic.eng.cips':
-            self.debug_log_msg(msg)
+            self.log_msg(msg)
             return cips_post_to_resultsdb(msg)
         elif msg['topic'] in resultsdb_style_topics:
-            self.debug_log_msg(msg)
+            self.log_msg(msg)
             return resultsdb_post_to_resultsdb(msg)
         elif msg['topic'] == '/topic/VirtualTopic.qe.ci.jenkins':
             # Some of the messages here can be empty strings, so only process
@@ -44,7 +44,7 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
                 # From our understanding, we are only interested in the AMI
                 # test results in this topic
                 if result_keys and result_keys[0].startswith('dva.ami'):
-                    self.debug_log_msg(msg)
+                    self.log_msg(msg)
                     return resultsdb_post_to_resultsdb(msg)
         else:
             LOGGER.warn("Received unhandled message topic %r" % msg['topic'])
