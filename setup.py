@@ -14,7 +14,6 @@ setup(
     url='https://github.com/release-engineering/resultsdb-updater',
     install_requires=requirements,
     packages=find_packages(),
-    include_data=True,
     entry_points="""
     [moksha.consumer]
     ciconsumer = resultsdbupdater.consumer:CIConsumer
