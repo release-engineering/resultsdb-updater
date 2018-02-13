@@ -1,2 +1,5 @@
+-r requirements.txt
+
 mock
 pytest
+tox

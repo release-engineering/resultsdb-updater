@@ -13,14 +13,18 @@ $script = <<SCRIPT
         swig
     virtualenv /opt/resultsdb-updater/env
     source /opt/resultsdb-updater/env/bin/activate
-    pip install -r /opt/resultsdb-updater/src/requirements.txt
     pip install -r /opt/resultsdb-updater/src/test-requirements.txt
+    pip install tox
     cd /opt/resultsdb-updater/src
     python setup.py egg_info
+    echo 'source /opt/resultsdb-updater/env/bin/activate' >> /home/vagrant/.bashrc
 SCRIPT
 
 Vagrant.configure("2") do |config|
   config.vm.box = "fedora/26-cloud-base"
   config.vm.synced_folder "./", "/opt/resultsdb-updater/src"
   config.vm.provision "shell", inline: $script
+  config.vm.provider "libvirt" do |v, override|
+    override.vm.synced_folder "./", "/opt/resultsdb-updater/src", type: "sshfs", sshfs_opts_append: "-o nonempty"
+  end
 end
