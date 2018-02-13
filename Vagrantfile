@@ -24,4 +24,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "fedora/26-cloud-base"
   config.vm.synced_folder "./", "/opt/resultsdb-updater/src"
   config.vm.provision "shell", inline: $script
+  config.vm.provider "libvirt" do |v, override|
+    override.vm.synced_folder "./", "/opt/resultsdb-updater/src", type: "sshfs", sshfs_opts_append: "-o nonempty"
+  end
 end
