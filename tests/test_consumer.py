@@ -389,3 +389,11 @@ class TestConsumer(unittest.TestCase):
             testcase_names.pop(testcase_names.index(testcase_name))
         msg = 'Not all the expected testcases were processed'
         assert len(testcase_names) == 0, msg
+
+    def test_full_consume_bogus_msg(self, mock_get_session):
+        fake_msg_path = path.join(self.json_dir, 'bogus.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        assert self.consumer.consume(fake_msg) is False
+        mock_get_session.assert_not_called()

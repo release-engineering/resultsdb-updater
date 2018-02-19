@@ -1,0 +1,19 @@
+{
+  "body": {
+    "msg": {
+      "some_key": "some_value"
+    },
+    "headers": {
+      "destination": "/topic/VirtualTopic.qe.ci.jenkins",
+      "message-id": "ID:server.domain.local-18295-1512954431690-2:858666:0:0:2",
+      "subscription": "/queue/Consumer.client-resultsdb-updater.VirtualTopic.eng.>"
+    },
+    "topic": "/topic/VirtualTopic.qe.ci.jenkins"
+  },
+  "headers": {
+    "destination": "/topic/VirtualTopic.qe.ci.jenkins",
+    "message-id": "ID:server.domain.local-18295-1512954431690-2:858666:0:0:2",
+    "subscription": "/queue/Consumer.client-resultsdb-updater.VirtualTopic.eng.>"
+  },
+  "topic": "/topic/VirtualTopic.qe.ci.jenkins"
+}
