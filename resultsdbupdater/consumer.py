@@ -22,29 +22,26 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
         LOGGER.debug(str(msg))
 
     def consume(self, msg):
-        resultsdb_style_topics = [
-            '/topic/VirtualTopic.eng.platformci.covscan.result',
-            '/topic/VirtualTopic.eng.platformci.rpmdiff.analysis.result',
-            '/topic/VirtualTopic.eng.platformci.rpmdiff.comparison.result'
-        ]
         if msg['topic'] == '/topic/VirtualTopic.eng.platformci.tier1.result':
             self.log_msg(msg)
             return ci_metrics_post_to_resultsdb(msg)
         elif msg['topic'] == '/topic/VirtualTopic.eng.cips':
             self.log_msg(msg)
             return cips_post_to_resultsdb(msg)
-        elif msg['topic'] in resultsdb_style_topics:
-            self.log_msg(msg)
-            return resultsdb_post_to_resultsdb(msg)
-        elif msg['topic'] == '/topic/VirtualTopic.qe.ci.jenkins':
+        else:
             # Some of the messages here can be empty strings, so only process
             # them if they are dicts to avoid tracebacks
             if isinstance(msg['body']['msg'], dict):
-                result_keys = msg['body']['msg'].get('results', {}).keys()
-                # From our understanding, we are only interested in the AMI
-                # test results in this topic
-                if result_keys and result_keys[0].startswith('dva.ami'):
+                single_result_keys = set([
+                    'data', 'outcome', 'ref_url', 'testcase'])
+                bulk_results_keys = set(['results', 'ref_url'])
+                actual_keys = set(msg['body']['msg'].keys())
+                if actual_keys.issuperset(single_result_keys) or \
+                        actual_keys.issuperset(bulk_results_keys):
                     self.log_msg(msg)
                     return resultsdb_post_to_resultsdb(msg)
-        else:
-            LOGGER.warn("Received unhandled message topic %r" % msg['topic'])
+            if msg['topic'] != '/topic/VirtualTopic.qe.ci.jenkins':
+                # Mute unhandled message warnings when the message came from
+                # VirtualTopic.qe.ci.jenkins since there will be many
+                LOGGER.warn("Received unhandled message %r" % msg)
+            return False
