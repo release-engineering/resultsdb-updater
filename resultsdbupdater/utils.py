@@ -184,62 +184,35 @@ def cips_post_to_resultsdb(msg):
     session = retry_session()
     # define variables from cips.json
     msg_id = msg['headers']['message-id']
-    ci_type = msg['headers']['ci_type']
+    type = msg['headers']['type']
     component = msg['headers']['component']
-    brew_task_id = msg['headers']['brew_task_id']
+    id = msg['headers']['id']
+    scratch = msg['headers']['scratch']
     msg_body = msg['body']['msg']
-    tests = msg_body['tests']
-
-    arch = msg_body['environment']['arch']
-    brew_tag = msg_body['environment']['brew_tag']
-    build_type = msg_body['environment']['build_type']
-
-    jenkins_job_url = msg_body['infrastructure']['jenkins_job_url']
-    jenkins_build_url = msg_body['infrastructure']['jenkins_build_url']
-
-    cips_report = msg_body['results']['cips_report']
-    cips_status = msg_body['results']['cips_status']
-
-    testcase_url = jenkins_job_url
+    url = msg_body['run']['url']
+    status = msg_body['status']
 
     # variables to be passed to create_result
     groups = [{
         'uuid': str(uuid.uuid4()),
-        'ref_url': jenkins_build_url
+        'ref_url': url
     }]
-    outcome = cips_status
-    ref_url = jenkins_build_url
+    outcome = status
+    ref_url = url
 
     result_data = {
         'item': component,
-        'ci_type': ci_type,
-        'brew_task_id': brew_task_id,
-        'brew_tag': brew_tag,
-        'arch': arch,
+        'type': type,
+        'id': id,
         'component': component,
-        'build_type': build_type,
-        'cips_report': cips_report,
-        'cips_status': cips_status,
-        'testcase_url': testcase_url,
+        'scratch': scratch,
+        'status': status,
     }
-
-    # Create individual test results for each test in the message
-    for test_name, test_outcome in tests.items():
-        testcase = {
-            'name': 'rpm-factory.cips.{}'.format(test_name),
-            'ref_url': testcase_url
-        }
-        if not create_result(
-                session, testcase, test_outcome, ref_url, result_data, groups):
-            LOGGER.error(
-                'A new result for message "{0}" couldn\'t be created'
-                .format(msg_id))
-            return False
 
     # Create the overall test result
     testcase = {
         'name': 'rpm-factory.cips',
-        'ref_url': testcase_url
+        'ref_url': ref_url
     }
     if not create_result(session, testcase, outcome, ref_url, result_data,
                          groups):
