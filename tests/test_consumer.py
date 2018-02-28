@@ -205,7 +205,7 @@ class TestConsumer(unittest.TestCase):
         assert expected_data == \
             json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
-    def test_full_consume_tps_msg(self, mock_get_session):
+    def test_full_consume_cips_msg(self, mock_get_session):
         mock_post_rv = mock.Mock()
         mock_post_rv.status_code = 201
         mock_requests = mock.Mock()
@@ -223,19 +223,14 @@ class TestConsumer(unittest.TestCase):
         assert mock_requests.post.call_count == 4
         all_expected_data = {}
         testcase_to_outcome = {
-            'rpm-factory.cips.install': 'PASSED',
-            'rpm-factory.cips.remove': 'PASSED',
-            'rpm-factory.cips.update': 'SKIPPED',
             'rpm-factory.cips': 'PASSED'
         }
         for testcase, outcome in testcase_to_outcome.items():
             all_expected_data[testcase] = {
                 'data': {
-                    'arch': 'x86_64',
-                    'brew_tag': 'rhel-7.5-candidate',
-                    'brew_task_id': '14645871',
-                    'build_type': 'scratch',
-                    'ci_type': 'ci-cips',
+                    'id': '14645871',
+                    'scratch': 'true',
+                    'type': 'brew-build',
                     'component': 'golang-1.9.2-4.bz1505967.el7',
                     'item': 'golang-1.9.2-4.bz1505967.el7',
                     'testcase_url': ('https://server.domain.local/job/ci-'
@@ -244,7 +239,7 @@ class TestConsumer(unittest.TestCase):
                     'cips_report': (
                         'https://server.domain.local/job/ci-package-sanity-development/850/'
                         'label=ose-slave-tps,provision_arch=x86_64/artifact/cips/logs/index.html'),
-                    'cips_status': 'PASSED'
+                    'status': 'PASSED'
                 },
                 'groups': [{
                     'ref_url': ('https://server.domain.local/job/ci-package-'
@@ -253,7 +248,7 @@ class TestConsumer(unittest.TestCase):
                     'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
                 }],
                 'note': '',
-                'outcome': outcome,
+                'outcome': 'PASSED',
                 'ref_url': ('https://server.domain.local/job/ci-package-'
                             'sanity-development/label=ose-slave-tps,'
                             'provision_arch=x86_64/850/'),
