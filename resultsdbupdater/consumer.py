@@ -25,7 +25,7 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
         if msg['topic'] == '/topic/VirtualTopic.eng.platformci.tier1.result':
             self.log_msg(msg)
             return ci_metrics_post_to_resultsdb(msg)
-        elif msg['topic'] == '/topic/VirtualTopic.eng.cips':
+        elif msg['topic'] == '/topic/VirtualTopic.eng.cips.complete':
             self.log_msg(msg)
             return cips_post_to_resultsdb(msg)
         else:
