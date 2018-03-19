@@ -1,60 +1,76 @@
 {
   "body": {
     "msg": {
-      "environment": {
-        "resource_group_type": "openstack",
-        "resource_base_image": "rhel-7.4-server-x86_64-updated",
-        "arch": "x86_64",
-        "brew_tag": "rhel-7.5-candidate",
-        "build_type": "scratch"
+      "category": "sanity",
+      "status": "PASSED",
+      "ci": {
+        "name": "RPM Factory",
+        "url": "https://domain.local",
+        "environment": "production",
+        "team": "rpm-factory",
+        "irc": "#rpm-factory",
+        "email": "nobody@redhat.com"
       },
-      "tests": {
-        "remove": "PASSED",
-        "install": "PASSED",
-        "update": "SKIPPED"
+      "run": {
+        "url": "https://domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835/",
+        "rebuild": "https://domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835//rebuild/parametrized",
+        "log": "https://domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835//console"
       },
-      "infrastructure": {
-        "jenkins_job_url": "https://server.domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/",
-        "jenkins_build_url": "https://server.domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/850/"
+      "name": "tier0",
+      "recipients": [],
+      "system": [
+        {
+          "os": "rhel-7.4-server-x86_64-updated",
+          "provider": "openstack"
+        }
+      ],
+      "artifact": {
+        "nvr": "setup-2.8.71-7.el7_4",
+        "scratch": "true",
+        "component": "setup-2.8.71-7.el7_4",
+        "type": "brew-build",
+        "id": 15477983,
+        "issuer": "jenkins/domain.local"
       },
-      "results": {
-        "start_time": "2017-11-29T08:53:40+00:00",
-        "end_time": "2017-11-29T08:58:19+00:00",
-        "cips_report": "https://server.domain.local/job/ci-package-sanity-development/850/label=ose-slave-tps,provision_arch=x86_64/artifact/cips/logs/index.html",
-        "cips_status": "PASSED"
-      }
+      "thread_id": "",
+      "xunit": ""
     },
     "headers": {
-      "ci_type": "ci-cips",
-      "content-length": "929",
+      "content-length": "1102",
       "expires": "0",
-      "brew_task_id": "14645871",
       "JMS_AMQP_MESSAGE_FORMAT": "0",
-      "JMS_AMQP_NATIVE": "false",
-      "destination": "/topic/VirtualTopic.eng.cips",
-      "component": "golang-1.9.2-4.bz1505967.el7",
-      "priority": "4",
-      "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
       "timestamp": "0",
+      "JMS_AMQP_NATIVE": "false",
+      "topic": "/topic/VirtualTopic.eng.cips.complete",
+      "component": "setup-2.8.71-7.el7_4",
+      "nvr": "setup-2.8.71-7.el7_4",
+      "priority": "4",
+      "subscription": "/queue/Consumer.client-datanommer.openpaas-prod.VirtualTopic.eng.>",
+      "message-id": "ID:messaging-domain.local-37288-1518002445552-2:1373099:0:0:1",
+      "scratch": "true",
       "JMS_AMQP_FirstAcquirer": "false",
-      "subscription": "/queue/Consumer.client-resultsdb-updater.local.VirtualTopic.eng.>"
-    },
-    "topic": "/topic/VirtualTopic.eng.cips"
+      "type": "brew-build",
+      "id": "15477983",
+      "issuer": "jenkins/domain.local"
+    }
   },
   "headers": {
-    "ci_type": "ci-cips",
-    "content-length": "929",
-    "expires": "0",
-    "brew_task_id": "14645871",
-    "JMS_AMQP_MESSAGE_FORMAT": "0",
-    "JMS_AMQP_NATIVE": "false",
-    "destination": "/topic/VirtualTopic.eng.cips",
-    "component": "golang-1.9.2-4.bz1505967.el7",
-    "priority": "4",
-    "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
-    "timestamp": "0",
-    "JMS_AMQP_FirstAcquirer": "false",
-    "subscription": "/queue/Consumer.client-resultsdb-updater.local.VirtualTopic.eng.>"
+      "content-length": "1102",
+      "expires": "0",
+      "JMS_AMQP_MESSAGE_FORMAT": "0",
+      "timestamp": "0",
+      "JMS_AMQP_NATIVE": "false",
+      "topic": "/topic/VirtualTopic.eng.cips.complete",
+      "component": "setup-2.8.71-7.el7_4",
+      "nvr": "setup-2.8.71-7.el7_4",
+      "priority": "4",
+      "subscription": "/queue/Consumer.client-datanommer.openpaas-prod.VirtualTopic.eng.>",
+      "message-id": "ID:messaging-domain.local-37288-1518002445552-2:1373099:0:0:1",
+      "scratch": "true",
+      "JMS_AMQP_FirstAcquirer": "false",
+      "type": "brew-build",
+      "id": "15477983",
+      "issuer": "jenkins/domain.local"
   },
-  "topic": "/topic/VirtualTopic.eng.cips"
+  "topic": "/topic/VirtualTopic.eng.cips.complete"
 }

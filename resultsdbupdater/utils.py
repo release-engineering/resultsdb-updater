@@ -184,64 +184,45 @@ def cips_post_to_resultsdb(msg):
     session = retry_session()
     # define variables from cips.json
     msg_id = msg['headers']['message-id']
-    ci_type = msg['headers']['ci_type']
     component = msg['headers']['component']
-    brew_task_id = msg['headers']['brew_task_id']
     msg_body = msg['body']['msg']
-    tests = msg_body['tests']
-
-    arch = msg_body['environment']['arch']
-    brew_tag = msg_body['environment']['brew_tag']
-    build_type = msg_body['environment']['build_type']
-
-    jenkins_job_url = msg_body['infrastructure']['jenkins_job_url']
-    jenkins_build_url = msg_body['infrastructure']['jenkins_build_url']
-
-    cips_report = msg_body['results']['cips_report']
-    cips_status = msg_body['results']['cips_status']
-
-    testcase_url = jenkins_job_url
+    msg_body_ci = msg['body']['msg']['ci']
+    msg_body_artifact = msg['body']['msg']['artifact']
+    url = msg_body['run']['url'].rsplit('/', 3)[0]
+    outcome = msg_body['status']
 
     # variables to be passed to create_result
     groups = [{
         'uuid': str(uuid.uuid4()),
-        'ref_url': jenkins_build_url
+        'url': url
     }]
-    outcome = cips_status
-    ref_url = jenkins_build_url
 
     result_data = {
         'item': component,
-        'ci_type': ci_type,
-        'brew_task_id': brew_task_id,
-        'brew_tag': brew_tag,
-        'arch': arch,
+        'build_type': msg['headers']['type'],
+        'idx': msg['headers']['id'],
+        'category': msg_body['category'],
         'component': component,
-        'build_type': build_type,
-        'cips_report': cips_report,
-        'cips_status': cips_status,
-        'testcase_url': testcase_url,
+        'scratch': msg['headers']['scratch'],
+        'issuer': msg_body_artifact['issuer'],
+        'rebuild': msg_body['run']['rebuild'],
+        'log': msg_body['run']['log'],
+        'system_os': msg_body['system'][0]['os'],
+        'system_provider': msg_body['system'][0]['provider'],
+        'ci_name': msg_body_ci['name'],
+        'ci_url': msg_body_ci['url'],
+        'ci_environment': msg_body_ci['environment'],
+        'ci_team': msg_body_ci['team'],
+        'ci_irc': msg_body_ci['irc'],
+        'ci_email': msg_body_ci['email']
     }
 
-    # Create individual test results for each test in the message
-    for test_name, test_outcome in tests.items():
-        testcase = {
-            'name': 'rpm-factory.cips.{}'.format(test_name),
-            'ref_url': testcase_url
-        }
-        if not create_result(
-                session, testcase, test_outcome, ref_url, result_data, groups):
-            LOGGER.error(
-                'A new result for message "{0}" couldn\'t be created'
-                .format(msg_id))
-            return False
-
-    # Create the overall test result
     testcase = {
-        'name': 'rpm-factory.cips',
-        'ref_url': testcase_url
+        'name': 'cips',
+        'ref_url': url
     }
-    if not create_result(session, testcase, outcome, ref_url, result_data,
+
+    if not create_result(session, testcase, outcome, url, result_data,
                          groups):
         LOGGER.error(
             'An overall result for message "{0}" couldn\'t be created'
