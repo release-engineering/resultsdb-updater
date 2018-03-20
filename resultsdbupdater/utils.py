@@ -189,18 +189,19 @@ def cips_post_to_resultsdb(msg):
     msg_body_ci = msg['body']['msg']['ci']
     msg_body_artifact = msg['body']['msg']['artifact']
     url = msg_body['run']['url'].rsplit('/', 3)[0]
+    test_run_url = msg_body['run']['url']
     outcome = msg_body['status']
 
     # variables to be passed to create_result
     groups = [{
         'uuid': str(uuid.uuid4()),
-        'url': url
+        'url': test_run_url
     }]
 
     result_data = {
         'item': component,
         'build_type': msg['headers']['type'],
-        'idx': msg['headers']['id'],
+        'brew_task_id': msg['headers']['id'],
         'category': msg_body['category'],
         'component': component,
         'scratch': msg['headers']['scratch'],
@@ -222,10 +223,10 @@ def cips_post_to_resultsdb(msg):
         'ref_url': url
     }
 
-    if not create_result(session, testcase, outcome, url, result_data,
+    if not create_result(session, testcase, outcome, test_run_url, result_data,
                          groups):
         LOGGER.error(
-            'An overall result for message "{0}" couldn\'t be created'
+            'A result for message "{0}" couldn\'t be created'
             .format(msg_id))
         return False
 

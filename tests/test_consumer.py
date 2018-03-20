@@ -226,10 +226,10 @@ class TestConsumer(unittest.TestCase):
         all_expected_data = {
             'data': {
                 'component': 'setup-2.8.71-7.el7_4',
-                'idx': '15477983',
+                'brew_task_id': '15477983',
                 'category': 'sanity',
                 'item': 'setup-2.8.71-7.el7_4',
-                'scratch': 'true',
+                'scratch': True,
                 'build_type': 'brew-build',
                 'issuer': 'jenkins/domain.local',
                 'rebuild': ('https://domain.local/job/ci-package-sanity-development'
@@ -248,13 +248,15 @@ class TestConsumer(unittest.TestCase):
             },
             'groups': [
                 {
-                    'url': 'https://domain.local/job/ci-package-sanity-development',
+                    'url': ('https://domain.local/job/ci-package-sanity-development'
+                            '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
                     'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
                 },
             ],
             'note': '',
             'outcome': 'PASSED',
-            'ref_url': 'https://domain.local/job/ci-package-sanity-development',
+            'ref_url': ('https://domain.local/job/ci-package-sanity-development'
+                        '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
             'testcase': {
                 'name': 'cips',
                 'ref_url': 'https://domain.local/job/ci-package-sanity-development'
