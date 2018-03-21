@@ -205,7 +205,7 @@ class TestConsumer(unittest.TestCase):
         assert expected_data == \
             json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
-    def test_full_consume_tps_msg(self, mock_get_session):
+    def test_full_consume_cips_msg(self, mock_get_session):
         mock_post_rv = mock.Mock()
         mock_post_rv.status_code = 201
         mock_requests = mock.Mock()
@@ -220,61 +220,51 @@ class TestConsumer(unittest.TestCase):
         assert mock_requests.post.call_args_list[0][0][0] == \
             'https://resultsdb.domain.local/api/v2.0/results'
         # Verify the post data
-        assert mock_requests.post.call_count == 4
+        assert mock_requests.post.call_count == 1
         all_expected_data = {}
-        testcase_to_outcome = {
-            'rpm-factory.cips.install': 'PASSED',
-            'rpm-factory.cips.remove': 'PASSED',
-            'rpm-factory.cips.update': 'SKIPPED',
-            'rpm-factory.cips': 'PASSED'
-        }
-        for testcase, outcome in testcase_to_outcome.items():
-            all_expected_data[testcase] = {
-                'data': {
-                    'arch': 'x86_64',
-                    'brew_tag': 'rhel-7.5-candidate',
-                    'brew_task_id': '14645871',
-                    'build_type': 'scratch',
-                    'ci_type': 'ci-cips',
-                    'component': 'golang-1.9.2-4.bz1505967.el7',
-                    'item': 'golang-1.9.2-4.bz1505967.el7',
-                    'testcase_url': ('https://server.domain.local/job/ci-'
-                                     'package-sanity-development/label=ose-'
-                                     'slave-tps,provision_arch=x86_64/'),
-                    'cips_report': (
-                        'https://server.domain.local/job/ci-package-sanity-development/850/'
-                        'label=ose-slave-tps,provision_arch=x86_64/artifact/cips/logs/index.html'),
-                    'cips_status': 'PASSED'
-                },
-                'groups': [{
-                    'ref_url': ('https://server.domain.local/job/ci-package-'
-                                'sanity-development/label=ose-slave-tps,'
-                                'provision_arch=x86_64/850/'),
+
+        all_expected_data = {
+            'data': {
+                'component': 'setup-2.8.71-7.el7_4',
+                'brew_task_id': '15477983',
+                'category': 'sanity',
+                'item': 'setup-2.8.71-7.el7_4',
+                'scratch': True,
+                'build_type': 'brew-build',
+                'issuer': 'jenkins/domain.local',
+                'rebuild': ('https://domain.local/job/ci-package-sanity-development'
+                            '/label=ose-slave-tps,provision_arch=x86_64/1835//'
+                            'rebuild/parametrized'),
+                'log': ('https://domain.local/job/ci-package-sanity-development'
+                        '/label=ose-slave-tps,provision_arch=x86_64/1835//console'),
+                'system_os': 'rhel-7.4-server-x86_64-updated',
+                'system_provider': 'openstack',
+                'ci_name': 'RPM Factory',
+                'ci_url': 'https://domain.local',
+                'ci_environment': 'production',
+                'ci_team': 'rpm-factory',
+                'ci_irc': '#rpm-factory',
+                'ci_email': 'nobody@redhat.com'
+            },
+            'groups': [
+                {
+                    'url': ('https://domain.local/job/ci-package-sanity-development'
+                            '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
                     'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
-                }],
-                'note': '',
-                'outcome': outcome,
-                'ref_url': ('https://server.domain.local/job/ci-package-'
-                            'sanity-development/label=ose-slave-tps,'
-                            'provision_arch=x86_64/850/'),
-                'testcase': {
-                    'name': testcase,
-                    'ref_url': ('https://server.domain.local/job/ci-package-'
-                                'sanity-development/label=ose-slave-tps,'
-                                'provision_arch=x86_64/')
-                }
-            }
-        # We can't guarantee the order of when the results are created, so this
-        # is a workaround
-        testcase_names = all_expected_data.keys()
-        for i in range(len(all_expected_data)):
-            post_call_data = json.loads(
-                mock_requests.post.call_args_list[i][1]['data'])
-            testcase_name = post_call_data['testcase']['name']
-            assert post_call_data == all_expected_data[testcase_name]
-            testcase_names.pop(testcase_names.index(testcase_name))
-        msg = 'Not all the expected testcases were processed'
-        assert len(testcase_names) == 0, msg
+                },
+            ],
+            'note': '',
+            'outcome': 'PASSED',
+            'ref_url': ('https://domain.local/job/ci-package-sanity-development'
+                        '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
+            'testcase': {
+                'name': 'cips',
+                'ref_url': 'https://domain.local/job/ci-package-sanity-development'
+            },
+        }
+
+        assert all_expected_data == \
+            json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
     def test_full_consume_covscan_msg(self, mock_get_session):
         mock_post_rv = mock.Mock()
