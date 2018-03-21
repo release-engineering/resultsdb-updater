@@ -191,6 +191,11 @@ def cips_post_to_resultsdb(msg):
     url = msg_body['run']['url'].rsplit('/', 3)[0]
     test_run_url = msg_body['run']['url']
     outcome = msg_body['status']
+    scratch = msg['headers']['scratch']
+    # scratch is supposed to be a bool but some messages in the wild
+    # use a string instead
+    if not isinstance(scratch, bool):
+        scratch = scratch.lower() == 'true'
 
     # variables to be passed to create_result
     groups = [{
@@ -204,7 +209,7 @@ def cips_post_to_resultsdb(msg):
         'brew_task_id': msg['headers']['id'],
         'category': msg_body['category'],
         'component': component,
-        'scratch': msg['headers']['scratch'],
+        'scratch': scratch,
         'issuer': msg_body_artifact['issuer'],
         'rebuild': msg_body['run']['rebuild'],
         'log': msg_body['run']['log'],
