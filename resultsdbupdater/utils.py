@@ -87,7 +87,7 @@ def get_first_group(session, description):
                 message))
 
 
-def ci_metrics_post_to_resultsdb(msg):
+def handle_ci_metrics(msg):
     session = retry_session()
     msg_id = msg['headers']['message-id']
     team = msg['body']['msg'].get('team', 'unassigned')
@@ -207,7 +207,7 @@ def _massage_outcome(outcome):
     return broken_mapping.get(outcome, outcome)
 
 
-def ci_umb_post_to_resultsdb(msg):
+def handle_ci_umb(msg):
     session = retry_session()
 
     msg_id = msg['headers']['message-id']
@@ -270,7 +270,7 @@ def ci_umb_post_to_resultsdb(msg):
     return True
 
 
-def resultsdb_post_to_resultsdb(msg):
+def handle_resultsdb_format(msg):
     session = retry_session()
     error_msg = 'A new result for message "{0}" couldn\'t be created'
     msg_id = msg['headers']['message-id']

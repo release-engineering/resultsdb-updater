@@ -30,7 +30,7 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
         # we want to handle for legacy reasons.
         if msg['topic'] == '/topic/VirtualTopic.eng.platformci.tier1.result':
             self.log_msg(msg)
-            return utils.ci_metrics_post_to_resultsdb(msg)
+            return utils.handle_ci_metrics(msg)
 
         # The following stanzas consider if the actual message body
         # matches one of a few patterns we support.  Start by
@@ -43,7 +43,7 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
         ci_umb_keys = set(['ci', 'run', 'artifact'])
         if actual_keys.issuperset(ci_umb_keys):
             self.log_msg(msg)
-            return utils.ci_umb_post_to_resultsdb(msg)
+            return utils.handle_ci_umb(msg)
 
         # Next, detect if the message bears the secondary format we support:
         # The "resultsdb" format.
@@ -52,7 +52,7 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
         bulk_keys = set(['results', 'ref_url'])
         if actual_keys.issuperset(single_keys) or actual_keys.issuperset(bulk_keys):
             self.log_msg(msg)
-            return utils.resultsdb_post_to_resultsdb(msg)
+            return utils.handle_resultsdb_format(msg)
 
         if msg['topic'] != '/topic/VirtualTopic.qe.ci.jenkins':
             # Mute unhandled message warnings when the message came from
