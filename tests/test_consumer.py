@@ -224,42 +224,47 @@ class TestConsumer(unittest.TestCase):
         all_expected_data = {}
 
         all_expected_data = {
-            'data': {
-                'component': 'setup-2.8.71-7.el7_4',
-                'brew_task_id': '15477983',
-                'category': 'sanity',
-                'item': 'setup-2.8.71-7.el7_4',
-                'scratch': True,
-                'build_type': 'brew-build',
-                'issuer': 'jenkins/domain.local',
-                'rebuild': ('https://domain.local/job/ci-package-sanity-development'
-                            '/label=ose-slave-tps,provision_arch=x86_64/1835//'
-                            'rebuild/parametrized'),
-                'log': ('https://domain.local/job/ci-package-sanity-development'
-                        '/label=ose-slave-tps,provision_arch=x86_64/1835//console'),
-                'system_os': 'rhel-7.4-server-x86_64-updated',
-                'system_provider': 'openstack',
-                'ci_name': 'RPM Factory',
-                'ci_url': 'https://domain.local',
-                'ci_environment': 'production',
-                'ci_team': 'rpm-factory',
-                'ci_irc': '#rpm-factory',
-                'ci_email': 'nobody@redhat.com'
+            u'data': {
+                u'item': u'setup-2.8.71-7.el7_4',
+                u'type': u'brew-build',
+
+                u'component': u'setup',
+                u'brew_task_id': 15477983,
+                u'category': u'sanity',
+                u'scratch': True,
+                u'issuer': u'jenkins/domain.redhat.com',
+                u'rebuild': (
+                    u'https://domain.redhat.com/job/ci-package-sanity-development'
+                    '/label=ose-slave-tps,provision_arch=x86_64/1835//'
+                    'rebuild/parametrized'),
+                u'log': (
+                    u'https://domain.redhat.com/job/ci-package-sanity-development'
+                    '/label=ose-slave-tps,provision_arch=x86_64/1835//console'),
+                u'system_os': u'rhel-7.4-server-x86_64-updated',
+                u'system_provider': u'openstack',
+                u'ci_name': u'RPM Factory',
+                u'ci_url': u'https://domain.redhat.com',
+                u'ci_environment': u'production',
+                u'ci_team': u'rpm-factory',
+                u'ci_irc': u'#rpm-factory',
+                u'ci_email': u'nobody@redhat.com'
             },
-            'groups': [
+            u'groups': [
                 {
-                    'url': ('https://domain.local/job/ci-package-sanity-development'
-                            '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
-                    'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
+                    u'url': (
+                        u'https://domain.redhat.com/job/ci-package-sanity-development'
+                        '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
+                    u'uuid': u'1bb0a6a5-3287-4321-9dc5-72258a302a37'
                 },
             ],
-            'note': '',
-            'outcome': 'PASSED',
-            'ref_url': ('https://domain.local/job/ci-package-sanity-development'
-                        '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
-            'testcase': {
-                'name': 'cips',
-                'ref_url': 'https://domain.local/job/ci-package-sanity-development'
+            u'note': u'',
+            u'outcome': u'PASSED',
+            u'ref_url': (
+                u'https://domain.redhat.com/job/ci-package-sanity-development'
+                '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
+            u'testcase': {
+                u'name': u'domain.ci-package-sanity-development',
+                u'ref_url': u'https://domain.redhat.com',
             },
         }
 
@@ -387,3 +392,125 @@ class TestConsumer(unittest.TestCase):
 
         assert self.consumer.consume(fake_msg) is False
         mock_get_session.assert_not_called()
+
+    def test_full_consume_pipeline_failure_msg(self, mock_get_session):
+        mock_post_rv = mock.Mock()
+        mock_post_rv.status_code = 201
+        mock_requests = mock.Mock()
+        mock_requests.post.return_value = mock_post_rv
+        mock_get_session.return_value = mock_requests
+        fake_msg_path = path.join(self.json_dir, 'pipeline_failure_message.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        assert self.consumer.consume(fake_msg) is True
+        # Verify the post URL
+        assert mock_requests.post.call_args_list[0][0][0] == \
+            'https://resultsdb.domain.local/api/v2.0/results'
+        # Verify the post data
+        assert mock_requests.post.call_count == 1
+        all_expected_data = {}
+
+        all_expected_data = {
+            u'data': {
+                u'item': u'tigervnc-1.8.0-5.el9000+5',
+                u'type': u'brew-build',
+
+                u'component': u'tigervnc',
+                u'brew_task_id': u'15665813',
+                u'category': u'functional',
+                u'scratch': True,
+                u'issuer': None,
+                u'rebuild': (
+                    u'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/'
+                    '34/rebuild/parameterized'),
+                u'log': (
+                    u'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/'
+                    '34/console'),
+                u'system_os': u'TODO',
+                u'system_provider': u'TODO',
+                u'ci_name': u'Continuous Infra',
+                u'ci_url': u'https://domain.redhat.com/',
+                u'ci_environment': None,
+                u'ci_team': u'contra',
+                u'ci_irc': u'#contra',
+                u'ci_email': u'continuous-infra@redhat.com',
+            },
+            u'groups': [{
+                u'url': u'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/',
+                u'uuid': u'1bb0a6a5-3287-4321-9dc5-72258a302a37'
+            }],
+            u'note': u'',
+            u'outcome': u'FAILED',
+            u'ref_url': u'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/',
+            u'testcase': {
+                u'name': u'domain.downstream-rhel9000-build-pipeline',
+                u'ref_url': u'https://domain.redhat.com/',
+            },
+        }
+
+        assert all_expected_data == \
+            json.loads(mock_requests.post.call_args_list[0][1]['data'])
+
+    def test_full_consume_platformci_success_msg(self, mock_get_session):
+        mock_post_rv = mock.Mock()
+        mock_post_rv.status_code = 201
+        mock_requests = mock.Mock()
+        mock_requests.post.return_value = mock_post_rv
+        mock_get_session.return_value = mock_requests
+        fake_msg_path = path.join(self.json_dir, 'platformci_success_message.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        assert self.consumer.consume(fake_msg) is True
+        # Verify the post URL
+        assert mock_requests.post.call_args_list[0][0][0] == \
+            'https://resultsdb.domain.local/api/v2.0/results'
+        # Verify the post data
+        assert mock_requests.post.call_count == 1
+        all_expected_data = {}
+
+        all_expected_data = {
+            u'data': {
+                u'item': u'setup-2.8.71-7.el7_4',
+                u'type': u'brew-build',
+
+                u'component': u'setup',
+                u'brew_task_id': u'15667760',
+                u'category': u'functional',
+                u'scratch': True,
+                u'issuer': u'ovasik',
+                u'rebuild': (
+                    u'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com/'
+                    'job/ci-openstack/8465/rebuild/parameterized'),
+                u'log': (
+                    u'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com/'
+                    'job/ci-openstack/8465/console'),
+                u'system_os': None,
+                u'system_provider': None,
+                u'ci_name': u'BaseOS CI',
+                u'ci_url': u'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com',
+                u'ci_environment': None,
+                u'ci_team': u'BaseOS QE',
+                u'ci_irc': u'#baseosci',
+                u'ci_email': u'baseos-ci@redhat.com',
+            },
+            u'groups': [{
+                u'url': (
+                    u'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com/'
+                    'job/ci-openstack/8465/'),
+                u'uuid': u'1bb0a6a5-3287-4321-9dc5-72258a302a37'
+            }],
+            u'note': u'',
+            u'outcome': u'PASSED',
+            u'ref_url': (
+                u'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com/'
+                'job/ci-openstack/8465/'),
+            u'testcase': {
+                u'name': u'baseos-jenkins.ci-openstack',
+                u'ref_url': u'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com',
+            },
+        }
+
+        assert all_expected_data == \
+            json.loads(mock_requests.post.call_args_list[0][1]['data'])

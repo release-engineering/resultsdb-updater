@@ -180,18 +180,50 @@ def ci_metrics_post_to_resultsdb(msg):
     return True
 
 
-def cips_post_to_resultsdb(msg):
+def _construct_testcase_dict(msg):
+    run_url = msg['run']['url'].split('://')[-1]
+    job = run_url.split('job/')[-1].split('/')[0]
+
+    # Convert jenkins.osci.redhat.com into jenkins.osci
+    # and baseos-team.rhev-ci-vms.engineering.foo into baseos-team
+    namespace = run_url.split('.redhat')[0].split('.rhev-ci-vms')[0]
+
+    # Invert jenkins.osci into osci.jenkins
+    namespace = '.'.join(reversed(namespace.split('.')))
+
+    return dict(
+        name='%s.%s' % (namespace, job),
+        ref_url=msg['ci']['url'],
+    )
+
+
+def _massage_outcome(outcome):
+    """ Be helpful.  Some people pass outcomes that don't match spec.  Fix it for them. """
+    broken_mapping = {
+        'pass': 'PASSED',
+        'fail': 'FAILED',
+        'FAILURE': 'FAILED',
+    }
+    return broken_mapping.get(outcome, outcome)
+
+
+def ci_umb_post_to_resultsdb(msg):
     session = retry_session()
-    # define variables from cips.json
+
     msg_id = msg['headers']['message-id']
-    component = msg['headers']['component']
     msg_body = msg['body']['msg']
+    item = msg_body['artifact']['nvr']
+    item_type = msg_body['artifact']['type']
+    component = msg_body['artifact']['component']
+    scratch = msg_body['artifact'].get('scratch')
+    brew_task_id = msg_body['artifact'].get('id')
     msg_body_ci = msg['body']['msg']['ci']
     msg_body_artifact = msg['body']['msg']['artifact']
-    url = msg_body['run']['url'].rsplit('/', 3)[0]
     test_run_url = msg_body['run']['url']
     outcome = msg_body['status']
-    scratch = msg['headers']['scratch']
+
+    outcome = _massage_outcome(outcome)
+
     # scratch is supposed to be a bool but some messages in the wild
     # use a string instead
     if not isinstance(scratch, bool):
@@ -203,33 +235,33 @@ def cips_post_to_resultsdb(msg):
         'url': test_run_url
     }]
 
+    system = msg_body['system']
+    if isinstance(system, list):
+        system = system[0] if system else {}
+
     result_data = {
-        'item': component,
-        'build_type': msg['headers']['type'],
-        'brew_task_id': msg['headers']['id'],
+        'item': item,
+        'type': item_type,
+        'brew_task_id': brew_task_id,
         'category': msg_body['category'],
         'component': component,
         'scratch': scratch,
-        'issuer': msg_body_artifact['issuer'],
-        'rebuild': msg_body['run']['rebuild'],
-        'log': msg_body['run']['log'],
-        'system_os': msg_body['system'][0]['os'],
-        'system_provider': msg_body['system'][0]['provider'],
-        'ci_name': msg_body_ci['name'],
-        'ci_url': msg_body_ci['url'],
-        'ci_environment': msg_body_ci['environment'],
-        'ci_team': msg_body_ci['team'],
-        'ci_irc': msg_body_ci['irc'],
-        'ci_email': msg_body_ci['email']
+        'issuer': msg_body_artifact.get('issuer'),
+        'rebuild': msg_body['run'].get('rebuild'),
+        'log': msg_body['run']['log'],  # required
+        'system_os': system.get('os'),
+        'system_provider': system.get('provider'),
+        'ci_name': msg_body_ci.get('name'),
+        'ci_url': msg_body_ci.get('url'),
+        'ci_environment': msg_body_ci.get('environment'),
+        'ci_team': msg_body_ci.get('team'),
+        'ci_irc': msg_body_ci.get('irc'),
+        'ci_email': msg_body_ci.get('email'),
     }
 
-    testcase = {
-        'name': 'cips',
-        'ref_url': url
-    }
+    testcase = _construct_testcase_dict(msg_body)
 
-    if not create_result(session, testcase, outcome, test_run_url, result_data,
-                         groups):
+    if not create_result(session, testcase, outcome, test_run_url, result_data, groups):
         LOGGER.error(
             'A result for message "{0}" couldn\'t be created'
             .format(msg_id))
