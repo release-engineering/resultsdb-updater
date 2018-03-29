@@ -192,7 +192,7 @@ def _construct_testcase_dict(msg):
     namespace = '.'.join(reversed(namespace.split('.')))
 
     return dict(
-        name='%s.%s' % (namespace, job),
+        name='.'.join([namespace, job]),
         ref_url=msg['ci']['url'],
     )
 
@@ -202,9 +202,9 @@ def _massage_outcome(outcome):
     broken_mapping = {
         'pass': 'PASSED',
         'fail': 'FAILED',
-        'FAILURE': 'FAILED',
+        'failure': 'FAILED',
     }
-    return broken_mapping.get(outcome, outcome)
+    return broken_mapping.get(outcome.lower(), outcome)
 
 
 def handle_ci_umb(msg):
@@ -236,6 +236,9 @@ def handle_ci_umb(msg):
     }]
 
     system = msg_body['system']
+
+    # Oddly, sometimes people pass us a sytem dict but other times a
+    # list of one system dict.  Try to handle those two situation here.
     if isinstance(system, list):
         system = system[0] if system else {}
 

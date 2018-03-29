@@ -409,8 +409,6 @@ class TestConsumer(unittest.TestCase):
             'https://resultsdb.domain.local/api/v2.0/results'
         # Verify the post data
         assert mock_requests.post.call_count == 1
-        all_expected_data = {}
-
         all_expected_data = {
             u'data': {
                 u'item': u'tigervnc-1.8.0-5.el9000+5',
@@ -468,13 +466,10 @@ class TestConsumer(unittest.TestCase):
             'https://resultsdb.domain.local/api/v2.0/results'
         # Verify the post data
         assert mock_requests.post.call_count == 1
-        all_expected_data = {}
-
         all_expected_data = {
             u'data': {
                 u'item': u'setup-2.8.71-7.el7_4',
                 u'type': u'brew-build',
-
                 u'component': u'setup',
                 u'brew_task_id': u'15667760',
                 u'category': u'functional',
