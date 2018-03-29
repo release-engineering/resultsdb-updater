@@ -5,16 +5,16 @@
       "status": "PASSED",
       "ci": {
         "name": "RPM Factory",
-        "url": "https://domain.local",
+        "url": "https://domain.redhat.com",
         "environment": "production",
         "team": "rpm-factory",
         "irc": "#rpm-factory",
         "email": "nobody@redhat.com"
       },
       "run": {
-        "url": "https://domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835/",
-        "rebuild": "https://domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835//rebuild/parametrized",
-        "log": "https://domain.local/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835//console"
+        "url": "https://domain.redhat.com/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835/",
+        "rebuild": "https://domain.redhat.com/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835//rebuild/parametrized",
+        "log": "https://domain.redhat.com/job/ci-package-sanity-development/label=ose-slave-tps,provision_arch=x86_64/1835//console"
       },
       "name": "tier0",
       "recipients": [],
@@ -27,10 +27,10 @@
       "artifact": {
         "nvr": "setup-2.8.71-7.el7_4",
         "scratch": true,
-        "component": "setup-2.8.71-7.el7_4",
+        "component": "setup",
         "type": "brew-build",
         "id": 15477983,
-        "issuer": "jenkins/domain.local"
+        "issuer": "jenkins/domain.redhat.com"
       },
       "thread_id": "",
       "xunit": ""
@@ -42,16 +42,16 @@
       "timestamp": "0",
       "JMS_AMQP_NATIVE": "false",
       "topic": "/topic/VirtualTopic.eng.cips.complete",
-      "component": "setup-2.8.71-7.el7_4",
+      "component": "setup",
       "nvr": "setup-2.8.71-7.el7_4",
       "priority": "4",
       "subscription": "/queue/Consumer.client-datanommer.openpaas-prod.VirtualTopic.eng.>",
-      "message-id": "ID:messaging-domain.local-37288-1518002445552-2:1373099:0:0:1",
-      "scratch": true,
+      "message-id": "ID:messaging-domain.redhat.com-37288-1518002445552-2:1373099:0:0:1",
+      "scratch": "true",
       "JMS_AMQP_FirstAcquirer": "false",
       "type": "brew-build",
       "id": "15477983",
-      "issuer": "jenkins/domain.local"
+      "issuer": "jenkins/domain.redhat.com"
     }
   },
   "headers": {
@@ -61,16 +61,16 @@
       "timestamp": "0",
       "JMS_AMQP_NATIVE": "false",
       "topic": "/topic/VirtualTopic.eng.cips.complete",
-      "component": "setup-2.8.71-7.el7_4",
+      "component": "setup",
       "nvr": "setup-2.8.71-7.el7_4",
       "priority": "4",
       "subscription": "/queue/Consumer.client-datanommer.openpaas-prod.VirtualTopic.eng.>",
-      "message-id": "ID:messaging-domain.local-37288-1518002445552-2:1373099:0:0:1",
-      "scratch": true,
+      "message-id": "ID:messaging-domain.redhat.com-37288-1518002445552-2:1373099:0:0:1",
+      "scratch": "true",
       "JMS_AMQP_FirstAcquirer": "false",
       "type": "brew-build",
       "id": "15477983",
-      "issuer": "jenkins/domain.local"
+      "issuer": "jenkins/domain.redhat.com"
   },
   "topic": "/topic/VirtualTopic.eng.cips.complete"
 }

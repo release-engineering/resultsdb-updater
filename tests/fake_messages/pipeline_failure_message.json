@@ -1,0 +1,54 @@
+{
+  "topic": "/topic/VirtualTopic.eng.ci.brew-build.test.error",
+  "headers": {
+    "CI_TYPE": "custom",
+    "topic": "VirtualTopic.eng.ci.brew-build.test.error",
+    "expires": "1522913585354",
+    "nvr": "tigervnc-1.8.0-5.el9000+5",
+    "scratch": "true",
+    "destination": "/topic/VirtualTopic.eng.ci.brew-build.test.error",
+    "component": "tigervnc",
+    "CI_NAME": "downstream-rhel9000-build-pipeline",
+    "persistent": "true",
+    "priority": "4",
+    "subscription": "/queue/Consumer.client-datanommer.openpaas-prod.VirtualTopic.eng.>",
+    "timestamp": "1522308785354",
+    "message-id": "ID:jenkins-14-75mdk-36686-1522087564078-81:1:1:1:1",
+    "type": "brew-build",
+    "id": "15665813",
+    "issuer": "null"
+  },
+  "body": {
+    "msg": {
+      "category": "functional",
+      "status": "FAILED",
+      "ci": {
+        "url": "https://domain.redhat.com/",
+        "team": "contra",
+        "irc": "#contra",
+        "email": "continuous-infra@redhat.com",
+        "name": "Continuous Infra"
+      },
+      "run": {
+        "url": "https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/",
+        "rebuild": "https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/rebuild/parameterized",
+        "log": "https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/console"
+      },
+      "system": {
+        "provider": "TODO",
+        "os": "TODO",
+        "label": "downstream-rhel-pipeline"
+      },
+      "artifact": {
+        "nvr": "tigervnc-1.8.0-5.el9000+5",
+        "scratch": "true",
+        "component": "tigervnc",
+        "type": "brew-build",
+        "id": "15665813",
+        "issuer": null
+      },
+      "reason": "unknown execution error",
+      "type": "pipeline"
+    }
+  }
+}
