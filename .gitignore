@@ -94,3 +94,4 @@ export/
 .vagrant/
 ciconsumer.egg-info
 ca.crt
+.pytest_cache
