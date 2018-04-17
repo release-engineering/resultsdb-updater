@@ -511,3 +511,63 @@ class TestConsumer(unittest.TestCase):
 
         assert all_expected_data == \
             json.loads(mock_requests.post.call_args_list[0][1]['data'])
+
+    def test_full_consume_osci_success_msg(self, mock_get_session):
+        mock_post_rv = mock.Mock()
+        mock_post_rv.status_code = 201
+        mock_requests = mock.Mock()
+        mock_requests.post.return_value = mock_post_rv
+        mock_get_session.return_value = mock_requests
+        fake_msg_path = path.join(self.json_dir, 'osci_success_message.json')
+        with open(fake_msg_path) as fake_msg_file:
+            fake_msg = json.load(fake_msg_file)
+
+        assert self.consumer.consume(fake_msg) is True
+        # Verify the post URL
+        assert mock_requests.post.call_args_list[0][0][0] == \
+            'https://resultsdb.domain.local/api/v2.0/results'
+        # Verify the post data
+        assert mock_requests.post.call_count == 1
+        all_expected_data = {
+            'data': {
+                'item': 'passwd-0.80-1.el8+5',
+                'type': 'brew-build',
+                'component': 'passwd',
+                'brew_task_id': '15801580',
+                'category': 'functional',
+                'scratch': True,
+                'issuer': None,
+                'rebuild': (
+                    'https://some-jenkins.osci.redhat.com/'
+                    'job/pipeline/21/rebuild/parameterized'),
+                'log': (
+                    'https://some-jenkins.osci.redhat.com/'
+                    'job/pipeline/21/console'),
+                'system_os': 'TODO',
+                'system_provider': 'TODO',
+                'ci_name': 'Continuous Infra',
+                'ci_url': 'https://some-jenkins.osci.redhat.com/',
+                'ci_environment': None,
+                'ci_team': 'contra',
+                'ci_irc': '#contra',
+                'ci_email': 'continuous-infra@redhat.com',
+            },
+            'groups': [{
+                'url': (
+                    'https://some-jenkins.osci.redhat.com/'
+                    'job/pipeline/21/'),
+                'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
+            }],
+            'note': '',
+            'outcome': 'FAILED',
+            'ref_url': (
+                'https://some-jenkins.osci.redhat.com/'
+                'job/pipeline/21/'),
+            'testcase': {
+                'name': 'osci.some-jenkins.pipeline',
+                'ref_url': 'https://some-jenkins.osci.redhat.com/',
+            },
+        }
+
+        assert all_expected_data == \
+            json.loads(mock_requests.post.call_args_list[0][1]['data'])

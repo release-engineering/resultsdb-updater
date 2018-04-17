@@ -1,0 +1,40 @@
+{
+    "headers": {
+        "message-id": "ID:jenkins-3-x34gp-33678-1523552526183-189:1:1:1:1"
+    },
+    "body": {
+        "msg": {
+            "artifact": {
+                "component": "passwd",
+                "id": "15801580",
+                "issuer": null,
+                "nvr": "passwd-0.80-1.el8+5",
+                "scratch": "true",
+                "type": "brew-build"
+            },
+            "category": "functional",
+            "ci": {
+                "email": "continuous-infra@redhat.com",
+                "irc": "#contra",
+                "name": "Continuous Infra",
+                "team": "contra",
+                "url": "https://some-jenkins.osci.redhat.com/"
+            },
+            "run": {
+                "log": "https://some-jenkins.osci.redhat.com/job/pipeline/21/console",
+                "rebuild": "https://some-jenkins.osci.redhat.com/job/pipeline/21/rebuild/parameterized",
+                "url": "https://some-jenkins.osci.redhat.com/job/pipeline/21/"
+            },
+            "status": "FAILURE",
+            "system": {
+                "label": "downstream-rhel-pipeline",
+                "os": "TODO",
+                "provider": "TODO"
+            },
+            "type": "pipeline"
+        }
+    },
+    "msg_id": "ID:jenkins-3-x34gp-33678-1523552526183-189:1:1:1:1",
+    "timestamp": 1523839718.0,
+    "topic": "/topic/VirtualTopic.eng.ci.brew-build.test.complete"
+}
