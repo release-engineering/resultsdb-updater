@@ -377,7 +377,7 @@ class TestConsumer(unittest.TestCase):
         }
         # We can't guarantee the order of when the results are created, so this
         # is a workaround
-        testcase_names = all_expected_data.keys()
+        testcase_names = list(all_expected_data.keys())
         for i in range(len(all_expected_data)):
             post_call_data = json.loads(
                 mock_requests.post.call_args_list[i][1]['data'])
