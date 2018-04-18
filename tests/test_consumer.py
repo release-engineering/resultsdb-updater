@@ -265,7 +265,7 @@ class TestConsumer(unittest.TestCase):
                 'https://domain.redhat.com/job/ci-package-sanity-development'
                 '/label=ose-slave-tps,provision_arch=x86_64/1835/'),
             'testcase': {
-                'name': 'domain.ci-package-sanity-development',
+                'name': 'domain.ci-package-sanity-development.sanity',
                 'ref_url': 'https://domain.redhat.com',
             },
         }
@@ -444,7 +444,7 @@ class TestConsumer(unittest.TestCase):
             'outcome': 'FAILED',
             'ref_url': 'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/',
             'testcase': {
-                'name': 'domain.downstream-rhel9000-build-pipeline',
+                'name': 'domain.downstream-rhel9000-build-pipeline.pipeline.functional',
                 'ref_url': 'https://domain.redhat.com/',
             },
         }
@@ -504,7 +504,7 @@ class TestConsumer(unittest.TestCase):
                 'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com/'
                 'job/ci-openstack/8465/'),
             'testcase': {
-                'name': 'baseos-jenkins.ci-openstack',
+                'name': 'baseos-jenkins.ci-openstack.tier1.functional',
                 'ref_url': 'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com',
             },
         }
@@ -564,7 +564,7 @@ class TestConsumer(unittest.TestCase):
                 'https://some-jenkins.osci.redhat.com/'
                 'job/pipeline/21/'),
             'testcase': {
-                'name': 'osci.some-jenkins.pipeline',
+                'name': 'osci.some-jenkins.pipeline.pipeline.functional',
                 'ref_url': 'https://some-jenkins.osci.redhat.com/',
             },
         }
