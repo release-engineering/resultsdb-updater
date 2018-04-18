@@ -1,7 +1,7 @@
 import fedmsg.consumers
 import fedmsg.config
 
-import utils
+from . import utils
 
 CONFIG = fedmsg.config.load_config()
 TOPICS = CONFIG.get('resultsdb-updater.topics', [])

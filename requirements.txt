@@ -4,6 +4,5 @@ m2ext
 moksha.hub
 psutil
 PyOpenSSL
-qpid-python
 stomper
 requests
