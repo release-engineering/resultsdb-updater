@@ -3,10 +3,11 @@ import json
 import uuid
 import re
 
+import fedmsg
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-import fedmsg
+import six
 
 
 CONFIG = fedmsg.config.load_config()
@@ -191,8 +192,17 @@ def _construct_testcase_dict(msg):
     # Invert jenkins.osci into osci.jenkins
     namespace = '.'.join(reversed(namespace.split('.')))
 
+    # These fields will definitely be a part of the testcase name.
+    tokens = [namespace, job]
+
+    # Optionally add these values if present
+    for optional_key in ('type', 'category'):
+        token = msg.get(optional_key)
+        if isinstance(token, six.text_type):
+            tokens.append(token)
+
     return dict(
-        name='.'.join([namespace, job]),
+        name='.'.join(tokens),
         ref_url=msg['ci']['url'],
     )
 
