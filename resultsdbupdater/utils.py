@@ -182,12 +182,12 @@ def handle_ci_metrics(msg):
 
 
 def _construct_testcase_dict(msg):
-    run_url = msg['run']['url'].split('://')[-1]
-    job = run_url.split('job/')[-1].split('/')[0]
+    log_url = msg['run']['log'].split('://')[-1]
+    job = log_url.split('job/')[-1].split('/')[0]
 
     # Convert jenkins.osci.redhat.com into jenkins.osci
     # and baseos-team.rhev-ci-vms.engineering.foo into baseos-team
-    namespace = run_url.split('.redhat')[0].split('.rhev-ci-vms')[0]
+    namespace = log_url.split('.redhat')[0].split('.rhev-ci-vms')[0]
 
     # Invert jenkins.osci into osci.jenkins
     namespace = '.'.join(reversed(namespace.split('.')))
