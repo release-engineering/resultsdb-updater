@@ -1,0 +1,56 @@
+{
+    "headers":{
+        "CI_NAME":"pipeline",
+        "CI_TYPE":"custom",
+        "component":"libfoo",
+        "destination":"/topic/VirtualTopic.eng.ci.brew-build.test.complete",
+        "expires":"1526139689417",
+        "id":"16000903",
+        "issuer":"null",
+        "message-id":"ID:some-jenkins-osci-5-lskcd-40659-1525353963561-107:1:1:1:1",
+        "nvr":"libfoo-2.7-9.el8+6",
+        "persistent":"true",
+        "priority":"4",
+        "scratch":"true",
+        "subscription":"/queue/Consumer.client-datanommer.openpaas-prod.VirtualTopic.eng.>",
+        "timestamp":"1525534889417",
+        "topic":"VirtualTopic.eng.ci.brew-build.test.complete",
+        "type":"brew-build"
+    },
+    "body": {
+        "msg":{
+            "artifact":{
+                "component":"libfoo",
+                "id":"16000903",
+                "issuer":null,
+                "nvr":"libfoo-2.7-9.el8+6",
+                "scratch":"true",
+                "source":"git://pkgs.devel.redhat.com/rpms/libfoo?#01233522cf656426af136ba046c3bdb740872817",
+                "type":"brew-build"
+            },
+            "category":"functional",
+            "ci":{
+                "email":"continuous-infra@redhat.com",
+                "irc":"#contra",
+                "name":"Continuous Infra",
+                "team":"contra",
+                "url":"https://some-jenkins.osci.redhat.com/"
+            },
+            "run":{
+                "log":"https://some-jenkins.osci.redhat.com/job/pipeline/15/console",
+                "rebuild":"https://some-jenkins.osci.redhat.com/job/pipeline/15/rebuild/parameterized",
+                "url":"https://some-jenkins.osci.redhat.com/blue/organizations/some-jenkins/pipeline/detail/pipeline/15/pipeline/"
+            },
+            "status":"PASSED",
+            "system":{
+                "label":"downstream-rhel-pipeline",
+                "os":"TODO",
+                "provider":"TODO"
+            },
+            "type":"tier0"
+        },
+        "timestamp":1525536811.0,
+        "topic":"/topic/VirtualTopic.eng.ci.brew-build.test.complete"
+    },
+    "topic":"/topic/VirtualTopic.eng.ci.brew-build.test.complete"
+}
