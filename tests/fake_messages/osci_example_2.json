@@ -47,7 +47,8 @@
                 "os":"TODO",
                 "provider":"TODO"
             },
-            "type":"tier0"
+            "type":"tier0",
+            "namespace":"osci"
         },
         "timestamp":1525536811.0,
         "topic":"/topic/VirtualTopic.eng.ci.brew-build.test.complete"

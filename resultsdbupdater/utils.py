@@ -7,7 +7,6 @@ import fedmsg
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-import six
 
 
 CONFIG = fedmsg.config.load_config()
@@ -182,29 +181,14 @@ def handle_ci_metrics(msg):
 
 
 def _construct_testcase_dict(msg):
-    log_url = msg['run']['log'].split('://')[-1]
-    job = log_url.split('job/')[-1].split('/')[0]
+    namespace = msg.get('namespace', 'unknown')
+    test_type = msg.get('type', 'unknown')
+    category = msg.get('category', 'unknown')
 
-    # Convert jenkins.osci.redhat.com into jenkins.osci
-    # and baseos-team.rhev-ci-vms.engineering.foo into baseos-team
-    namespace = log_url.split('.redhat')[0].split('.rhev-ci-vms')[0]
-
-    # Invert jenkins.osci into osci.jenkins
-    namespace = '.'.join(reversed(namespace.split('.')))
-
-    # These fields will definitely be a part of the testcase name.
-    tokens = [namespace, job]
-
-    # Optionally add these values if present
-    for optional_key in ('type', 'category'):
-        token = msg.get(optional_key)
-        if isinstance(token, six.text_type):
-            tokens.append(token)
-
-    return dict(
-        name='.'.join(tokens),
-        ref_url=msg['ci']['url'],
-    )
+    return {
+        'name': '.'.join([namespace, test_type, category]),
+        'ref_url': msg['ci']['url'],
+    }
 
 
 def _massage_outcome(outcome):
@@ -273,6 +257,9 @@ def handle_ci_umb(msg):
     }
 
     testcase = _construct_testcase_dict(msg_body)
+    if 'unknown' in testcase['name']:
+        LOGGER.warn(('The message "{0}" did not contain enough information to fully build '
+                     'a testcase name. Using "{1}".').format(msg_id, testcase['name']))
 
     if not create_result(session, testcase, outcome, test_run_url, result_data, groups):
         LOGGER.error(

@@ -33,7 +33,8 @@
         "issuer": "jenkins/domain.redhat.com"
       },
       "thread_id": "",
-      "xunit": ""
+      "xunit": "",
+      "namespace": "rpm-factory"
     },
     "headers": {
       "content-length": "1102",
