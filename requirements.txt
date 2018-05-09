@@ -1,6 +1,4 @@
 fedmsg
-m2crypto
-m2ext
 moksha.hub
 psutil
 PyOpenSSL
