@@ -48,7 +48,8 @@
         "issuer": null
       },
       "reason": "unknown execution error",
-      "type": "pipeline"
+      "type": "pipeline",
+      "namespace": "contra"
     }
   }
 }
