@@ -90,10 +90,13 @@ objects:
           imagePullPolicy: Always
           volumeMounts:
           - name: resultsdb-updater-config-volume
-            mountPath: /etc/resultsdb-updater
+            mountPath: /etc/fedmsg.d
             readOnly: true
           # TODO: readinessProbe and livenessProbe (is it possible?)
         volumes:
         - name: resultsdb-updater-config-volume
           secret:
             secretName: "resultsdb-updater-test-${TEST_ID}-secret"
+            items:
+            - key: resultsdb-updater.py
+              path: updater.py
