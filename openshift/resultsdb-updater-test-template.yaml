@@ -3,7 +3,9 @@
 # To create an environment from the template, process and apply it:
 #   oc process -f openshift/resultsdb-updater-test-template.yaml -p TEST_ID=123 | oc apply -f -
 # To clean up the environment, use a selector on the environment label:
-#   oc delete dc,deploy,pod,configmap,secret,svc,route -l environment=test-123
+#   oc delete all -l environment=test-123
+# Or use the app label to delete things related to resultsdb-updater:
+#   oc delete all -l app=resultsdb-updater
 
 ---
 apiVersion: v1
@@ -46,6 +48,7 @@ objects:
   metadata:
     name: "resultsdb-updater-test-${TEST_ID}-secret"
     labels:
+      app: "resultsdb-updater"
       environment: "test-${TEST_ID}"
   stringData:
     resultsdb-updater.py: |-
@@ -66,16 +69,19 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: "resultdb-updater-test-${TEST_ID}"
+    name: "resultsdb-updater-test-${TEST_ID}"
     labels:
+      app: "resultsdb-updater"
       environment: "test-${TEST_ID}"
   spec:
     replicas: 1
     selector:
+      app: "resultsdb-updater"
       environment: "test-${TEST_ID}"
     template:
       metadata:
         labels:
+          app: "resultsdb-updater"
           environment: "test-${TEST_ID}"
       spec:
         containers:
