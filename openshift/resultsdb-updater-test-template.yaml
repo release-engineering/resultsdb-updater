@@ -25,7 +25,6 @@ parameters:
 - name: RESULTSDB_API_URL
   displayname: Resultsdb API URL
   description: API URL for Resultsdb
-  value: "http://resultsdb-test-${TEST_ID}-internal-api.myproject.svc:5001/api/v2.0"
   required: true
 - name: RESULTSDB_UPDATER_USERNAME
   displayName: ResultsDB updater user name
@@ -40,7 +39,6 @@ parameters:
 - name: STOMP_URI
   displayName: Messagebus URI
   description: Messagebus URI
-  value: server:61613
   required: true
 objects:
 - apiVersion: v1
