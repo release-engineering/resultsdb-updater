@@ -13,6 +13,4 @@ RUN yum install -y epel-release && \
     yum -y clean all && \
     rm -f /tmp/$(basename $resultsdb_updater_rpm)
 
-RUN ln -s /etc/resultsdb-updater/resultsdb-updater.py /etc/fedmsg.d/resultsdb-updater.py
-
 ENTRYPOINT fedmsg-hub
