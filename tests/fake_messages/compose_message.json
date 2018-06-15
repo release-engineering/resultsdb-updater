@@ -1,0 +1,36 @@
+{
+  "topic": "/topic/VirtualTopic.eng.ci.productmd-compose.test.complete",
+  "headers": {
+    "type": "compose",
+    "compose_id": "RHEL-X.0-20180101.1",
+    "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1"
+  },
+  "body": {
+    "msg": {
+      "ci": {
+        "name": "RTT CI",
+        "team": "RTT",
+        "url": "https://rtt-jenkins",
+        "irc": "#rtt",
+        "email": "release-test-team<AT>redhat.com"
+      },
+      "run": {
+        "url": "https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/",
+        "log": "https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/console"
+      },
+      "artifact": {
+        "type": "compose",
+        "compose_id": "RHEL-X.0-20180101.1"
+      },
+      "system": [
+          {
+              "provider": "beaker",
+              "architecture": "x86_64"
+          }
+      ],
+      "type": "tier2",
+      "category": "functional",
+      "status": "passed"
+    }
+  }
+}

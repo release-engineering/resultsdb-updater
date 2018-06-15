@@ -206,22 +206,11 @@ def handle_ci_umb(msg):
 
     msg_id = msg['headers']['message-id']
     msg_body = msg['body']['msg']
-    item = msg_body['artifact']['nvr']
     item_type = msg_body['artifact']['type']
-    component = msg_body['artifact']['component']
-    scratch = msg_body['artifact'].get('scratch')
-    brew_task_id = msg_body['artifact'].get('id')
-    msg_body_ci = msg['body']['msg']['ci']
-    msg_body_artifact = msg['body']['msg']['artifact']
     test_run_url = msg_body['run']['url']
     outcome = msg_body['status']
 
     outcome = _massage_outcome(outcome)
-
-    # scratch is supposed to be a bool but some messages in the wild
-    # use a string instead
-    if not isinstance(scratch, bool):
-        scratch = scratch.lower() == 'true'
 
     # variables to be passed to create_result
     groups = [{
@@ -236,25 +225,58 @@ def handle_ci_umb(msg):
     if isinstance(system, list):
         system = system[0] if system else {}
 
-    result_data = {
-        'item': item,
-        'type': item_type,
-        'brew_task_id': brew_task_id,
-        'category': msg_body['category'],
-        'component': component,
-        'scratch': scratch,
-        'issuer': msg_body_artifact.get('issuer'),
-        'rebuild': msg_body['run'].get('rebuild'),
-        'log': msg_body['run']['log'],  # required
-        'system_os': system.get('os'),
-        'system_provider': system.get('provider'),
-        'ci_name': msg_body_ci.get('name'),
-        'ci_url': msg_body_ci.get('url'),
-        'ci_environment': msg_body_ci.get('environment'),
-        'ci_team': msg_body_ci.get('team'),
-        'ci_irc': msg_body_ci.get('irc'),
-        'ci_email': msg_body_ci.get('email'),
-    }
+    if item_type == "compose":
+        result_data = {
+            key: value for key, value in (
+                ('ci_name', msg_body['ci']['name']),
+                ('ci_team', msg_body['ci']['team']),
+                ('ci_url', msg_body['ci']['url']),
+                ('ci_irc', msg_body['ci'].get('irc')),
+                ('ci_email', msg_body['ci']['email']),
+
+                ('log', msg_body['run']['log']),
+
+                ('type', item_type),
+                ('compose_id', msg_body['artifact']['compose_id']),
+
+                ('system_provider', system['provider']),
+                ('system_architecture', system['architecture']),
+                ('system_variant', system.get('variant')),
+
+                ('category', msg_body['category']),
+            ) if value is not None
+        }
+    else:
+        msg_body_ci = msg_body['ci']
+        item = msg_body['artifact']['nvr']
+        component = msg_body['artifact']['component']
+        scratch = msg_body['artifact'].get('scratch', '')
+        brew_task_id = msg_body['artifact'].get('id')
+
+        # scratch is supposed to be a bool but some messages in the wild
+        # use a string instead
+        if not isinstance(scratch, bool):
+            scratch = scratch.lower() == 'true'
+
+        result_data = {
+            'item': item,
+            'type': item_type,
+            'brew_task_id': brew_task_id,
+            'category': msg_body['category'],
+            'component': component,
+            'scratch': scratch,
+            'issuer': msg_body['artifact'].get('issuer'),
+            'rebuild': msg_body['run'].get('rebuild'),
+            'log': msg_body['run']['log'],  # required
+            'system_os': system.get('os'),
+            'system_provider': system.get('provider'),
+            'ci_name': msg_body_ci.get('name'),
+            'ci_url': msg_body_ci.get('url'),
+            'ci_environment': msg_body_ci.get('environment'),
+            'ci_team': msg_body_ci.get('team'),
+            'ci_irc': msg_body_ci.get('irc'),
+            'ci_email': msg_body_ci.get('email'),
+        }
 
     testcase = _construct_testcase_dict(msg_body)
     if 'unknown' in testcase['name']:
