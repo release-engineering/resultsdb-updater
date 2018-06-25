@@ -191,8 +191,19 @@ def _construct_testcase_dict(msg):
     }
 
 
-def _massage_outcome(outcome):
-    """ Be helpful.  Some people pass outcomes that don't match spec.  Fix it for them. """
+def _test_result_outcome(message):
+    """
+    Returns test result outcome value for ResultDB.
+
+    Some systems generate outcomes that don't match spec.
+
+    Test outcome is FAILED for messages with "*.error" topic.
+    """
+    if message['topic'].endswith('.error'):
+        return 'FAILED'
+
+    outcome = message['body']['msg']['status']
+
     broken_mapping = {
         'pass': 'PASSED',
         'fail': 'FAILED',
@@ -208,9 +219,8 @@ def handle_ci_umb(msg):
     msg_body = msg['body']['msg']
     item_type = msg_body['artifact']['type']
     test_run_url = msg_body['run']['url']
-    outcome = msg_body['status']
 
-    outcome = _massage_outcome(outcome)
+    outcome = _test_result_outcome(msg)
 
     # variables to be passed to create_result
     groups = [{
@@ -243,7 +253,7 @@ def handle_ci_umb(msg):
                 ('system_architecture', system['architecture']),
                 ('system_variant', system.get('variant')),
 
-                ('category', msg_body['category']),
+                ('category', msg_body.get('category')),
             ) if value is not None
         }
     else:
