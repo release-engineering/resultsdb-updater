@@ -247,7 +247,7 @@ def handle_ci_umb(msg):
                 ('log', msg_body['run']['log']),
 
                 ('type', item_type),
-                ('compose_id', msg_body['artifact']['compose_id']),
+                ('productmd.compose.id', msg_body['artifact']['compose_id']),
 
                 ('system_provider', system['provider']),
                 ('system_architecture', system['architecture']),
