@@ -21,7 +21,6 @@
   "body": {
     "msg": {
       "category": "functional",
-      "status": "FAILED",
       "ci": {
         "url": "https://domain.redhat.com/",
         "team": "contra",
