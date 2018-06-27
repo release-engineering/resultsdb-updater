@@ -235,7 +235,7 @@ def handle_ci_umb(msg):
     if isinstance(system, list):
         system = system[0] if system else {}
 
-    if item_type == "compose":
+    if item_type == 'compose':
         result_data = {
             key: value for key, value in (
                 ('ci_name', msg_body['ci']['name']),

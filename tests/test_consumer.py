@@ -675,33 +675,33 @@ def test_full_consume_compose_msg(mock_get_session):
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
     assert mock_requests.post.call_count == 1
-    url = "https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/"
+    url = 'https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/'
     expected_data = {
-        "testcase": {
-            "name": "unknown.tier2.functional",
-            "ref_url": "https://rtt-jenkins"
+        'testcase': {
+            'name': 'unknown.tier2.functional',
+            'ref_url': 'https://rtt-jenkins'
         },
-        "groups": [
+        'groups': [
             {
-                "uuid": "1bb0a6a5-3287-4321-9dc5-72258a302a37",
-                "url": url
+                'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',
+                'url': url
             }
         ],
-        "outcome": "passed",
-        "ref_url": url,
-        "note": "",
-        "data": {
-            "productmd.compose.id": "RHEL-X.0-20180101.1",
-            "type": "compose",
-            "category": "functional",
-            "log": url + "console",
-            "system_provider": "beaker",
-            "system_architecture": "x86_64",
-            "ci_name": "RTT CI",
-            "ci_team": "RTT",
-            "ci_url": "https://rtt-jenkins",
-            "ci_irc": "#rtt",
-            "ci_email": "release-test-team<AT>redhat.com"
+        'outcome': 'passed',
+        'ref_url': url,
+        'note': '',
+        'data': {
+            'productmd.compose.id': 'RHEL-X.0-20180101.1',
+            'type': 'compose',
+            'category': 'functional',
+            'log': url + 'console',
+            'system_provider': 'beaker',
+            'system_architecture': 'x86_64',
+            'ci_name': 'RTT CI',
+            'ci_team': 'RTT',
+            'ci_url': 'https://rtt-jenkins',
+            'ci_irc': '#rtt',
+            'ci_email': 'release-test-team<AT>redhat.com'
         }
     }
 
