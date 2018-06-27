@@ -30,7 +30,8 @@
       ],
       "type": "tier2",
       "category": "functional",
-      "status": "passed"
+      "status": "passed",
+      "namespace": "rtt"
     }
   }
 }

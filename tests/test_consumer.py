@@ -678,7 +678,7 @@ def test_full_consume_compose_msg(mock_get_session):
     url = 'https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/'
     expected_data = {
         'testcase': {
-            'name': 'unknown.tier2.functional',
+            'name': 'rtt.tier2.functional',
             'ref_url': 'https://rtt-jenkins'
         },
         'groups': [
