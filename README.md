@@ -1,5 +1,7 @@
 # ResultsDB-Updater
 
+[![Build Status](https://travis-ci.org/release-engineering/resultsdb-updater.svg?branch=master)](https://travis-ci.org/release-engineering/resultsdb-updater)
+
 ResultsDB-Updater is a micro-service that listens for test results on the CI
 message bus and updates ResultsDB in a standard format.
 
