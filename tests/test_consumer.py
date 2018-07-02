@@ -692,7 +692,7 @@ def test_full_consume_compose_msg(mock_get_session):
         'note': '',
         'data': {
             'productmd.compose.id': 'RHEL-X.0-20180101.1',
-            'type': 'compose',
+            'type': 'productmd-compose',
             'category': 'functional',
             'log': url + 'console',
             'system_provider': 'beaker',
