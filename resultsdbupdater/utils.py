@@ -236,8 +236,11 @@ def handle_ci_umb(msg):
         system = system[0] if system else {}
 
     if item_type == 'productmd-compose':
+        item = msg_body['artifact']['compose_id']
         result_data = {
             key: value for key, value in (
+                ('item', item),
+
                 ('ci_name', msg_body['ci']['name']),
                 ('ci_team', msg_body['ci']['team']),
                 ('ci_url', msg_body['ci']['url']),
@@ -247,7 +250,7 @@ def handle_ci_umb(msg):
                 ('log', msg_body['run']['log']),
 
                 ('type', item_type),
-                ('productmd.compose.id', msg_body['artifact']['compose_id']),
+                ('productmd.compose.id', item),
 
                 ('system_provider', system['provider']),
                 ('system_architecture', system['architecture']),
