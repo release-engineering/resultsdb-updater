@@ -132,3 +132,5 @@ objects:
               path: umb-consumer.crt.pem
             - key: umb-consumer.key.pem
               path: umb-consumer.key.pem
+    triggers:
+    - type: ConfigChange
