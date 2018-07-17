@@ -691,7 +691,7 @@ def test_full_consume_compose_msg(mock_get_session):
         'ref_url': url,
         'note': '',
         'data': {
-            'item': 'RHEL-X.0-20180101.1',
+            'item': 'RHEL-X.0-20180101.1/unknown/x86_64',
             'productmd.compose.id': 'RHEL-X.0-20180101.1',
             'type': 'productmd-compose',
             'category': 'functional',
