@@ -109,6 +109,13 @@ objects:
           - name: resultsdb-updater-certs
             mountPath: /etc/resultsdb
             readOnly: true
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 300m
+              memory: 384Mi
           # TODO: readinessProbe and livenessProbe (is it possible?)
         volumes:
         - name: resultsdb-updater-config-volume
