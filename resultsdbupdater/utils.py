@@ -236,7 +236,10 @@ def handle_ci_umb(msg):
         system = system[0] if system else {}
 
     if item_type == 'productmd-compose':
-        item = msg_body['artifact']['compose_id']
+        architecture = system['architecture']
+        variant = system.get('variant')
+        compose_id = msg_body['artifact']['compose_id']
+        item = '{0}/{1}/{2}'.format(compose_id, variant or 'unknown', architecture)
         result_data = {
             key: value for key, value in (
                 ('item', item),
@@ -250,11 +253,11 @@ def handle_ci_umb(msg):
                 ('log', msg_body['run']['log']),
 
                 ('type', item_type),
-                ('productmd.compose.id', item),
+                ('productmd.compose.id', compose_id),
 
                 ('system_provider', system['provider']),
-                ('system_architecture', system['architecture']),
-                ('system_variant', system.get('variant')),
+                ('system_architecture', architecture),
+                ('system_variant', variant),
 
                 ('category', msg_body.get('category')),
             ) if value is not None
