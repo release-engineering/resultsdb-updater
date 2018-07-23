@@ -6,10 +6,7 @@ matrix:
     - python: 3.6
       env: TOXENV=py36
     - env: TOXENV=flake8
-addons:
-  apt_packages:
-    - swig
 install:
-  - pip install -r test-requirements.txt
+  - pip install tox
 script:
   - tox

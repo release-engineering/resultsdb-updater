@@ -1,7 +1,4 @@
 fedmsg
 moksha.hub
 psutil
-PyOpenSSL
-stomper
 requests
-six
