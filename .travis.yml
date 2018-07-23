@@ -10,6 +10,6 @@ addons:
   apt_packages:
     - swig
 install:
-  - pip install -r test-requirements.txt
+  - pip install tox
 script:
   - tox
