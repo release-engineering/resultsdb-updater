@@ -274,6 +274,10 @@ def handle_ci_umb(msg):
         if not isinstance(scratch, bool):
             scratch = scratch.lower() == 'true'
 
+        # we need to differentiate between scratch and non-scratch builds
+        if scratch:
+            item_type += '_scratch'
+
         result_data = {
             'item': item,
             'type': item_type,
