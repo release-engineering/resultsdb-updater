@@ -230,7 +230,7 @@ def test_full_consume_cips_msg(mock_get_session):
     all_expected_data = {
         'data': {
             'item': 'setup-2.8.71-7.el7_4',
-            'type': 'brew-build',
+            'type': 'brew-build_scratch',
 
             'component': 'setup',
             'brew_task_id': 15477983,
@@ -424,7 +424,7 @@ def test_full_consume_pipeline_failure_msg(mock_get_session):
     all_expected_data = {
         'data': {
             'item': 'tigervnc-1.8.0-5.el9000+5',
-            'type': 'brew-build',
+            'type': 'brew-build_scratch',
 
             'component': 'tigervnc',
             'brew_task_id': '15665813',
@@ -483,7 +483,7 @@ def test_full_consume_platformci_success_msg(mock_get_session):
     all_expected_data = {
         'data': {
             'item': 'setup-2.8.71-7.el7_4',
-            'type': 'brew-build',
+            'type': 'brew-build_scratch',
             'component': 'setup',
             'brew_task_id': '15667760',
             'category': 'functional',
@@ -545,7 +545,7 @@ def test_full_consume_osci_success_msg(mock_get_session):
     all_expected_data = {
         'data': {
             'item': 'passwd-0.80-1.el8+5',
-            'type': 'brew-build',
+            'type': 'brew-build_scratch',
             'component': 'passwd',
             'brew_task_id': '15801580',
             'category': 'functional',
@@ -616,7 +616,7 @@ def test_full_consume_osci_example_2(mock_get_session, namespace, expected):
     all_expected_data = {
         'data': {
             'item': 'libfoo-2.7-9.el8+6',
-            'type': 'brew-build',
+            'type': 'brew-build_scratch',
             'component': 'libfoo',
             'brew_task_id': '16000903',
             'category': 'functional',
