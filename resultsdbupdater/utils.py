@@ -19,6 +19,45 @@ logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
 
 
+def get_http_auth(user, password, url):
+    """Return an auth tuple to be used with requests
+
+    Args:
+        user (string) - username used for Basic auth
+        password (string) - password for Basic auth
+        url (string) - URL for which the credentials above will be used
+
+    Returns:
+        Tuple of (user, password), if both defined, or None
+
+    Raises:
+        RuntimeError, if only one of (user, password) is defined
+        RuntimeError, if url is not HTTPS
+    """
+    auth = None
+
+    if not user and not password:
+        pass
+    elif user and password:
+        auth = (user, password)
+    else:
+        raise RuntimeError(
+            'User or password not configured for ResultDB Basic authentication!')
+
+    # https://tools.ietf.org/html/rfc7617#section-4
+    if auth and not url.startswith('https://'):
+        raise RuntimeError(
+            'Basic authentication should not be used without HTTPS!')
+
+    return auth
+
+
+RESULTSDB_AUTH = get_http_auth(
+    CONFIG.get('resultsdb-updater.resultsdb_user'),
+    CONFIG.get('resultsdb-updater.resultsdb_pass'),
+    RESULTSDB_API_URL)
+
+
 def retry_session():
     # This will give the total wait time in minutes:
     # >>> sum([min((0.3 * (2 ** (i - 1))), 120) / 60 for i in range(24)])
@@ -60,6 +99,7 @@ def create_result(session, testcase, outcome, ref_url, data, groups=None,
             'note': note or '',
             'data': data}),
         headers={'content-type': 'application/json'},
+        auth=RESULTSDB_AUTH,
         verify=TRUSTED_CA)
     if post_req.status_code == 201:
         return True

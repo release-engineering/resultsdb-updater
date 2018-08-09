@@ -64,7 +64,10 @@ objects:
         'stomp_ssl_key': '/etc/resultsdb/umb-consumer.key.pem',
         'resultsdb-updater.log_level': logging.DEBUG,
         'resultsdb-updater.resultsdb_api_url': '${RESULTSDB_API_URL}',
-        'resultsdb-updater.resultsdb_api_ca': None,
+        # TODO make certificate verification work
+        'resultsdb-updater.resultsdb_api_ca': False,
+        'resultsdb-updater.resultsdb_user': 'resultsdb-updater',
+        'resultsdb-updater.resultsdb_pass': 'password',
         'resultsdb-updater.topics': ["/queue/Consumer.mister.queue.VirtualTopic.Test"],
         'moksha.blocking_mode': True,
       }
