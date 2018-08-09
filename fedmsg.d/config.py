@@ -17,5 +17,9 @@ config = {
     'resultsdb-updater.log_level': logging.INFO,
     'resultsdb-updater.resultsdb_api_url': 'https://resultsdb.domain.local/api/v2.0',
     'resultsdb-updater.resultsdb_api_ca': None,
+    # User and password for ResultsDB HTTP Basic authentication.
+    # Used only for creating results.
+    # 'resultsdb-updater.resultsdb_user': 'resultsdb-updater',
+    # 'resultsdb-updater.resultsdb_pass': 'password',
     'resultsdb-updater.topics': []
 }
