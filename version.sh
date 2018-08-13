@@ -4,7 +4,8 @@
 
 set -ex
 
-lasttag="$(git describe --abbrev=0 HEAD)"
+# Handle both lightweight and annotated tags
+lasttag="$(git describe --tags --abbrev=0 HEAD)"
 lastversion="${lasttag##v}"
 revbase="^$lasttag"
 
