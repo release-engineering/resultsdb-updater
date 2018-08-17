@@ -1,74 +1,49 @@
-pipeline {
-    agent {
-        node {
-            label 'docker'
-        }
-    }
+/*
+Although the pipeline below doesn't define any parameters, it will expect
+the job running it to provide some:
 
+    SPEC_URL              URL to resultsdb-updater spec file.
+    REGISTRY              URL of the registry where the resultsdb-updater image
+                          is going to be pushed.
+    REGISTRY_AUTH_SECRET  Name of the secret stored as a Jenkins credential to
+                          be used to authenticate to the registry.
+*/
+pipeline {
+    agent any
     options {
         timestamps()
     }
 
     stages {
-        stage('Wait for Travis CI results') {
-            steps {
-                script {
-                    def commit = sh(script: "git rev-parse HEAD",
-                                    returnStdout: true).trim()
-                    def repo = 'release-engineering/resultsdb-updater'
-                    def url = "https://api.travis-ci.org/repos/${repo}/builds"
-
-                    def build = null
-
-                    // try finding a Travis build for this commit for a minute or so
-                    for (int i = 0; i < 4; i++) {
-                        if (i > 0) { sleep(20) }
-
-                        def response = sh(script: "curl -s ${url}",
-                                          returnStdout: true).trim()
-                        def json = new groovy.json.JsonSlurper().parseText(response)
-
-                        for (b in json) {
-                            if (b.commit.startsWith(commit)) {
-                                build = b
-                                break
-                            }
-                        }
-
-                        if (build != null) { break }
-                    }
-
-                    if (build == null) {
-                        error("No build found for commit ${commit}")
-                    }
-
-                    // wait for the build to finish for 15 minutes or so
-                    for (int i = 0; i < 31; i++) {
-                        if (build.state == 'finished') {
-                            break
-                        } else {
-                            if (i > 0) { sleep(30) }
-
-                            def response = sh(script: "curl -s ${url}/${build.id}",
-                                              returnStdout: true).trim()
-                            build = new groovy.json.JsonSlurper().parseText(response)
-                        }
-                    }
-
-                    def build_url = "https://travis-ci.org/${repo}/builds/${build.id}"
-
-                    if (build.state != 'finished') {
-                        error("Travis CI build is taking too long: ${build_url}")
-                    }
-
-                    if (build.result != 0) {
-                        error("Travis CI failed: ${build_url}")
-                    }
+        stage('Run unit tests') {
+            agent {
+                node {
+                    label 'fedora-28'
                 }
             }
-        }
+            environment {
+                SPEC_FILE = 'resultsdb-updater.spec'
+            }
+            steps {
+                sh '''
+                curl  $SPEC_URL > $SPEC_FILE
+                sudo dnf -y builddep $SPEC_FILE
+                # This works because the spec file is only for the python2 package
+                sudo dnf -y install $(awk '/^Requires: / {printf $2" "}' $SPEC_FILE)
+                sudo dnf -y install python3-flake8 python2-pytest
+                '''
 
+                sh 'flake8 --ignore E731 --exclude .tox,.git'
+
+                sh 'pytest -vv'
+            }
+        }
         stage('Build container image') {
+            agent {
+                node {
+                    label 'docker'
+                }
+            }
             steps {
                 script {
                     def appVersion = sh(returnStdout: true,
@@ -82,6 +57,11 @@ pipeline {
         }
 
         stage('Perform functional tests') {
+            agent {
+                node {
+                    label 'fedora-28'
+                }
+            }
             steps {
                 echo 'TODO:'
                 echo 'Deploy resultsdb...'
@@ -92,6 +72,11 @@ pipeline {
         }
 
         stage('Apply "latest" tag') {
+            agent {
+                node {
+                    label 'fedora-28'
+                }
+            }
             steps {
                 echo 'TODO'
             }
