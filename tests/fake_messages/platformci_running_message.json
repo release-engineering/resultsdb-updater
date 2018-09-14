@@ -1,0 +1,43 @@
+{
+  "timestamp": 1536925439.0, 
+  "msg_id": "ID:messaging-devops-broker02.web.prod.ext.phx2.redhat.com-38086-1536885036904-4:33441:0:0:1", 
+  "topic": "/topic/VirtualTopic.eng.ci.brew-build.test.running", 
+  "headers": {
+    "expires": "0", 
+    "destination": "/topic/VirtualTopic.eng.ci.brew-build.test.running", 
+    "priority": "4", 
+    "message-id": "ID:some-jenkins.redhat.com-38086-1536885036904-4:33441:0:0:1", 
+    "timestamp": "0", 
+    "subscription": "/queue/Consumer.client-datanommer.upshift-prod.VirtualTopic.eng.>"
+  }, 
+  "body": {
+    "msg": {
+      "category": "static-analysis", 
+      "ci": {
+        "url": "https://some-jenkins.redhat.com", 
+        "team": "Platform QE", 
+        "irc": "#baseosci", 
+        "email": "platform-ci@redhat.com", 
+        "name": "Platform CI"
+      }, 
+      "run": {
+        "url": "https://some-jenkins.redhat.com/job/ci-covscan/109087/", 
+        "rebuild": "https://some-jenkins.redhat.com/job/ci-covscan/109087/rebuild/parameterized", 
+        "log": "https://some-jenkins.redhat.com/job/ci-covscan/109087/console"
+      }, 
+      "namespace": "baseos-ci.brew-build", 
+      "artifact": {
+        "nvr": "setup-2.8.71-7.el7_4", 
+        "scratch": true, 
+        "component": "setup", 
+        "type": "brew-build", 
+        "id": "18325602", 
+        "issuer": null
+      }, 
+      "label": null, 
+      "reason": null, 
+      "generated_at": "2018-09-14 11:44:13.497630", 
+      "type": "covscan" 
+    }
+  }
+}

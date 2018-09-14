@@ -241,6 +241,10 @@ def _test_result_outcome(message):
     """
     if message['topic'].endswith('.error'):
         return 'FAILED'
+    elif message['topic'].endswith('.queued'):
+        return 'QUEUED'
+    elif message['topic'].endswith('.running'):
+        return 'RUNNING'
 
     outcome = message['body']['msg']['status']
 
@@ -268,7 +272,7 @@ def handle_ci_umb(msg):
         'url': test_run_url
     }]
 
-    system = msg_body['system']
+    system = msg_body.get('system', {})
 
     # Oddly, sometimes people pass us a sytem dict but other times a
     # list of one system dict.  Try to handle those two situation here.
