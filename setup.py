@@ -5,7 +5,7 @@ with open('requirements.txt', 'r') as f:
 
 setup(
     name='resultsdb-updater',
-    version='5.2.2',
+    version='5.3.0',
     description=('A micro-service that listens for messages on the message '
                  'bus and updates ResultsDB'),
     license='GPLv2+',
