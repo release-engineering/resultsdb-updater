@@ -1,0 +1,42 @@
+{
+  "timestamp": 1536855059.0, 
+  "msg_id": "ID:messaging-devops-broker01.web.prod.ext.phx2.redhat.com-38241-1536153362773-4:537927:0:0:1", 
+  "topic": "/topic/VirtualTopic.eng.ci.brew-build.test.queued", 
+  "headers": {
+    "expires": "0", 
+    "priority": "4", 
+    "message-id": "ID:some-jenkins.redhat.com-38241-1536153362773-4:537927:0:0:1", 
+    "timestamp": "0", 
+    "subscription": "/queue/Consumer.client-datanommer.upshift-prod.VirtualTopic.eng.>"
+  }, 
+  "body": {
+    "msg": {
+      "category": "static-analysis", 
+      "ci": {
+        "url": "https://some-jenkins.redhat.com", 
+        "team": "Platform QE", 
+        "irc": "#baseosci", 
+        "email": "platform-ci@redhat.com", 
+        "name": "PlatformCI"
+      }, 
+      "run": {
+        "url": "https://some-jenkins.redhat.com/job/ci-brew-dispatcher/125157/", 
+        "rebuild": "https://some-jenkins.redhat.com/job/ci-brew-dispatcher/125157/rebuild/parameterized", 
+        "log": "https://some-jenkins.redhat.com/job/ci-brew-dispatcher/125157/console"
+      }, 
+      "namespace": "baseos-ci.brew-build", 
+      "artifact": {
+        "nvr": "openstack-neutron-lbaas-13.0.1-0.20180913154426.eb47e20.el7ost", 
+        "scratch": false, 
+        "component": "openstack-neutron-lbaas", 
+        "type": "brew-build", 
+        "id": "18310713", 
+        "issuer": null
+      }, 
+      "label": null, 
+      "reason": null, 
+      "generated_at": "2018-09-13 16:11:12.813661", 
+      "type": "covscan" 
+    }
+  }
+}

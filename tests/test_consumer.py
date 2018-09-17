@@ -709,3 +709,115 @@ def test_full_consume_compose_msg(mock_get_session):
     actual_data = json.loads(
         mock_requests.post.call_args_list[0][1]['data'])
     assert expected_data == actual_data, actual_data
+
+
+@mock.patch('resultsdbupdater.utils.retry_session')
+def test_queued_outcome_msg(mock_get_session):
+    mock_post_rv = mock.Mock()
+    mock_post_rv.status_code = 201
+    mock_requests = mock.Mock()
+    mock_requests.post.return_value = mock_post_rv
+    mock_get_session.return_value = mock_requests
+    fake_msg_path = path.join(json_dir, 'platformci_queued_message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    assert consumer.consume(fake_msg) is True
+    # Verify the post URL
+    assert mock_requests.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+    # Verify the post data
+    assert mock_requests.post.call_count == 1
+    all_expected_data = {
+        'data': {
+            'item': 'openstack-neutron-lbaas-13.0.1-0.20180913154426.eb47e20.el7ost',
+            'type': 'brew-build',
+            'component': 'openstack-neutron-lbaas',
+            'brew_task_id': '18310713',
+            'category': 'static-analysis',
+            'scratch': False,
+            'issuer': None,
+            'rebuild': (
+                'https://some-jenkins.redhat.com/job/ci-brew-dispatcher/'
+                '125157/rebuild/parameterized'),
+            'log': (
+                'https://some-jenkins.redhat.com/job/ci-brew-dispatcher/'
+                '125157/console'),
+            'system_os': None,
+            'system_provider': None,
+            'ci_name': 'PlatformCI',
+            'ci_url': 'https://some-jenkins.redhat.com',
+            'ci_environment': None,
+            'ci_team': 'Platform QE',
+            'ci_irc': '#baseosci',
+            'ci_email': 'platform-ci@redhat.com',
+        },
+        'groups': [{'url': 'https://some-jenkins.redhat.com/job/ci-brew-dispatcher/125157/',
+                   'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'}],
+        'note': '',
+        'outcome': 'QUEUED',
+        'ref_url': 'https://some-jenkins.redhat.com/job/ci-brew-dispatcher/125157/',
+        'testcase': {
+            'name': 'baseos-ci.brew-build.covscan.static-analysis',
+            'ref_url': 'https://some-jenkins.redhat.com'
+        }
+    }
+
+    assert all_expected_data == \
+        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+
+
+@mock.patch('resultsdbupdater.utils.retry_session')
+def test_queued_running_msg(mock_get_session):
+    mock_post_rv = mock.Mock()
+    mock_post_rv.status_code = 201
+    mock_requests = mock.Mock()
+    mock_requests.post.return_value = mock_post_rv
+    mock_get_session.return_value = mock_requests
+    fake_msg_path = path.join(json_dir, 'platformci_running_message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    assert consumer.consume(fake_msg) is True
+    # Verify the post URL
+    assert mock_requests.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+    # Verify the post data
+    assert mock_requests.post.call_count == 1
+    all_expected_data = {
+        'data': {
+            'item': 'setup-2.8.71-7.el7_4',
+            'type': 'brew-build_scratch',
+            'component': 'setup',
+            'brew_task_id': '18325602',
+            'category': 'static-analysis',
+            'scratch': True,
+            'issuer': None,
+            'rebuild': (
+                'https://some-jenkins.redhat.com/job/ci-covscan/'
+                '109087/rebuild/parameterized'),
+            'log': (
+                'https://some-jenkins.redhat.com/job/ci-covscan/'
+                '109087/console'),
+            'system_os': None,
+            'system_provider': None,
+            'ci_name': 'Platform CI',
+            'ci_url': 'https://some-jenkins.redhat.com',
+            'ci_environment': None,
+            'ci_team': 'Platform QE',
+            'ci_irc': '#baseosci',
+            'ci_email': 'platform-ci@redhat.com',
+        },
+        'groups': [{'url': 'https://some-jenkins.redhat.com/job/ci-covscan/109087/',
+                   'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'}],
+        'note': '',
+        'outcome': 'RUNNING',
+        'ref_url': 'https://some-jenkins.redhat.com/job/ci-covscan/109087/',
+        'testcase': {
+            'name': 'baseos-ci.brew-build.covscan.static-analysis',
+            'ref_url': 'https://some-jenkins.redhat.com'
+        }
+    }
+
+    assert all_expected_data == \
+        json.loads(mock_requests.post.call_args_list[0][1]['data'])
