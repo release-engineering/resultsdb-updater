@@ -821,3 +821,55 @@ def test_queued_running_msg(mock_get_session):
 
     assert all_expected_data == \
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
+
+
+@mock.patch('resultsdbupdater.utils.retry_session')
+def test_pelc_component_version_msg(mock_get_session):
+    mock_rv = mock.Mock()
+    mock_rv.status_code = 201
+    mock_requests = mock.Mock()
+    mock_requests.post.return_value = mock_rv
+    mock_get_session.return_value = mock_requests
+    fake_msg_path = path.join(json_dir, 'pelc_component_version.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    assert consumer.consume(fake_msg) is True
+    # Verify the post URL
+    assert mock_requests.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+
+    # Verify the URLs called
+    url = 'https://rcm-tools-jenkins/3/'
+    expected_data = {
+        'testcase': {
+            'name': 'pelc.scan.validation',
+            'ref_url': 'https://rcm-tools-jenkins'
+        },
+        'groups': [
+            {
+                'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',
+                'url': url
+            }
+        ],
+        'outcome': 'PASSED',
+        'ref_url': url,
+        'note': '',
+        'data': {
+            'item': '389-ds-base-1.4.0.10',
+            'component': '389-ds-base',
+            'version': '1.4.0.10',
+            'type': 'component-version',
+            'category': 'validation',
+            'log': url + 'console',
+            'ci_name': 'PELC',
+            'ci_team': 'PnT DevOps',
+            'ci_url': 'https://rcm-tools-jenkins',
+            'ci_irc': '#pnt-devops',
+            'ci_email': 'rbean<AT>redhat.com',
+        }
+    }
+
+    actual_data = json.loads(
+        mock_requests.post.call_args_list[0][1]['data'])
+    assert expected_data == actual_data, actual_data

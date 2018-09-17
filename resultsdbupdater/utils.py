@@ -306,6 +306,29 @@ def handle_ci_umb(msg):
                 ('category', msg_body.get('category')),
             ) if value is not None
         }
+    elif item_type == 'component-version':
+        component = msg_body['artifact']['component']
+        version = msg_body['artifact']['version']
+        item = '{0}-{1}'.format(component, version)
+        result_data = {
+            key: value for key, value in (
+                ('item', item),
+
+                ('ci_name', msg_body['ci']['name']),
+                ('ci_team', msg_body['ci']['team']),
+                ('ci_url', msg_body['ci']['url']),
+                ('ci_irc', msg_body['ci'].get('irc')),
+                ('ci_email', msg_body['ci']['email']),
+
+                ('log', msg_body['run']['log']),
+
+                ('type', item_type),
+                ('component', component),
+                ('version', version),
+
+                ('category', msg_body.get('category')),
+            ) if value is not None
+        }
     else:
         msg_body_ci = msg_body['ci']
         item = msg_body['artifact']['nvr']
