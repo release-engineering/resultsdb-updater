@@ -282,7 +282,8 @@ def handle_ci_umb(msg):
     if item_type == 'productmd-compose':
         architecture = system['architecture']
         variant = system.get('variant')
-        compose_id = msg_body['artifact']['compose_id']
+        # Field compose_id in artifacts is deprecated.
+        compose_id = msg_body['artifact'].get('id') or msg_body['artifact']['compose_id']
         item = '{0}/{1}/{2}'.format(compose_id, variant or 'unknown', architecture)
         result_data = {
             key: value for key, value in (
