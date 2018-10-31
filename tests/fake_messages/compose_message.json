@@ -20,7 +20,7 @@
       },
       "artifact": {
         "type": "productmd-compose",
-        "compose_id": "RHEL-X.0-20180101.1"
+        "id": "RHEL-X.0-20180101.1"
       },
       "system": [
           {
