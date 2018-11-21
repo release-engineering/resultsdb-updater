@@ -330,6 +330,46 @@ def handle_ci_umb(msg):
                 ('category', msg_body.get('category')),
             ) if value is not None
         }
+    elif item_type == 'redhat-module':
+        msg_body_ci = msg_body['ci']
+
+        # The pagure.io/messages spec defines the NSVC delimited with ':' and the stream name can
+        # contain '-', which MBS changes to '_' when importing to koji.
+        # See https://github.com/release-engineering/resultsdb-updater/pull/73
+        nsvc_regex = re.compile('^(.*):(.*):(.*):(.*)')
+        try:
+            name, stream, version, context = re.match(
+                nsvc_regex, msg_body['artifact']['nsvc']).groups()
+            stream = stream.replace('-', '_')
+        except AttributeError:
+            LOGGER.error("Invalid nsvc '{}' encountered, ignoring result".format(
+                msg_body['artifact']['nsvc']))
+            return False
+
+        nsvc = '{}-{}-{}.{}'.format(name, stream, version, context)
+
+        result_data = {
+            'item': nsvc,
+            'type': item_type,
+            'mbs_id': msg_body['artifact'].get('id'),
+            'category': msg_body['category'],
+            'context': msg_body['artifact']['context'],
+            'name': msg_body['artifact']['name'],
+            'nsvc': nsvc,
+            'stream': msg_body['artifact']['stream'],
+            'version': msg_body['artifact']['version'],
+            'issuer': msg_body['artifact'].get('issuer'),
+            'rebuild': msg_body['run'].get('rebuild'),
+            'log': msg_body['run']['log'],
+            'system_os': system.get('os'),
+            'system_provider': system.get('provider'),
+            'ci_name': msg_body_ci.get('name'),
+            'ci_url': msg_body_ci.get('url'),
+            'ci_team': msg_body_ci.get('team'),
+            'ci_irc': msg_body_ci.get('irc'),
+            'ci_email': msg_body_ci.get('email'),
+        }
+    # used as a default
     else:
         msg_body_ci = msg_body['ci']
         item = msg_body['artifact']['nvr']

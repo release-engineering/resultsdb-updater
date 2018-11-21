@@ -1,0 +1,52 @@
+{
+  "topic": "/topic/VirtualTopic.eng.ci.redhat-module.test.complete", 
+  "headers": {
+    "message-id": "ID:messaging-devops-broker01.web.prod.ext.phx2.redhat.com-41224-1542644943665-11:17017:0:0:1"
+  },
+  "body": {
+    "msg": {
+      "category": "functional", 
+      "status": "failed", 
+      "ci": {
+        "url": "https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com", 
+        "team": "BaseOS QE", 
+        "irc": "#baseosci", 
+        "email": "baseos-ci@redhat.com", 
+        "name": "BaseOS CI"
+      }, 
+      "run": {
+        "debug": "https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/ci-openstack-mbs/45/artifact/citool-debug.txt", 
+        "url": "https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/ci-openstack-mbs/45/", 
+        "rebuild": "https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/ci-openstack-mbs/45/rebuild/parameterized", 
+        "log": "https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/ci-openstack-mbs/45/console"
+      }, 
+      "recipients": [
+        "deparker", 
+        "emachado", 
+        "mcermak", 
+        "mprchlik", 
+        "qe-baseos-tools-commits"
+      ], 
+      "namespace": "baseos-ci.redhat-module", 
+      "system": [], 
+      "artifact": {
+        "name": "go-toolset",
+        "stream": "rhel8",
+        "nsvc": "go-toolset:rhel8-8:820181119195405:b754926a",
+        "version": "820181119195405",
+        "context": "b754926a",
+        "type": "redhat-module",
+        "id": "2240",
+        "issuer": "deparker"
+      }, 
+      "label": null, 
+      "note": null, 
+      "thread_id": "bf5e4a928b8d-1", 
+      "reason": null, 
+      "version": "0.1.0", 
+      "xunit": "eJztWW1v4jgQ/itRvuyHyjEJL2JXpRKlOY7bQlDCqtpPkUkMeMnb2Q7a3q+/CYE03RLKSVQbdHxocJwZ+xnP4xmPeyupkCJl8HN3W7SViIS0p3J454RFUlW2n3pqU727TXicUC5ZprFrP+8U5kTQWHhMy8SRfE6oqmxIkL4aC1ergVAaSOQFRIhCcwlPGceBljW2I7NoibJfV3gr6qcBdXkaRZS7xSSavW/NoGFvhz02cbyhnAQBygEUU//RHz0eU0t5oP2g0ZpFAs1TFviF5krKRHzBOBdFOyGNr+gGeQxtQqHRaKlxPzXAan9FpObFIf4RzzF8htkiIYm3RuFc4FYbZyBweeEz8z0Ye4cIZwsk8DIOSLTENl2CIYLFEYYVoDwiASp8C75kmcrndutEZxLurQrDji2Hz2DR45NEV7GQJwluCGckOk12TsmacgS+zGw/ScWLgTieJHMg0StMekPrakYL/hr6ccp6LKGI+SdNJ4lYl2Wb7++Gk8kIhJHpy7YZxGESUEn9N9xJCAdN4EW5vVP7dN93TMtxByN31ne+Oj3VMFoN9RM+JtpTJU/pO0LuwBpPrYk5mcGWjtGWsFRWKJn9r6b9OLp37enYfbCeJo9W/8Edm7M/rQfA9JyGis9g6av0XxkBD3towrRhnAULBJsw6B5WtJ2ZPZm5j9ZwOJoMe2r7sNgkjn6lyEG5v6x7AD2+N23nFHHbHIym5hENXHZdEC/zp7LidHH2kEOALQviSSzD5O+QrYdPWkPHOd0F1nFGZYGbOIOBV4RHEHE0eFF3vCx34brgzF7iVJZxlrtqgzMP5GjOIqRrQIMm0rtaTt8bIO9Ntilvmt2W3zQo0X52O26n5YIVSW6I9vOfvXlnGCkjXk62ZAVrsf/dTeBQmSaqkgernjrtO45aG3LmqKCn3TI67c+dViNfX7LxyhzYv9bB/1WQ8/7cMwsW0DL+g99e3Ia3/nrttuxc9OK1bW6pr9f0fAn8kIpl2e6Xjlp6Tr88sukfQrZBQEl0QVHCuDzHGWdzHC6iPOAiS5j27nZBWJByqsB+E9CVhw8l692dL/f1yNvKZFsUsHkqs3IETA9J5O9rkMa1AvndFYjxHyqQ7a69ViB1qEAG4wfHnVmu/W0CaTBaKECjBVsi2F2wP7mCEJiGaJTRyley+fILCh7HFYifrKcd1u9Ts6eK7bHuWv0cjcPGhVQ/xqnVz5FzfkUgr2NGN96kx2an5hm9GvIHZfRTM7Z4FpKGOA8Hu7R9vTj87Wn7naGvabueadv57szMseuYs2/T/Trl5AvY/JqXzxVN9QvJy/oZ8nKN79/0t0mtcQE3OdWwa3t8qIZ85pucIlihi6Fc3W/hqiH/n27hDqxC3W/hqiF//JkdF//PL7fF3b9iU696", 
+      "generated_at": "2018-11-19 20:51:30.064897", 
+      "type": "tier1"
+    }
+  }
+}
