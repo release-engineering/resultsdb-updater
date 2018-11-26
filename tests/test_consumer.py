@@ -873,3 +873,69 @@ def test_pelc_component_version_msg(mock_get_session):
     actual_data = json.loads(
         mock_requests.post.call_args_list[0][1]['data'])
     assert expected_data == actual_data, actual_data
+
+
+@mock.patch('resultsdbupdater.utils.retry_session')
+def test_full_consume_redhat_module_success_msg(mock_get_session):
+    mock_post_rv = mock.Mock()
+    mock_post_rv.status_code = 201
+    mock_requests = mock.Mock()
+    mock_requests.post.return_value = mock_post_rv
+    mock_get_session.return_value = mock_requests
+    fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    assert consumer.consume(fake_msg) is True
+    # Verify the post URL
+    assert mock_requests.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+    # Verify the post data
+    assert mock_requests.post.call_count == 1
+    all_expected_data = {
+        'data': {
+            'item': 'go-toolset-rhel8_8-820181119195405.b754926a',
+            'type': 'redhat-module',
+            'context': 'b754926a',
+            'name': 'go-toolset',
+            'nsvc': 'go-toolset-rhel8_8-820181119195405.b754926a',
+            'stream': 'rhel8',
+            'version': '820181119195405',
+            'mbs_id': '2240',
+            'category': 'functional',
+            'issuer': 'deparker',
+            'rebuild': (
+                'https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
+                '/job/ci-openstack-mbs/45/rebuild/parameterized'
+            ),
+            'log': (
+                'https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
+                '/job/ci-openstack-mbs/45/console'
+            ),
+            'ci_name': 'BaseOS CI',
+            'ci_url': 'https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com',
+            'ci_team': 'BaseOS QE',
+            'ci_irc': '#baseosci',
+            'ci_email': 'baseos-ci@redhat.com',
+            'system_os': None,
+            'system_provider': None,
+        },
+        'groups': [{
+            'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',
+            'url': (
+                'https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
+                '/job/ci-openstack-mbs/45/'
+            )
+        }],
+        'note': '',
+        'outcome': 'failed',
+        'ref_url': (
+            'https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/ci-openstack-mbs/45/'),
+        'testcase': {
+            'name': 'baseos-ci.redhat-module.tier1.functional',
+            'ref_url': 'https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com',
+        },
+    }
+
+    assert all_expected_data == \
+        json.loads(mock_requests.post.call_args_list[0][1]['data'])
