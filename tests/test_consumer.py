@@ -251,7 +251,8 @@ def test_full_consume_cips_msg(mock_get_session):
             'ci_environment': 'production',
             'ci_team': 'rpm-factory',
             'ci_irc': '#rpm-factory',
-            'ci_email': 'nobody@redhat.com'
+            'ci_email': 'nobody@redhat.com',
+            'recipients': []
         },
         'groups': [
             {
@@ -445,6 +446,7 @@ def test_full_consume_pipeline_failure_msg(mock_get_session):
             'ci_team': 'contra',
             'ci_irc': '#contra',
             'ci_email': 'continuous-infra@redhat.com',
+            'recipients': []
         },
         'groups': [{
             'url': 'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/',
@@ -503,6 +505,7 @@ def test_full_consume_platformci_success_msg(mock_get_session):
             'ci_team': 'BaseOS QE',
             'ci_irc': '#baseosci',
             'ci_email': 'baseos-ci@redhat.com',
+            'recipients': ['jscotka', 'ovasik']
         },
         'groups': [{
             'url': (
@@ -565,6 +568,7 @@ def test_full_consume_osci_success_msg(mock_get_session):
             'ci_team': 'contra',
             'ci_irc': '#contra',
             'ci_email': 'continuous-infra@redhat.com',
+            'recipients': []
         },
         'groups': [{
             'url': (
@@ -636,6 +640,7 @@ def test_full_consume_osci_example_2(mock_get_session, namespace, expected):
             'ci_team': 'contra',
             'ci_irc': '#contra',
             'ci_email': 'continuous-infra@redhat.com',
+            'recipients': []
         },
         'groups': [{
             'url': (
@@ -702,7 +707,8 @@ def test_full_consume_compose_msg(mock_get_session):
             'ci_team': 'RTT',
             'ci_url': 'https://rtt-jenkins',
             'ci_irc': '#rtt',
-            'ci_email': 'release-test-team<AT>redhat.com'
+            'ci_email': 'release-test-team<AT>redhat.com',
+            'recipients': []
         }
     }
 
@@ -751,6 +757,7 @@ def test_queued_outcome_msg(mock_get_session):
             'ci_team': 'Platform QE',
             'ci_irc': '#baseosci',
             'ci_email': 'platform-ci@redhat.com',
+            'recipients': []
         },
         'groups': [{'url': 'https://some-jenkins.redhat.com/job/ci-brew-dispatcher/125157/',
                    'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'}],
@@ -807,6 +814,7 @@ def test_queued_running_msg(mock_get_session):
             'ci_team': 'Platform QE',
             'ci_irc': '#baseosci',
             'ci_email': 'platform-ci@redhat.com',
+            'recipients': []
         },
         'groups': [{'url': 'https://some-jenkins.redhat.com/job/ci-covscan/109087/',
                    'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'}],
@@ -867,6 +875,7 @@ def test_pelc_component_version_msg(mock_get_session):
             'ci_url': 'https://rcm-tools-jenkins',
             'ci_irc': '#pnt-devops',
             'ci_email': 'rbean<AT>redhat.com',
+            'recipients': []
         }
     }
 
@@ -919,6 +928,13 @@ def test_full_consume_redhat_module_success_msg(mock_get_session):
             'ci_email': 'baseos-ci@redhat.com',
             'system_os': None,
             'system_provider': None,
+            'recipients': [
+                'deparker',
+                'emachado',
+                'mcermak',
+                'mprchlik',
+                'qe-baseos-tools-commits',
+            ]
         },
         'groups': [{
             'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',

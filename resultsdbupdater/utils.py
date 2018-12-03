@@ -406,6 +406,9 @@ def handle_ci_umb(msg):
             'ci_email': msg_body_ci.get('email'),
         }
 
+    # add optional recipients field
+    result_data['recipients'] = msg_body.get('recipients', [])
+
     testcase = _construct_testcase_dict(msg_body)
     if 'unknown' in testcase['name']:
         LOGGER.warn(('The message "{0}" did not contain enough information to fully build '
