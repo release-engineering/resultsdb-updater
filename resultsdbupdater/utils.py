@@ -330,6 +330,41 @@ def handle_ci_umb(msg):
                 ('category', msg_body.get('category')),
             ) if value is not None
         }
+    elif item_type == 'container-image':
+        repo = msg_body['artifact']['repository']
+        digest = msg_body['artifact']['digest']
+        item = '{0}@{1}'.format(repo, digest)
+        result_data = {
+            key: value for key, value in (
+                ('item', item),
+
+                ('ci_name', msg_body['ci']['name']),
+                ('ci_team', msg_body['ci']['team']),
+                ('ci_url', msg_body['ci']['url']),
+                ('ci_irc', msg_body['ci'].get('irc')),
+                ('ci_environment', msg_body['ci'].get('environment')),
+                ('ci_email', msg_body['ci']['email']),
+
+                ('log', msg_body['run']['log']),
+                ('rebuild', msg_body['run'].get('rebuild')),
+                ('xunit', msg_body.get('xunit')),
+
+                ('type', item_type),
+                ('repository', msg_body['artifact'].get('repository')),
+                ('digest', msg_body['artifact'].get('digest')),
+                ('format', msg_body['artifact'].get('format')),
+                ('pull_ref', msg_body['artifact'].get('pull_ref')),
+                ('scratch', msg_body['artifact'].get('scratch')),
+                ('nvr', msg_body['artifact'].get('nvr')),
+                ('issuer', msg_body['artifact'].get('issuer')),
+
+                ('system_os', system.get('os')),
+                ('system_provider', system.get('provider')),
+                ('system_architecture', system.get('architecture')),
+
+                ('category', msg_body.get('category')),
+            ) if value is not None
+        }
     elif item_type == 'redhat-module':
         msg_body_ci = msg_body['ci']
 

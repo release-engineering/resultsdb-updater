@@ -1,0 +1,56 @@
+{
+  "topic": "/topic/VirtualTopic.eng.ci.container-image.test.complete",
+  "headers": {
+    "CI_TYPE": "custom",
+    "expires": "0",
+    "timestamp": "1547722123935",
+    "original-destination": "/topic/VirtualTopic.eng.ci.container-image.test.complete",
+    "destination": "/queue/Consumer.client-datanommer.upshift-dev.VirtualTopic.eng.>",
+    "CI_NAME": "waiverdb-test-stage-waiverdb-dev-integration-test",
+    "persistent": "true",
+    "priority": "4",
+    "message-id": "ID:jenkins-7-dtj6f-40196-1544165803216-163:1:1:1:1",
+    "type": "application/json",
+    "subscription": "/queue/Consumer.client-datanommer.upshift-dev.VirtualTopic.eng.>"
+  },
+  "body": {
+    "msg": {
+      "category": "integration",
+      "status": "passed",
+      "ci": {
+        "name": "C3I Jenkins",
+        "url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/",
+        "docs": "https://pagure.io/waiverdb/blob/master/f/openshift",
+        "environment": "development",
+        "team": "DevOps",
+        "irc": "#pnt-devops-dev",
+        "email": "pnt-factory2-devel@redhat.com"
+      },
+      "run": {
+        "debug": "",
+        "url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job/waiverdb-test/job/waiverdb-test-stage-waiverdb-dev-integration-test/104/",
+        "rebuild": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job/waiverdb-test/job/waiverdb-test-stage-waiverdb-dev-integration-test/104//rebuild/parametrized",
+        "log": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job/waiverdb-test/job/waiverdb-test-stage-waiverdb-dev-integration-test/104//console"
+      },
+      "namespace": "waiverdb-test",
+      "system": [
+        {
+          "os": "docker-registry.engineering.redhat.com/factory2/waiverdb-jenkins-slave:latest",
+          "architecture": "x86_64",
+          "provider": "openshift"
+        }
+      ],
+      "artifact": {
+        "nvr": "waiverdb:test",
+        "repository": "factory2/waiverdb",
+        "scratch": true,
+        "type": "container-image",
+        "digest": "sha256:693377241d5bc55af239fdc5183bcc97d7c5c097bebe84097c4388063a3950cc",
+        "issuer": "c3i-jenkins"
+      },
+      "version": "0.1.0",
+      "xunit": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job/waiverdb-test/job/waiverdb-test-stage-waiverdb-dev-integration-test/104//artifacts/junit-functional-tests.xml",
+      "type": "tier1"
+    }
+  }
+}

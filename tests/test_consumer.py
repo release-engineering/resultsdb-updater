@@ -955,3 +955,75 @@ def test_full_consume_redhat_module_success_msg(mock_get_session):
 
     assert all_expected_data == \
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
+
+
+@mock.patch('resultsdbupdater.utils.retry_session')
+def test_container_image_msg(mock_get_session):
+    mock_post_rv = mock.Mock()
+    mock_post_rv.status_code = 201
+    mock_requests = mock.Mock()
+    mock_requests.post.return_value = mock_post_rv
+    mock_get_session.return_value = mock_requests
+    fake_msg_path = path.join(json_dir, 'container_image_message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    assert consumer.consume(fake_msg) is True
+    # Verify the post URL
+    assert mock_requests.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+    # Verify the post data
+    assert mock_requests.post.call_count == 1
+    all_expected_data = {
+        "note": "",
+        "ref_url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job/waiverdb-test"
+                   "/job/waiverdb-test-stage-waiverdb-dev-integration-test/104/",
+        "testcase": {
+            "ref_url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/",
+            "name": "waiverdb-test.tier1.integration"
+        },
+        "groups": [
+            {
+                "url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job"
+                       "/waiverdb-test/job/waiverdb-test-stage-waiverdb-dev-integration-test/104/",
+                "uuid": "1bb0a6a5-3287-4321-9dc5-72258a302a37"
+            }
+        ],
+        "outcome": "passed",
+        "data": {
+            "category": "integration",
+            "system_os": "docker-registry.engineering.redhat.com"
+                         "/factory2/waiverdb-jenkins-slave:latest",
+            "log": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job"
+                   "/waiverdb-test/job/waiverdb-test-stage-waiverdb-dev-integration-test"
+                   "/104//console",
+            "repository": "factory2/waiverdb",
+            "issuer": "c3i-jenkins",
+            "ci_environment": "development",
+            "scratch": True,
+            "ci_email": "pnt-factory2-devel@redhat.com",
+            "recipients": [
+
+            ],
+            "ci_name": "C3I Jenkins",
+            "ci_irc": "#pnt-devops-dev",
+            "item": "factory2/waiverdb@sha256:693377241d5bc55af239fdc51"
+                    "83bcc97d7c5c097bebe84097c4388063a3950cc",
+            "system_provider": "openshift",
+            "ci_url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/",
+            "xunit": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/"
+                     "job/waiverdb-test/job/waiverdb-test"
+                     "-stage-waiverdb-dev-integration-test/104/"
+                     "/artifacts/junit-functional-tests.xml",
+            "system_architecture": "x86_64",
+            "ci_team": "DevOps",
+            "type": "container-image",
+            "rebuild": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job"
+                       "/waiverdb-test/job/waiverdb"
+                       "-test-stage-waiverdb-dev-integration-test/104//rebuild/parametrized",
+            "digest": "sha256:693377241d5bc55af239fdc5183bcc97d7c5c097bebe84097c4388063a3950cc",
+            "nvr": "waiverdb:test"
+        }
+    }
+    assert all_expected_data == \
+        json.loads(mock_requests.post.call_args_list[0][1]['data'])
