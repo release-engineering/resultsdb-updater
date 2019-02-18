@@ -31,7 +31,8 @@
       "type": "tier2",
       "category": "functional",
       "status": "passed",
-      "namespace": "rtt"
+      "namespace": "rtt",
+      "version": "0.1.0"
     }
   }
 }

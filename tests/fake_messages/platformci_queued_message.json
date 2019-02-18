@@ -36,7 +36,8 @@
       "label": null, 
       "reason": null, 
       "generated_at": "2018-09-13 16:11:12.813661", 
-      "type": "covscan" 
+      "type": "covscan",
+      "version": "0.1.0"
     }
   }
 }

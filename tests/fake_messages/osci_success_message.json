@@ -32,7 +32,8 @@
                 "provider": "TODO"
             },
             "type": "pipeline",
-            "namespace":"osci"
+            "namespace":"osci",
+            "version": "0.1.0"
         }
     },
     "msg_id": "ID:jenkins-3-x34gp-33678-1523552526183-189:1:1:1:1",
