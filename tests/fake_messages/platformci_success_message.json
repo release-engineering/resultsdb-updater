@@ -50,7 +50,8 @@
       "thread_id": "90d2bbe46220-1",
       "xunit": "eJztWV1v4jgU/SsoL/PkuAmfsyqVgEbdbgtBSUbdeYpM4oKLsSPbQcP8+nU+SNMpUB462ma3L4nt3Ot7fM+1ORaXCkslU6JfV5dVu8XQBg8NofsCEaaMVv5paNjG1WUieIKFIplH2d6VDgskMZcRMTNzoHYJNlpbRNMXc8HjbtoopQpEFElZeS71U3FOzayRz0zYElbzAZEyhoXp7QcC3fDyiU6F4lssEKWgCFkFm498/5RbKqj5hNmaMAkWKaFx5blSKpF/QFiYgtLIFCu8BREB2400MVuaIk5tvc54hZQZ8Q184guoP+toTCoUreGg0+vCDAKsJzpbdqRnLvHACRfY9aHEKk2gjxhROzhGkkRA5h2QOWjaSGZ9LmtIRKtqPT8GvbDXOZWLmOiM88rhlOmKy+ccZx0wAHanC/rd/JMZYabJo9ryQI5OTbxFgiCmzgKxwGiNBdDES8LZWS4R17UVKbSgOHyxBuvCHJh6BWa/e7qgI5JgQOKzoikk13Vb++29cnbh6uJS6fOmmvBNQrHC8atKS5DQnkonqdYu3b6MR77j+uHkNgxG/p2v89Dt9fr93oXxBZ4yHxpKpPgNo3DiTufuzJkFQyMv7CP2zujO8e5vx6E3n4bX7sPs3h1dh1Mn+NO91pB26aYVE5159Va8bA364d04OqLeqBT0zQ74CSLEYhIjdQSw5wfeLAjv3Zub29nN0OgeNptx9kuhHDT7yx1r7NOx4/lnWHvO5HbuHHeAdfooXxbP1krgx3c+opCul0cUKag2idzdib935oUFi4KX0IJZMUtowwwEXCHBsJSm7hhlZdaH4MdAmXV4quoo60MfBOUTTwVD1PyxoXuU9aGsCArik5XGtn+Xln6+r1rF4VGeGh+kUApMeqRr2+221bYHxXrRNqozsu/++2wcA1yM66pJUvVIKK6jP/jtmTKYc/WSsiD/JW8EY1+bxtjX38LYhGLEmrLN2hcNI20P+B1Ig9URqVGhZa3VYltRqhBg65/YvqW1Aab9sGMynutkeI6tFJEpkk0hsqoYcK/mX+v6XFOTRaq0QoVyJxXeFCJ/r+X7n1q+kVre+tTyDdby/nc/cKah7wTf5vt0FSVIyeKwy4P7UIL6PndOJuHzorDO3k24KFiNuChY/+WLgvVaxdkfWsEcB/zOsrM6kEBDeGs3jbf2/+26cCAHnaaR1vl91wX4QsvD6v+Telte/QMHyMhu",
       "type": "tier1",
-      "namespace": "baseos"
+      "namespace": "baseos",
+      "version": "0.1.0"
     }
   }
 }

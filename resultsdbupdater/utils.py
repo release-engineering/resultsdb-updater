@@ -3,8 +3,12 @@ import json
 import uuid
 import re
 
+from collections import namedtuple
+
 import fedmsg
 import requests
+
+import semver
 
 
 CONFIG = fedmsg.config.load_config()
@@ -26,6 +30,22 @@ def update_publisher_id(data, msg):
     msg_publisher_id = msg['headers'].get('JMSXUserID')
     if msg_publisher_id:
         data['publisher_id'] = msg_publisher_id
+
+
+FedoraCiTestArray = namedtuple(
+    'FedoraCiTestArray',
+    [
+        'category',
+        'namespace',
+        'type',
+        'result',
+        'xunit',
+    ]
+)
+
+
+class RequiredFieldException(Exception):
+    pass
 
 
 def get_http_auth(user, password, url):
@@ -188,40 +208,80 @@ def handle_ci_metrics(msg):
     create_result(testcase, overall_outcome, group_tests_ref_url, result_data, groups)
 
 
-def _construct_testcase_dict(msg):
-    namespace = msg.get('namespace', 'unknown')
-    test_type = msg.get('type', 'unknown')
-    category = msg.get('category', 'unknown')
-
-    return {
-        'name': '.'.join([namespace, test_type, category]),
-        'ref_url': msg['ci']['url'],
-    }
-
-
-def _test_result_outcome(message):
+def _test_result_outcome(topic, outcome):
     """
-    Returns test result outcome value for ResultDB.
+    Returns test result outcome value for ResultDB. The outcome depends
+    on the topic and the outcome (in case of complete messages).
 
     Some systems generate outcomes that don't match spec.
 
     Test outcome is FAILED for messages with "*.error" topic.
     """
-    if message['topic'].endswith('.error'):
+    if topic.endswith('.error'):
         return 'FAILED'
-    elif message['topic'].endswith('.queued'):
+    elif topic.endswith('.queued'):
         return 'QUEUED'
-    elif message['topic'].endswith('.running'):
+    elif topic.endswith('.running'):
         return 'RUNNING'
-
-    outcome = message['body']['msg']['status']
 
     broken_mapping = {
         'pass': 'PASSED',
         'fail': 'FAILED',
         'failure': 'FAILED',
     }
-    return broken_mapping.get(outcome.lower(), outcome)
+
+    return broken_mapping.get(outcome.lower(), outcome.upper())
+
+
+def _get_required_field(message, field):
+    """
+    Try to get a required field and blows up if it was not successful.
+    """
+
+    value = message.get(field, None)
+
+    if value is None:
+        raise RequiredFieldException("Required field '{}' is missing".format(field))
+
+    return value
+
+
+def _get_test_details(topic, message):
+    """
+    Returns test details according to the version of the spec.
+    """
+    result = None
+
+    # version 0.1.x
+    if semver.match(message['version'], '<0.2.0'):
+        category = _get_required_field(message, 'category')
+        namespace = _get_required_field(message, 'namespace')
+        test_type = _get_required_field(message, 'type')
+        xunit = message.get('xunit', None)
+        result = message.get('status', None)
+
+    # version >= 0.2.0
+    else:
+        if 'test' not in message:
+            raise RequiredFieldException("Message does not contain required 'test' array")
+
+        category = _get_required_field(message['test'], 'category')
+        namespace = _get_required_field(message['test'], 'namespace')
+        test_type = _get_required_field(message['test'], 'type')
+
+        # result is required for complete messages only
+        if topic.endswith('.complete'):
+            result = _get_required_field(message['test'], 'result')
+
+        xunit = message.get('xunit', None)
+
+    return FedoraCiTestArray(
+        category=category,
+        namespace=namespace,
+        result=result,
+        type=test_type,
+        xunit=xunit
+    )
 
 
 def namespace_from_topic(topic):
@@ -311,12 +371,35 @@ def verify_topic_and_testcase_name(topic, testcase_name):
 
 
 def handle_ci_umb(msg):
-    msg_id = msg['headers']['message-id']
+    #
+    # Handle messages in Fedora CI messages format
+    #
+    # https://pagure.io/fedora-ci/messages
+    #
+
     msg_body = msg['body']['msg']
+
+    # check if required version is provided in the message
+    if 'version' not in msg_body:
+        LOGGER.error((
+            'The message "{0}" does not contain required version information'
+            .format(msg_body),
+            ', cannot continue'
+        ))
+        return
+
+    topic = msg['topic']
+
     item_type = msg_body['artifact']['type']
     test_run_url = msg_body['run']['url']
 
-    outcome = _test_result_outcome(msg)
+    try:
+        test = _get_test_details(topic, msg_body)
+    except RequiredFieldException as e:
+        LOGGER.error(e)
+        return
+
+    outcome = _test_result_outcome(topic, test.result)
 
     # variables to be passed to create_result
     groups = [{
@@ -343,8 +426,8 @@ def handle_ci_umb(msg):
 
                 ('ci_name', msg_body['ci']['name']),
                 ('ci_team', msg_body['ci']['team']),
-                ('ci_url', msg_body['ci']['url']),
-                ('ci_irc', msg_body['ci'].get('irc')),
+                ('ci_url', msg_body['ci'].get('url', 'not available')),
+                ('ci_irc', msg_body['ci'].get('irc', 'not available')),
                 ('ci_email', msg_body['ci']['email']),
 
                 ('log', msg_body['run']['log']),
@@ -356,9 +439,10 @@ def handle_ci_umb(msg):
                 ('system_architecture', architecture),
                 ('system_variant', variant),
 
-                ('category', msg_body.get('category')),
+                ('category', test.category),
             ) if value is not None
         }
+
     elif item_type == 'component-version':
         component = msg_body['artifact']['component']
         version = msg_body['artifact']['version']
@@ -369,8 +453,8 @@ def handle_ci_umb(msg):
 
                 ('ci_name', msg_body['ci']['name']),
                 ('ci_team', msg_body['ci']['team']),
-                ('ci_url', msg_body['ci']['url']),
-                ('ci_irc', msg_body['ci'].get('irc')),
+                ('ci_url', msg_body['ci'].get('url', 'not available')),
+                ('ci_irc', msg_body['ci'].get('irc', 'not available')),
                 ('ci_email', msg_body['ci']['email']),
 
                 ('log', msg_body['run']['log']),
@@ -379,9 +463,10 @@ def handle_ci_umb(msg):
                 ('component', component),
                 ('version', version),
 
-                ('category', msg_body.get('category')),
+                ('category', test.category),
             ) if value is not None
         }
+
     elif item_type == 'container-image':
         repo = msg_body['artifact']['repository']
         digest = msg_body['artifact']['digest']
@@ -392,14 +477,13 @@ def handle_ci_umb(msg):
 
                 ('ci_name', msg_body['ci']['name']),
                 ('ci_team', msg_body['ci']['team']),
-                ('ci_url', msg_body['ci']['url']),
-                ('ci_irc', msg_body['ci'].get('irc')),
-                ('ci_environment', msg_body['ci'].get('environment')),
+                ('ci_url', msg_body['ci'].get('url', 'not available')),
+                ('ci_irc', msg_body['ci'].get('irc', 'not available')),
                 ('ci_email', msg_body['ci']['email']),
 
                 ('log', msg_body['run']['log']),
                 ('rebuild', msg_body['run'].get('rebuild')),
-                ('xunit', msg_body.get('xunit')),
+                ('xunit', test.xunit),
 
                 ('type', item_type),
                 ('repository', msg_body['artifact'].get('repository')),
@@ -414,9 +498,10 @@ def handle_ci_umb(msg):
                 ('system_provider', system.get('provider')),
                 ('system_architecture', system.get('architecture')),
 
-                ('category', msg_body.get('category')),
+                ('category', test.category),
             ) if value is not None
         }
+
     elif item_type == 'redhat-module':
         msg_body_ci = msg_body['ci']
 
@@ -431,7 +516,7 @@ def handle_ci_umb(msg):
         except AttributeError:
             LOGGER.error("Invalid nsvc '{}' encountered, ignoring result".format(
                 msg_body['artifact']['nsvc']))
-            return False
+            return
 
         nsvc = '{}-{}-{}.{}'.format(name, stream, version, context)
 
@@ -439,7 +524,7 @@ def handle_ci_umb(msg):
             'item': nsvc,
             'type': item_type,
             'mbs_id': msg_body['artifact'].get('id'),
-            'category': msg_body['category'],
+            'category': test.category,
             'context': msg_body['artifact']['context'],
             'name': msg_body['artifact']['name'],
             'nsvc': nsvc,
@@ -451,13 +536,13 @@ def handle_ci_umb(msg):
             'system_os': system.get('os'),
             'system_provider': system.get('provider'),
             'ci_name': msg_body_ci.get('name'),
-            'ci_url': msg_body_ci.get('url'),
+            'ci_url': msg_body_ci.get('url', 'not available'),
             'ci_team': msg_body_ci.get('team'),
-            'ci_irc': msg_body_ci.get('irc'),
+            'ci_irc': msg_body_ci.get('irc', 'not available'),
             'ci_email': msg_body_ci.get('email'),
         }
     # used as a default
-    else:
+    elif item_type == 'brew-build':
         msg_body_ci = msg_body['ci']
         item = msg_body['artifact']['nvr']
         component = msg_body['artifact']['component']
@@ -477,7 +562,7 @@ def handle_ci_umb(msg):
             'item': item,
             'type': item_type,
             'brew_task_id': brew_task_id,
-            'category': msg_body['category'],
+            'category': test.category,
             'component': component,
             'scratch': scratch,
             'issuer': msg_body['artifact'].get('issuer'),
@@ -486,25 +571,34 @@ def handle_ci_umb(msg):
             'system_os': system.get('os'),
             'system_provider': system.get('provider'),
             'ci_name': msg_body_ci.get('name'),
-            'ci_url': msg_body_ci.get('url'),
-            'ci_environment': msg_body_ci.get('environment'),
+            'ci_url': msg_body_ci.get('url', 'not available'),
             'ci_team': msg_body_ci.get('team'),
-            'ci_irc': msg_body_ci.get('irc'),
+            'ci_irc': msg_body_ci.get('irc', 'not available'),
             'ci_email': msg_body_ci.get('email'),
         }
 
-    # add optional recipients field
-    result_data['recipients'] = msg_body.get('recipients', [])
+    # an unknown artifact type
+    else:
+        LOGGER.error("Artifact type '{}' handling not implemented".format(item_type))
+        return
+
+    # add optional recipients field, according to the version
+    if semver.match(msg_body['version'], '<0.2.0'):
+        result_data['recipients'] = msg_body.get('recipients', [])
+
+    else:
+        notification = msg_body.get('notification', None)
+
+        if notification:
+            result_data['recipients'] = notification.get('recipients', [])
 
     update_publisher_id(data=result_data, msg=msg)
 
-    testcase = _construct_testcase_dict(msg_body)
-    if 'unknown' in testcase['name']:
-        LOGGER.warning(
-            'The message "{0}" did not contain enough information to fully build a '
-            'testcase name. Using "{1}".'
-            .format(msg_id, testcase['name'])
-        )
+    # construct resultsdb testcase dict
+    testcase = {
+        'name': '.'.join([test.namespace, test.type, test.category]),
+        'ref_url': msg_body['run']['url'],
+    }
 
     if not verify_topic_and_testcase_name(msg['topic'], testcase['name']):
         return

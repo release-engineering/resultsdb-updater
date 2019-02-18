@@ -48,7 +48,8 @@
       },
       "reason": "unknown execution error",
       "type": "pipeline",
-      "namespace": "contra"
+      "namespace": "contra",
+      "version": "0.1.0"
     }
   }
 }
