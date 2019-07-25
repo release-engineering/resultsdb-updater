@@ -19,6 +19,16 @@ logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
 
 
+def update_publisher_id(data, msg):
+    """
+    Sets data['publisher_id'] to message publisher ID (JMSXUserID) if it
+    exists.
+    """
+    msg_publisher_id = msg['headers'].get('JMSXUserID')
+    if msg_publisher_id:
+        data['publisher_id'] = msg_publisher_id
+
+
 def get_http_auth(user, password, url):
     """Return an auth tuple to be used with requests
 
@@ -188,6 +198,8 @@ def handle_ci_metrics(msg):
         test['artifact'] = artifact
         test['brew_task_id'] = brew_task_id
 
+        update_publisher_id(data=test, msg=msg)
+
         if not create_result(session, testcase, outcome, group_tests_ref_url,
                              test, groups):
             LOGGER.error(
@@ -209,6 +221,8 @@ def handle_ci_metrics(msg):
         'artifact': artifact,
         'brew_task_id': brew_task_id
     }
+
+    update_publisher_id(data=result_data, msg=msg)
 
     if not create_result(session, testcase, overall_outcome,
                          group_tests_ref_url, result_data, groups):
@@ -444,6 +458,8 @@ def handle_ci_umb(msg):
     # add optional recipients field
     result_data['recipients'] = msg_body.get('recipients', [])
 
+    update_publisher_id(data=result_data, msg=msg)
+
     testcase = _construct_testcase_dict(msg_body)
     if 'unknown' in testcase['name']:
         LOGGER.warn(('The message "{0}" did not contain enough information to fully build '
@@ -488,12 +504,14 @@ def handle_resultsdb_format(msg):
         }]
 
         for testcase, result in msg_body['results'].items():
+            result_data = result.get('data', {})
+            update_publisher_id(data=result_data, msg=msg)
             result_rv = create_result(
                 session,
                 testcase,
                 result['outcome'],
                 result.get('ref_url', ''),
-                result.get('data', {}),
+                result_data,
                 groups,
                 result.get('note', ''),
             )
@@ -513,12 +531,15 @@ def handle_resultsdb_format(msg):
             'description': group_ref_url
         }]
 
+        result_data = msg_body['data']
+        update_publisher_id(data=result_data, msg=msg)
+
         result_rv = create_result(
             session,
             msg_body['testcase'],
             msg_body['outcome'],
             msg_body['ref_url'],
-            msg_body['data'],
+            result_data,
             groups,
             msg_body.get('note', '')
         )

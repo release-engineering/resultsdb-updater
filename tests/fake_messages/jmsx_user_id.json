@@ -1,0 +1,51 @@
+{
+  "topic": "/topic/VirtualTopic.eng.ci.component-version.test.complete",
+  "body": {
+    "msg": {
+      "artifact": {
+        "component": "setup",
+        "id": "0",
+        "nvr": "nethack-prod-3.4.3-21346.fc11",
+        "scratch": "false",
+        "type": "koji_build"
+      },
+      "category": "validation",
+      "ci": {
+        "email": "example-ci@example.com",
+        "irc": "#example",
+        "name": "example-ci",
+        "team": "Example",
+        "url": "https://ci.example.com/"
+      },
+      "namespace": "example.testcase",
+      "run": {
+        "log": "https://ci.example.com/job/example/111/console",
+        "url": "https://ci.example.com/job/example/111/"
+      },
+      "status": "PASSED",
+      "system": {
+        "provider": "example-ci"
+      },
+      "type": "tier0",
+      "outcome": "PASSED",
+      "ref_url": "https://ci.example.com/job/example/111/",
+      "data": {},
+      "testcase": {
+          "name": "example.testcase.tier0.validation"
+      },
+      "job_name": "example-ci-job",
+      "jenkins_job_url": "https://ci.example.com/job/example/",
+      "jenkins_build_url": "https://ci.example.com/job/example/111/",
+      "tests": [
+        {
+          "failed": 0,
+          "executed": 1
+        }
+      ]
+    }
+  },
+  "headers": {
+    "message-id": "test message",
+    "JMSXUserID": "msg-example-ci"
+  }
+}
