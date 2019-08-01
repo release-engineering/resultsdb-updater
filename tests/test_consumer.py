@@ -5,6 +5,8 @@ import json
 import pytest
 import mock
 
+import resultsdbupdater.utils
+
 from resultsdbupdater import consumer as ciconsumer
 
 
@@ -1027,3 +1029,36 @@ def test_container_image_msg(mock_get_session):
     }
     assert all_expected_data == \
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
+
+
+@mock.patch('resultsdbupdater.utils.retry_session')
+@pytest.mark.parametrize('consume_fn', (
+    resultsdbupdater.utils.handle_ci_umb,
+    resultsdbupdater.utils.handle_ci_metrics,
+    resultsdbupdater.utils.handle_resultsdb_format,
+))
+def test_publisher_id(mock_get_session, consume_fn):
+    mock_post_rv = mock.Mock()
+    mock_post_rv.status_code = 201
+
+    mock_get_rv = mock.Mock()
+    mock_get_rv.status_code = 200
+    mock_get_rv.json.return_value = {'data': []}
+
+    mock_requests = mock.Mock()
+    mock_requests.post.return_value = mock_post_rv
+    mock_requests.get.return_value = mock_get_rv
+    mock_get_session.return_value = mock_requests
+
+    fake_msg_path = path.join(json_dir, 'jmsx_user_id.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    assert consume_fn(fake_msg) is True
+    # Verify the post URL
+    assert mock_requests.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+
+    actual_data = json.loads(
+        mock_requests.post.call_args_list[0][1]['data'])
+    assert 'msg-example-ci' == actual_data['data'].get('publisher_id'), actual_data
