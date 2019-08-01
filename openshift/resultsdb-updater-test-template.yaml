@@ -68,6 +68,10 @@ objects:
         'resultsdb-updater.resultsdb_api_ca': False,
         'resultsdb-updater.resultsdb_user': 'resultsdb-updater',
         'resultsdb-updater.resultsdb_pass': 'password',
+        'resultsdb-updater.resultsdb_api_invalid_msg_publisher_ids': (
+            None,
+            'msg-rh-jenkins-ci-plugin',
+        ),
         'resultsdb-updater.topics': ["/queue/Consumer.mister.queue.VirtualTopic.Test"],
         'moksha.blocking_mode': True,
       }

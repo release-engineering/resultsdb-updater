@@ -17,6 +17,13 @@ config = {
     'resultsdb-updater.log_level': logging.INFO,
     'resultsdb-updater.resultsdb_api_url': 'https://resultsdb.domain.local/api/v2.0',
     'resultsdb-updater.resultsdb_api_ca': None,
+
+    # List of invalid message publisher IDs (from JMSXUserID message header).
+    # Invalid message IDs will be logged.
+    'resultsdb-updater.resultsdb_api_invalid_msg_publisher_ids': (
+        None,
+    ),
+
     # User and password for ResultsDB HTTP Basic authentication.
     # Used only for creating results.
     # 'resultsdb-updater.resultsdb_user': 'resultsdb-updater',

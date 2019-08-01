@@ -12,6 +12,8 @@ from requests.packages.urllib3.util.retry import Retry
 CONFIG = fedmsg.config.load_config()
 RESULTSDB_API_URL = CONFIG.get('resultsdb-updater.resultsdb_api_url')
 TRUSTED_CA = CONFIG.get('resultsdb-updater.resultsdb_api_ca')
+INVALID_MSG_PUBLISHER_IDS = CONFIG.get(
+    'resultsdb-updater.resultsdb_api_invalid_msg_publisher_ids', ())
 
 LOGGER = logging.getLogger('CIConsumer')
 log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -19,13 +21,28 @@ logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
 
 
-def update_publisher_id(data, msg):
+def update_publisher_id(data, msg, testcase):
     """
     Sets data['publisher_id'] to message publisher ID (JMSXUserID) if it
     exists.
+
+    Args:
+        data (dict) - output data for ResultsDB
+        msg (dict) - consumed message
+        testcase (dict) - testcase dictionary for ResultsDB,
+            should contain keys 'name' and 'ref_url'
     """
     msg_publisher_id = msg['headers'].get('JMSXUserID')
-    if msg_publisher_id:
+
+    if msg_publisher_id in INVALID_MSG_PUBLISHER_IDS:
+        msg_id = msg['headers']['message-id']
+        source = testcase.get('ref_url')
+        testcase_name = testcase.get('name')
+        LOGGER.info(
+            'Invalid JMSXUserID in message header ("%s"), '
+            'source:%s, testcase:%s, message-id:%s',
+            msg_publisher_id, source, testcase_name, msg_id)
+    elif msg_publisher_id:
         data['publisher_id'] = msg_publisher_id
 
 
@@ -198,7 +215,7 @@ def handle_ci_metrics(msg):
         test['artifact'] = artifact
         test['brew_task_id'] = brew_task_id
 
-        update_publisher_id(data=test, msg=msg)
+        update_publisher_id(data=test, msg=msg, testcase=testcase)
 
         if not create_result(session, testcase, outcome, group_tests_ref_url,
                              test, groups):
@@ -222,7 +239,7 @@ def handle_ci_metrics(msg):
         'brew_task_id': brew_task_id
     }
 
-    update_publisher_id(data=result_data, msg=msg)
+    update_publisher_id(data=test, msg=msg, testcase=testcase)
 
     if not create_result(session, testcase, overall_outcome,
                          group_tests_ref_url, result_data, groups):
@@ -458,12 +475,12 @@ def handle_ci_umb(msg):
     # add optional recipients field
     result_data['recipients'] = msg_body.get('recipients', [])
 
-    update_publisher_id(data=result_data, msg=msg)
-
     testcase = _construct_testcase_dict(msg_body)
     if 'unknown' in testcase['name']:
         LOGGER.warn(('The message "{0}" did not contain enough information to fully build '
                      'a testcase name. Using "{1}".').format(msg_id, testcase['name']))
+
+    update_publisher_id(data=result_data, msg=msg, testcase=testcase)
 
     if not create_result(session, testcase, outcome, test_run_url, result_data, groups):
         LOGGER.error(
@@ -483,7 +500,8 @@ def handle_resultsdb_format(msg):
     rpmdiff_url_regex_pattern = \
         r'^(?P<url_prefix>http.+\/run\/)(?P<run>\d+)(?:\/)?(?P<result>\d+)?$'
 
-    if msg_body.get('testcase', {}).get('name', '').startswith('dist.rpmdiff'):
+    testcase = msg_body.get('testcase', {})
+    if testcase.get('name', '').startswith('dist.rpmdiff'):
         rpmdiff_url_regex_match = re.match(
             rpmdiff_url_regex_pattern, msg_body['ref_url'])
 
@@ -503,12 +521,19 @@ def handle_resultsdb_format(msg):
             'ref_url': group_ref_url
         }]
 
-        for testcase, result in msg_body['results'].items():
+        for testcase_name, result in msg_body['results'].items():
             result_data = result.get('data', {})
-            update_publisher_id(data=result_data, msg=msg)
+            update_publisher_id(
+                data=result_data,
+                msg=msg,
+                testcase={
+                    'name': testcase_name,
+                    'ref_url': testcase.get('ref_url'),
+                }
+            )
             result_rv = create_result(
                 session,
-                testcase,
+                testcase_name,
                 result['outcome'],
                 result.get('ref_url', ''),
                 result_data,
@@ -532,11 +557,11 @@ def handle_resultsdb_format(msg):
         }]
 
         result_data = msg_body['data']
-        update_publisher_id(data=result_data, msg=msg)
+        update_publisher_id(data=result_data, msg=msg, testcase=testcase)
 
         result_rv = create_result(
             session,
-            msg_body['testcase'],
+            testcase,
             msg_body['outcome'],
             msg_body['ref_url'],
             result_data,
