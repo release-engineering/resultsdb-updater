@@ -1062,3 +1062,43 @@ def test_publisher_id(mock_get_session, consume_fn):
     actual_data = json.loads(
         mock_requests.post.call_args_list[0][1]['data'])
     assert 'msg-example-ci' == actual_data['data'].get('publisher_id'), actual_data
+
+
+def test_topic_namespace_match():
+    fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    fake_msg['topic'] = '/topic/VirtualTopic.eng.ci.baseos-ci.redhat-module.test.complete'
+
+    with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
+        assert consumer.consume(fake_msg) is True
+        mock_create_result.assert_called_once()
+
+
+def test_topic_namespace_mismatch(caplog):
+    fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    fake_msg['topic'] = '/topic/VirtualTopic.eng.ci.bad-ci.redhat-module.test.complete'
+
+    with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
+        assert consumer.consume(fake_msg) is False
+        mock_create_result.assert_not_called()
+        assert any(
+            'namespace "baseos-ci" does not match message topic' in rec.message
+            for rec in caplog.records)
+
+
+def test_topic_namespace_missing(caplog):
+    fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
+        assert consumer.consume(fake_msg) is True
+        mock_create_result.assert_called_once()
+        assert any(
+            'uses old scheme not containing namespace' in rec.message
+            for rec in caplog.records)

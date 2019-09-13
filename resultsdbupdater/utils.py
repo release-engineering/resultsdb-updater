@@ -270,6 +270,92 @@ def _test_result_outcome(message):
     return broken_mapping.get(outcome.lower(), outcome)
 
 
+def namespace_from_topic(topic):
+    """
+    Returns namespace from message topic.
+
+    Returns None if the topic does not have the expected format.
+
+    The expected topic format is:
+
+        /topic/VirtualTopic.eng.ci.<namespace>.<artifact>.<event>.{queued,running,complete,error}
+    """
+    if not topic.startswith('/topic/VirtualTopic.eng.ci.'):
+        return None
+
+    topic_components = topic.split('.')
+    if len(topic_components) != 7:
+        return None
+
+    return topic_components[3]
+
+
+def namespace_from_testcase_name(testcase_name):
+    """
+    Returns namespace from test case name.
+
+    Namespace is the component before the first dot.
+    """
+    return testcase_name.split('.', 1)[0]
+
+
+def verify_topic_and_testcase_name(topic, testcase_name):
+    """
+    Verifies that the topic contains same namespace as the test case name.
+
+    If an old topic format is encountered, this test is skipped and a warning
+    is logged. This will be removed in the future after everyone uses the new
+    topic format.
+
+    The new topic format is:
+
+        /topic/VirtualTopic.eng.ci.<namespace>.<artifact>.<event>.{queued,running,complete,error}
+
+    Returns true only if topic format is different or the namespace does not
+    match.
+
+    Note: If the "namespace" field in the message contains ".", only the
+    component before the first "." is expected to be in the topic.
+
+    Example:
+
+    - Message body:
+
+        "msg": {
+          "category": "functional",
+          "namespace": "baseos-ci.redhat-module",
+          "type": "tier1",
+          ...
+        }
+
+    - Test case name:
+
+        baseos-ci.redhat-module.tier1.functional
+
+    - Example of expected topic:
+
+        /topic/VirtualTopic.eng.ci.baseos-ci.redhat-module.test.complete
+    """
+    topic_namespace = namespace_from_topic(topic)
+    if not topic_namespace:
+        LOGGER.warning(
+            'The message topic "%s" uses old scheme not containing '
+            'namespace from test case name "%s"',
+            topic, testcase_name)
+        # Old topics are allowed for now.
+        return True
+
+    testcase_namespace = namespace_from_testcase_name(testcase_name)
+    if testcase_namespace != topic_namespace:
+        LOGGER.warning(
+            'Test case "%s" namespace "%s" does not match '
+            'message topic "%s" namespace "%s"',
+            testcase_name, testcase_namespace, topic, topic_namespace)
+        return False
+
+    return True
+
+
 def handle_ci_umb(msg):
     session = retry_session()
 
@@ -464,6 +550,9 @@ def handle_ci_umb(msg):
     if 'unknown' in testcase['name']:
         LOGGER.warn(('The message "{0}" did not contain enough information to fully build '
                      'a testcase name. Using "{1}".').format(msg_id, testcase['name']))
+
+    if not verify_topic_and_testcase_name(msg['topic'], testcase['name']):
+        return False
 
     if not create_result(session, testcase, outcome, test_run_url, result_data, groups):
         LOGGER.error(
