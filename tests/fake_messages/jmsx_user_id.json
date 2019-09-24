@@ -2,12 +2,14 @@
   "topic": "/topic/VirtualTopic.eng.ci.component-version.test.complete",
   "body": {
     "msg": {
+      "version": "0.1.0",
       "artifact": {
         "component": "setup",
         "id": "0",
         "nvr": "nethack-prod-3.4.3-21346.fc11",
         "scratch": "false",
-        "type": "koji_build"
+        "version": "1.2.3",
+        "type": "component-version"
       },
       "category": "validation",
       "ci": {
