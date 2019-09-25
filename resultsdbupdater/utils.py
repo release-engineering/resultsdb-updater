@@ -12,6 +12,7 @@ from requests.packages.urllib3.util.retry import Retry
 CONFIG = fedmsg.config.load_config()
 RESULTSDB_API_URL = CONFIG.get('resultsdb-updater.resultsdb_api_url')
 TRUSTED_CA = CONFIG.get('resultsdb-updater.resultsdb_api_ca')
+TIMEOUT = CONFIG.get('resultsdb-updater.requests_timeout', 15)
 
 LOGGER = logging.getLogger('CIConsumer')
 log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -110,6 +111,7 @@ def create_result(session, testcase, outcome, ref_url, data, groups=None,
             'data': data}),
         headers={'content-type': 'application/json'},
         auth=RESULTSDB_AUTH,
+        timeout=TIMEOUT,
         verify=TRUSTED_CA)
     if post_req.status_code == 201:
         return True
@@ -123,6 +125,7 @@ def create_result(session, testcase, outcome, ref_url, data, groups=None,
 def get_first_group(session, description):
     get_req = session.get(
         '{0}/groups?description={1}'.format(RESULTSDB_API_URL, description),
+        timeout=TIMEOUT,
         verify=TRUSTED_CA
     )
     if get_req.status_code == 200:

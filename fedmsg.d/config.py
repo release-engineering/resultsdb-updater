@@ -21,5 +21,6 @@ config = {
     # Used only for creating results.
     # 'resultsdb-updater.resultsdb_user': 'resultsdb-updater',
     # 'resultsdb-updater.resultsdb_pass': 'password',
-    'resultsdb-updater.topics': []
+    'resultsdb-updater.topics': [],
+    'resultsdb-updater.requests_timeout': 15,
 }
