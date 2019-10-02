@@ -5,8 +5,6 @@ import re
 
 import fedmsg
 import requests
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 
 
 CONFIG = fedmsg.config.load_config()
@@ -69,28 +67,6 @@ RESULTSDB_AUTH = get_http_auth(
     RESULTSDB_API_URL)
 
 
-def retry_session():
-    # This will give the total wait time in minutes:
-    # >>> sum([min((0.3 * (2 ** (i - 1))), 120) / 60 for i in range(24)])
-    # >>> 30.5575
-    # This works by the using the minimum time in seconds of the backoff time
-    # and the max back off time which defaults to 120 seconds. The backoff time
-    # increases after every failed attempt.
-    session = requests.Session()
-    retry = Retry(
-        total=24,
-        read=5,
-        connect=24,
-        backoff_factor=0.3,
-        status_forcelist=(500, 502, 504),
-        method_whitelist=('GET', 'POST'),
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-    return session
-
-
 def get_error_from_request(request):
     try:
         return request.json().get('message')
@@ -98,9 +74,8 @@ def get_error_from_request(request):
         return request.text
 
 
-def create_result(session, testcase, outcome, ref_url, data, groups=None,
-                  note=None):
-    post_req = session.post(
+def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
+    post_req = requests.post(
         '{0}/results'.format(RESULTSDB_API_URL),
         data=json.dumps({
             'testcase': testcase,
@@ -113,35 +88,23 @@ def create_result(session, testcase, outcome, ref_url, data, groups=None,
         auth=RESULTSDB_AUTH,
         timeout=TIMEOUT,
         verify=TRUSTED_CA)
-    if post_req.status_code == 201:
-        return True
-    else:
-        message = get_error_from_request(post_req)
-        LOGGER.error(
-            'The result failed with the following: {0}'.format(message))
-        return False
+    post_req.raise_for_status()
 
 
-def get_first_group(session, description):
-    get_req = session.get(
+def get_first_group(description):
+    get_req = requests.get(
         '{0}/groups?description={1}'.format(RESULTSDB_API_URL, description),
         timeout=TIMEOUT,
         verify=TRUSTED_CA
     )
-    if get_req.status_code == 200:
-        if len(get_req.json()['data']) > 0:
-            return get_req.json()['data'][0]
-        else:
-            return {}
-    else:
-        message = get_error_from_request(get_req)
-        raise RuntimeError(
-            'The query for groups failed with the following: {0}'.format(
-                message))
+    get_req.raise_for_status()
+    if len(get_req.json()['data']) > 0:
+        return get_req.json()['data'][0]
+
+    return {}
 
 
 def handle_ci_metrics(msg):
-    session = retry_session()
     msg_id = msg['headers']['message-id']
     team = msg['body']['msg'].get('team', 'unassigned')
     if team == 'unassigned':
@@ -202,13 +165,7 @@ def handle_ci_metrics(msg):
         test['brew_task_id'] = brew_task_id
 
         update_publisher_id(data=test, msg=msg)
-
-        if not create_result(session, testcase, outcome, group_tests_ref_url,
-                             test, groups):
-            LOGGER.error(
-                'A new result for message "{0}" couldn\'t be created'
-                .format(msg_id))
-            return False
+        create_result(testcase, outcome, group_tests_ref_url, test, groups)
 
     # Create the overall test result
     testcase = {
@@ -226,15 +183,7 @@ def handle_ci_metrics(msg):
     }
 
     update_publisher_id(data=result_data, msg=msg)
-
-    if not create_result(session, testcase, overall_outcome,
-                         group_tests_ref_url, result_data, groups):
-        LOGGER.error(
-            'An overall result for message "{0}" couldn\'t be created'
-            .format(msg_id))
-        return False
-
-    return True
+    create_result(testcase, overall_outcome, group_tests_ref_url, result_data, groups)
 
 
 def _construct_testcase_dict(msg):
@@ -360,8 +309,6 @@ def verify_topic_and_testcase_name(topic, testcase_name):
 
 
 def handle_ci_umb(msg):
-    session = retry_session()
-
     msg_id = msg['headers']['message-id']
     msg_body = msg['body']['msg']
     item_type = msg_body['artifact']['type']
@@ -555,21 +502,12 @@ def handle_ci_umb(msg):
                      'a testcase name. Using "{1}".').format(msg_id, testcase['name']))
 
     if not verify_topic_and_testcase_name(msg['topic'], testcase['name']):
-        return False
+        return
 
-    if not create_result(session, testcase, outcome, test_run_url, result_data, groups):
-        LOGGER.error(
-            'A result for message "{0}" couldn\'t be created'
-            .format(msg_id))
-        return False
-
-    return True
+    create_result(testcase, outcome, test_run_url, result_data, groups)
 
 
 def handle_resultsdb_format(msg):
-    session = retry_session()
-    error_msg = 'A new result for message "{0}" couldn\'t be created'
-    msg_id = msg['headers']['message-id']
     msg_body = msg['body']['msg']
     group_ref_url = msg_body['ref_url']
     rpmdiff_url_regex_pattern = \
@@ -598,8 +536,7 @@ def handle_resultsdb_format(msg):
         for testcase, result in msg_body['results'].items():
             result_data = result.get('data', {})
             update_publisher_id(data=result_data, msg=msg)
-            result_rv = create_result(
-                session,
+            create_result(
                 testcase,
                 result['outcome'],
                 result.get('ref_url', ''),
@@ -607,15 +544,12 @@ def handle_resultsdb_format(msg):
                 groups,
                 result.get('note', ''),
             )
-            if not result_rv:
-                LOGGER.error(error_msg.format(msg_id))
-                return False
 
     else:
         groups = [{
             # Check to see if there is a group already for these sets of tests,
             # otherwise, generate a UUID
-            'uuid': get_first_group(session, group_ref_url).get(
+            'uuid': get_first_group(group_ref_url).get(
                 'uuid', str(uuid.uuid4())),
             'ref_url': group_ref_url,
             # Set the description to the ref_url so that we can query for the
@@ -626,8 +560,7 @@ def handle_resultsdb_format(msg):
         result_data = msg_body['data']
         update_publisher_id(data=result_data, msg=msg)
 
-        result_rv = create_result(
-            session,
+        create_result(
             msg_body['testcase'],
             msg_body['outcome'],
             msg_body['ref_url'],
@@ -635,9 +568,3 @@ def handle_resultsdb_format(msg):
             groups,
             msg_body.get('note', '')
         )
-
-        if not result_rv:
-            LOGGER.error(error_msg.format(msg_id))
-            return False
-
-    return True

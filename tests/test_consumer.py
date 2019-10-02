@@ -4,6 +4,7 @@ import json
 
 import pytest
 import mock
+import requests
 
 import resultsdbupdater.utils
 
@@ -22,18 +23,13 @@ uuid_patcher = mock.patch(
 uuid_patcher.start()
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_msg(mock_get_session):
-    mock_rv = mock.Mock()
-    mock_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the URLs called
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -98,27 +94,20 @@ def test_full_consume_msg(mock_get_session):
     assert expected_data_two == actual_data_two, actual_data_two
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_overall_rpmdiff_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_get_rv = mock.Mock()
-    mock_get_rv.status_code = 200
-    mock_get_rv.json.return_value = {
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_overall_rpmdiff_msg(mock_requests):
+    mock_requests.get.return_value.json.return_value = {
         'data': [{
             'description': 'https://domain.local/run/12345',
             'uuid': '529da400-fc74-4b28-af81-52f56816a2cb'
         }]
     }
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_requests.get.return_value = mock_get_rv
-    mock_get_session.return_value = mock_requests
+
     fake_msg_path = path.join(json_dir, 'rpmdiff_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
     # result to
     mock_requests.get.assert_called_once_with(
@@ -158,22 +147,14 @@ def test_full_consume_overall_rpmdiff_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_rpmdiff_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_get_rv = mock.Mock()
-    mock_get_rv.status_code = 200
-    mock_get_rv.json.return_value = {'data': []}
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_requests.get.return_value = mock_get_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_rpmdiff_msg(mock_requests):
+    mock_requests.get.return_value.json.return_value = {'data': []}
     fake_msg_path = path.join(json_dir, 'rpmdiff_message_two.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
     # result to, but this time nothing was returned
     mock_requests.get.assert_called_once_with(
@@ -212,18 +193,13 @@ def test_full_consume_rpmdiff_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_cips_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_cips_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'cips_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -281,22 +257,14 @@ def test_full_consume_cips_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_covscan_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_get_rv = mock.Mock()
-    mock_get_rv.status_code = 200
-    mock_get_rv.json.return_value = {'data': []}
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_requests.get.return_value = mock_get_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_covscan_msg(mock_requests):
+    mock_requests.get.return_value.json.return_value = {'data': []}
     fake_msg_path = path.join(json_dir, 'covscan_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
     # result to, but this time nothing was returned
     mock_requests.get.assert_called_once_with(
@@ -339,18 +307,13 @@ def test_full_consume_covscan_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_bulk_results_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_bulk_results_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'bulk_results_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     all_expected_data = {
         'dva.ami.memory': {
             'data': {'item': 'ami-b63769a1'},
@@ -400,28 +363,23 @@ def test_full_consume_bulk_results_msg(mock_get_session):
     assert len(testcase_names) == 0, msg
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_bogus_msg(mock_get_session):
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_bogus_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'bogus.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is False
-    mock_get_session.assert_not_called()
+    consumer.consume(fake_msg)
+    mock_requests.post.assert_not_called()
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_pipeline_failure_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_pipeline_failure_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'pipeline_failure_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -470,18 +428,13 @@ def test_full_consume_pipeline_failure_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_platformci_success_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_platformci_success_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'platformci_success_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -533,18 +486,13 @@ def test_full_consume_platformci_success_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_osci_success_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_osci_success_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'osci_success_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -600,14 +548,9 @@ def test_full_consume_osci_success_msg(mock_get_session):
     (None, 'unknown.tier0.functional'),
     ('cheese', 'cheese.tier0.functional')
 ])
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_osci_example_2(mock_get_session, namespace, expected):
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_osci_example_2(mock_requests, namespace, expected):
     """ Testing a second OSCI message that didn't do what we expected. """
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
     fake_msg_path = path.join(json_dir, 'osci_example_2.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
@@ -616,7 +559,7 @@ def test_full_consume_osci_example_2(mock_get_session, namespace, expected):
     else:
         fake_msg['body']['msg']['namespace'] = namespace
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -668,18 +611,13 @@ def test_full_consume_osci_example_2(mock_get_session, namespace, expected):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_compose_msg(mock_get_session):
-    mock_rv = mock.Mock()
-    mock_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_compose_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'compose_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the URLs called
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -722,18 +660,13 @@ def test_full_consume_compose_msg(mock_get_session):
     assert expected_data == actual_data, actual_data
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_queued_outcome_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_queued_outcome_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'platformci_queued_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -779,18 +712,13 @@ def test_queued_outcome_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_queued_running_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_queued_running_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'platformci_running_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -836,18 +764,13 @@ def test_queued_running_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_pelc_component_version_msg(mock_get_session):
-    mock_rv = mock.Mock()
-    mock_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_pelc_component_version_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'pelc_component_version.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -889,18 +812,13 @@ def test_pelc_component_version_msg(mock_get_session):
     assert expected_data == actual_data, actual_data
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_full_consume_redhat_module_success_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_redhat_module_success_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -962,18 +880,13 @@ def test_full_consume_redhat_module_success_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
-def test_container_image_msg(mock_get_session):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_get_session.return_value = mock_requests
+@mock.patch('resultsdbupdater.utils.requests')
+def test_container_image_msg(mock_requests):
     fake_msg_path = path.join(json_dir, 'container_image_message.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consumer.consume(fake_msg) is True
+    consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -1034,30 +947,20 @@ def test_container_image_msg(mock_get_session):
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.retry_session')
+@mock.patch('resultsdbupdater.utils.requests')
 @pytest.mark.parametrize('consume_fn', (
     resultsdbupdater.utils.handle_ci_umb,
     resultsdbupdater.utils.handle_ci_metrics,
     resultsdbupdater.utils.handle_resultsdb_format,
 ))
-def test_publisher_id(mock_get_session, consume_fn):
-    mock_post_rv = mock.Mock()
-    mock_post_rv.status_code = 201
-
-    mock_get_rv = mock.Mock()
-    mock_get_rv.status_code = 200
-    mock_get_rv.json.return_value = {'data': []}
-
-    mock_requests = mock.Mock()
-    mock_requests.post.return_value = mock_post_rv
-    mock_requests.get.return_value = mock_get_rv
-    mock_get_session.return_value = mock_requests
+def test_publisher_id(mock_requests, consume_fn):
+    mock_requests.get.return_value.json.return_value = {'data': []}
 
     fake_msg_path = path.join(json_dir, 'jmsx_user_id.json')
     with open(fake_msg_path) as fake_msg_file:
         fake_msg = json.load(fake_msg_file)
 
-    assert consume_fn(fake_msg) is True
+    consume_fn(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -1075,7 +978,7 @@ def test_topic_namespace_match():
     fake_msg['topic'] = '/topic/VirtualTopic.eng.ci.baseos-ci.redhat-module.test.complete'
 
     with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
-        assert consumer.consume(fake_msg) is True
+        consumer.consume(fake_msg)
         mock_create_result.assert_called_once()
 
 
@@ -1087,7 +990,7 @@ def test_topic_namespace_mismatch(caplog):
     fake_msg['topic'] = '/topic/VirtualTopic.eng.ci.bad-ci.redhat-module.test.complete'
 
     with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
-        assert consumer.consume(fake_msg) is False
+        consumer.consume(fake_msg)
         mock_create_result.assert_not_called()
         assert any(
             'namespace "baseos-ci" does not match message topic' in rec.message
@@ -1100,8 +1003,31 @@ def test_topic_namespace_missing(caplog):
         fake_msg = json.load(fake_msg_file)
 
     with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
-        assert consumer.consume(fake_msg) is True
+        consumer.consume(fake_msg)
         mock_create_result.assert_called_once()
         assert any(
             'uses old scheme not containing namespace' in rec.message
             for rec in caplog.records)
+
+
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_post_failed(mock_requests):
+    mock_requests.post.return_value.raise_for_status.side_effect = \
+        requests.exceptions.HTTPError()
+    fake_msg_path = path.join(json_dir, 'message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        consumer.consume(fake_msg)
+
+
+@mock.patch('resultsdbupdater.utils.requests')
+def test_full_consume_post_timeout(mock_requests):
+    mock_requests.post.side_effect = requests.exceptions.Timeout()
+    fake_msg_path = path.join(json_dir, 'message.json')
+    with open(fake_msg_path) as fake_msg_file:
+        fake_msg = json.load(fake_msg_file)
+
+    with pytest.raises(requests.exceptions.Timeout):
+        consumer.consume(fake_msg)
