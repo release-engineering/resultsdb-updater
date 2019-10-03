@@ -108,16 +108,18 @@ def handle_ci_metrics(msg):
     msg_id = msg['headers']['message-id']
     team = msg['body']['msg'].get('team', 'unassigned')
     if team == 'unassigned':
-        LOGGER.warn((
+        LOGGER.warning(
             'The message "{0}" did not contain a team. Using "unassigned" as '
-            'the team namespace section of the Test Case').format(msg_id))
+            'the team namespace section of the Test Case'
+            .format(msg_id)
+        )
 
     if 'job_name' in msg['body']['msg']:
         test_name = msg['body']['msg']['job_name']  # new format
     else:
         # This should eventually be deprecated and removed.
         test_name = msg['body']['msg']['job_names']  # old format
-        LOGGER.warn('Saw message "{0}" with job_names field.'.format(msg_id))
+        LOGGER.warning('Saw message "{0}" with job_names field.'.format(msg_id))
 
     testcase_url = msg['body']['msg']['jenkins_job_url']
     group_ref_url = msg['body']['msg']['jenkins_build_url']
@@ -498,8 +500,11 @@ def handle_ci_umb(msg):
 
     testcase = _construct_testcase_dict(msg_body)
     if 'unknown' in testcase['name']:
-        LOGGER.warn(('The message "{0}" did not contain enough information to fully build '
-                     'a testcase name. Using "{1}".').format(msg_id, testcase['name']))
+        LOGGER.warning(
+            'The message "{0}" did not contain enough information to fully build a '
+            'testcase name. Using "{1}".'
+            .format(msg_id, testcase['name'])
+        )
 
     if not verify_topic_and_testcase_name(msg['topic'], testcase['name']):
         return
