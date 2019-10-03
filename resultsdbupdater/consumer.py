@@ -60,4 +60,4 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
         if msg['topic'] != '/topic/VirtualTopic.qe.ci.jenkins':
             # Mute unhandled message warnings when the message came from
             # VirtualTopic.qe.ci.jenkins since there will be many
-            utils.LOGGER.warn("Received unhandled message %r" % msg)
+            utils.LOGGER.warning('Received unhandled message %r' % msg)
