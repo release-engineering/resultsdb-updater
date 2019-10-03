@@ -2,6 +2,7 @@ import logging
 
 config = {
     'ciconsumer': True,
+    'moksha.blocking_mode': True,
     'zmq_enabled': False,
     'endpoints': {},
     'validate_signatures': False,
