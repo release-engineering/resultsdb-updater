@@ -19,7 +19,7 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             msg['headers']['message-id']))
         utils.LOGGER.debug(str(msg))
 
-    def consume(self, msg):
+    def _consume_helper(self, msg):
         # Some of the messages here can be empty strings, so only process
         # them if they are dicts to avoid tracebacks
         if not isinstance(msg['body']['msg'], dict):
@@ -61,3 +61,11 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             # Mute unhandled message warnings when the message came from
             # VirtualTopic.qe.ci.jenkins since there will be many
             utils.LOGGER.warning('Received unhandled message %r' % msg)
+
+    def consume(self, msg):
+        try:
+            self._consume_helper(msg)
+        except (AttributeError, IndexError, KeyError, ValueError, TypeError):
+            # Disallow propagating exceptions which would be raised again on
+            # message redelivery.
+            utils.LOGGER.exception('Failed to process message')

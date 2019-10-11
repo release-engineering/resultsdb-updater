@@ -1031,3 +1031,8 @@ def test_full_consume_post_timeout(mock_requests):
 
     with pytest.raises(requests.exceptions.Timeout):
         consumer.consume(fake_msg)
+
+
+def test_consume_no_exception_on_bad_message(caplog):
+    consumer.consume({})
+    assert 'Failed to process message' in caplog.text
