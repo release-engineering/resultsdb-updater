@@ -2,4 +2,4 @@ fedmsg
 moksha.hub
 psutil
 requests
-semver
+semantic-version
