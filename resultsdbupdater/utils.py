@@ -8,7 +8,7 @@ from collections import namedtuple
 import fedmsg
 import requests
 
-import semver
+import semantic_version
 
 
 CONFIG = fedmsg.config.load_config()
@@ -253,7 +253,7 @@ def _get_test_details(topic, message):
     result = None
 
     # version 0.1.x
-    if semver.match(message['version'], '<0.2.0'):
+    if semantic_version.match('<0.2.0', message['version']):
         category = _get_required_field(message, 'category')
         namespace = _get_required_field(message, 'namespace')
         test_type = _get_required_field(message, 'type')
@@ -583,7 +583,7 @@ def handle_ci_umb(msg):
         return
 
     # add optional recipients field, according to the version
-    if semver.match(msg_body['version'], '<0.2.0'):
+    if semantic_version.match('<0.2.0', msg_body['version']):
         result_data['recipients'] = msg_body.get('recipients', [])
 
     else:
