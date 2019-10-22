@@ -21,6 +21,8 @@ log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(
     format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
 
+USER_AGENT = 'resultsdb_updater'
+
 
 def update_publisher_id(data, msg):
     """
@@ -104,7 +106,10 @@ def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
             'ref_url': ref_url,
             'note': note or '',
             'data': data}),
-        headers={'content-type': 'application/json'},
+        headers={
+            'content-type': 'application/json',
+            'User-Agent': USER_AGENT,
+        },
         auth=RESULTSDB_AUTH,
         timeout=TIMEOUT,
         verify=TRUSTED_CA)
@@ -115,7 +120,10 @@ def get_first_group(description):
     get_req = requests.get(
         '{0}/groups?description={1}'.format(RESULTSDB_API_URL, description),
         timeout=TIMEOUT,
-        verify=TRUSTED_CA
+        verify=TRUSTED_CA,
+        headers={
+            'User-Agent': USER_AGENT,
+        },
     )
     get_req.raise_for_status()
     if len(get_req.json()['data']) > 0:
