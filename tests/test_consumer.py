@@ -113,6 +113,7 @@ def test_full_consume_overall_rpmdiff_msg(mock_requests):
     mock_requests.get.assert_called_once_with(
         ('https://resultsdb.domain.local/api/v2.0/groups?description='
          'https://domain.local/run/12345'),
+        headers=mock.ANY,
         timeout=15,
         verify=None
     )
@@ -160,6 +161,7 @@ def test_full_consume_rpmdiff_msg(mock_requests):
     mock_requests.get.assert_called_once_with(
         ('https://resultsdb.domain.local/api/v2.0/groups?description='
          'https://domain.local/run/12345'),
+        headers=mock.ANY,
         timeout=15,
         verify=None
     )
@@ -206,6 +208,7 @@ def test_full_consume_covscan_msg(mock_requests):
     mock_requests.get.assert_called_once_with(
         ('https://resultsdb.domain.local/api/v2.0/groups?description='
          'http://domain.local/covscanhub/task/64208/log/added.html'),
+        headers=mock.ANY,
         timeout=15,
         verify=None
     )
