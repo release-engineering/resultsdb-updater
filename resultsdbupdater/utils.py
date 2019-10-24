@@ -95,13 +95,6 @@ RESULTSDB_AUTH = get_http_auth(
     RESULTSDB_API_URL)
 
 
-def get_error_from_request(request):
-    try:
-        return request.json().get('message')
-    except ValueError:
-        return request.text
-
-
 def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
     post_req = requests.post(
         '{0}/results'.format(RESULTSDB_API_URL),
