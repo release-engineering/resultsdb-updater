@@ -476,6 +476,15 @@ def test_fedora_ci_no_version(mock_requests):
 
 
 @mock.patch('resultsdbupdater.utils.requests')
+def test_fedora_ci_no_test(mock_requests, caplog):
+    """ Make sure message is not processed if test is missing. """
+    fake_msg = get_fake_msg('fedora-ci-message-no-test')
+    consumer.consume(fake_msg)
+    mock_requests.post.assert_not_called()
+    assert "KeyError: 'test'" in caplog.text
+
+
+@mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_compose_msg(mock_requests):
     fake_msg = get_fake_msg('compose_message')
     consumer.consume(fake_msg)
