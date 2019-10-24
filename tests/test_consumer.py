@@ -23,11 +23,15 @@ uuid_patcher = mock.patch(
 uuid_patcher.start()
 
 
+def get_fake_msg(name):
+    fake_msg_path = path.join(json_dir, name + '.json')
+    with open(fake_msg_path) as fake_msg_file:
+        return json.load(fake_msg_file)
+
+
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
+    fake_msg = get_fake_msg('message')
 
     consumer.consume(fake_msg)
     # Verify the URLs called
@@ -103,9 +107,7 @@ def test_full_consume_overall_rpmdiff_msg(mock_requests):
         }]
     }
 
-    fake_msg_path = path.join(json_dir, 'rpmdiff_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
+    fake_msg = get_fake_msg('rpmdiff_message')
 
     consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
@@ -151,9 +153,7 @@ def test_full_consume_overall_rpmdiff_msg(mock_requests):
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_rpmdiff_msg(mock_requests):
     mock_requests.get.return_value.json.return_value = {'data': []}
-    fake_msg_path = path.join(json_dir, 'rpmdiff_message_two.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
+    fake_msg = get_fake_msg('rpmdiff_message_two')
 
     consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
@@ -198,9 +198,7 @@ def test_full_consume_rpmdiff_msg(mock_requests):
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_covscan_msg(mock_requests):
     mock_requests.get.return_value.json.return_value = {'data': []}
-    fake_msg_path = path.join(json_dir, 'covscan_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
+    fake_msg = get_fake_msg('covscan_message')
 
     consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
@@ -248,9 +246,7 @@ def test_full_consume_covscan_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_bulk_results_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'bulk_results_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
+    fake_msg = get_fake_msg('bulk_results_message')
 
     consumer.consume(fake_msg)
     all_expected_data = {
@@ -304,20 +300,14 @@ def test_full_consume_bulk_results_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_bogus_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'bogus.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('bogus')
     consumer.consume(fake_msg)
     mock_requests.post.assert_not_called()
 
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_pipeline_failure_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'pipeline_failure_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('pipeline_failure_message')
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -368,10 +358,7 @@ def test_full_consume_pipeline_failure_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_platformci_success_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'platformci_success_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('platformci_success_message')
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -426,10 +413,7 @@ def test_full_consume_platformci_success_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_osci_success_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'osci_success_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('osci_success_message')
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -486,20 +470,14 @@ def test_full_consume_osci_success_msg(mock_requests):
 @mock.patch('resultsdbupdater.utils.requests')
 def test_fedora_ci_no_version(mock_requests):
     """ Make sure message is not processed if version is missing. """
-    fake_msg_path = path.join(json_dir, 'fedora-ci-message-no-version.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('fedora-ci-message-no-version')
     consumer.consume(fake_msg)
     mock_requests.post.assert_not_called()
 
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_compose_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'compose_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('compose_message')
     consumer.consume(fake_msg)
     # Verify the URLs called
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -545,10 +523,7 @@ def test_full_consume_compose_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_queued_outcome_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'platformci_queued_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('platformci_queued_message')
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -596,10 +571,7 @@ def test_queued_outcome_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_queued_running_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'platformci_running_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('platformci_running_message')
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -647,10 +619,7 @@ def test_queued_running_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_pelc_component_version_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'pelc_component_version.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('pelc_component_version')
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -695,10 +664,7 @@ def test_pelc_component_version_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_redhat_module_success_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('redhat_module_message')
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -765,10 +731,7 @@ def test_full_consume_redhat_module_success_msg(mock_requests):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_container_image_msg(mock_requests):
-    fake_msg_path = path.join(json_dir, 'container_image_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('container_image_message')
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -839,10 +802,7 @@ def test_container_image_msg(mock_requests):
 def test_publisher_id(mock_requests, consume_fn):
     mock_requests.get.return_value.json.return_value = {'data': []}
 
-    fake_msg_path = path.join(json_dir, 'jmsx_user_id.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('jmsx_user_id')
     consume_fn(fake_msg)
     # Verify the post URL
     assert mock_requests.post.call_args_list[0][0][0] == \
@@ -854,10 +814,7 @@ def test_publisher_id(mock_requests, consume_fn):
 
 
 def test_topic_namespace_match():
-    fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('redhat_module_message')
     fake_msg['topic'] = '/topic/VirtualTopic.eng.ci.baseos-ci.redhat-module.test.complete'
 
     with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
@@ -866,10 +823,7 @@ def test_topic_namespace_match():
 
 
 def test_topic_namespace_mismatch(caplog):
-    fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('redhat_module_message')
     fake_msg['topic'] = '/topic/VirtualTopic.eng.ci.bad-ci.redhat-module.test.complete'
 
     with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
@@ -881,9 +835,7 @@ def test_topic_namespace_mismatch(caplog):
 
 
 def test_topic_namespace_missing(caplog):
-    fake_msg_path = path.join(json_dir, 'redhat_module_message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
+    fake_msg = get_fake_msg('redhat_module_message')
 
     with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
         consumer.consume(fake_msg)
@@ -897,9 +849,7 @@ def test_topic_namespace_missing(caplog):
 def test_full_consume_post_failed(mock_requests):
     mock_requests.post.return_value.raise_for_status.side_effect = \
         requests.exceptions.HTTPError()
-    fake_msg_path = path.join(json_dir, 'message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
+    fake_msg = get_fake_msg('message')
 
     with pytest.raises(requests.exceptions.HTTPError):
         consumer.consume(fake_msg)
@@ -908,9 +858,7 @@ def test_full_consume_post_failed(mock_requests):
 @mock.patch('resultsdbupdater.utils.requests')
 def test_full_consume_post_timeout(mock_requests):
     mock_requests.post.side_effect = requests.exceptions.Timeout()
-    fake_msg_path = path.join(json_dir, 'message.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
+    fake_msg = get_fake_msg('message')
 
     with pytest.raises(requests.exceptions.Timeout):
         consumer.consume(fake_msg)
@@ -923,10 +871,7 @@ def test_consume_no_exception_on_bad_message(caplog):
 
 @mock.patch('resultsdbupdater.utils.requests')
 def test_fedora_ci_message_brew_build_test_complete_version_2(mock_requests):
-    fake_msg_path = path.join(json_dir, 'fedora-ci-message-brew-build.test.complete-2.0.0.json')
-    with open(fake_msg_path) as fake_msg_file:
-        fake_msg = json.load(fake_msg_file)
-
+    fake_msg = get_fake_msg('fedora-ci-message-brew-build.test.complete-2.0.0')
     consumer.consume(fake_msg)
 
     # Verify the post URL
