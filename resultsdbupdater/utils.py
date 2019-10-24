@@ -50,6 +50,12 @@ class RequiredFieldException(Exception):
     pass
 
 
+def get_contact(msg_body):
+    if semantic_version.match('<0.2.1', msg_body['version']):
+        return msg_body['ci']
+    return msg_body['contact']
+
+
 def get_http_auth(user, password, url):
     """Return an auth tuple to be used with requests
 
@@ -422,6 +428,8 @@ def handle_ci_umb(msg):
     if isinstance(system, list):
         system = system[0] if system else {}
 
+    contact = get_contact(msg_body)
+
     if item_type == 'productmd-compose':
         architecture = system['architecture']
         variant = system.get('variant')
@@ -432,11 +440,11 @@ def handle_ci_umb(msg):
             key: value for key, value in (
                 ('item', item),
 
-                ('ci_name', msg_body['ci']['name']),
-                ('ci_team', msg_body['ci']['team']),
-                ('ci_url', msg_body['ci'].get('url', 'not available')),
-                ('ci_irc', msg_body['ci'].get('irc', 'not available')),
-                ('ci_email', msg_body['ci']['email']),
+                ('ci_name', contact['name']),
+                ('ci_team', contact['team']),
+                ('ci_url', contact.get('url', 'not available')),
+                ('ci_irc', contact.get('irc', 'not available')),
+                ('ci_email', contact['email']),
 
                 ('log', msg_body['run']['log']),
 
@@ -459,11 +467,11 @@ def handle_ci_umb(msg):
             key: value for key, value in (
                 ('item', item),
 
-                ('ci_name', msg_body['ci']['name']),
-                ('ci_team', msg_body['ci']['team']),
-                ('ci_url', msg_body['ci'].get('url', 'not available')),
-                ('ci_irc', msg_body['ci'].get('irc', 'not available')),
-                ('ci_email', msg_body['ci']['email']),
+                ('ci_name', contact['name']),
+                ('ci_team', contact['team']),
+                ('ci_url', contact.get('url', 'not available')),
+                ('ci_irc', contact.get('irc', 'not available')),
+                ('ci_email', contact['email']),
 
                 ('log', msg_body['run']['log']),
 
@@ -483,11 +491,11 @@ def handle_ci_umb(msg):
             key: value for key, value in (
                 ('item', item),
 
-                ('ci_name', msg_body['ci']['name']),
-                ('ci_team', msg_body['ci']['team']),
-                ('ci_url', msg_body['ci'].get('url', 'not available')),
-                ('ci_irc', msg_body['ci'].get('irc', 'not available')),
-                ('ci_email', msg_body['ci']['email']),
+                ('ci_name', contact['name']),
+                ('ci_team', contact['team']),
+                ('ci_url', contact.get('url', 'not available')),
+                ('ci_irc', contact.get('irc', 'not available')),
+                ('ci_email', contact['email']),
 
                 ('log', msg_body['run']['log']),
                 ('rebuild', msg_body['run'].get('rebuild')),
@@ -511,8 +519,6 @@ def handle_ci_umb(msg):
         }
 
     elif item_type == 'redhat-module':
-        msg_body_ci = msg_body['ci']
-
         # The pagure.io/messages spec defines the NSVC delimited with ':' and the stream name can
         # contain '-', which MBS changes to '_' when importing to koji.
         # See https://github.com/release-engineering/resultsdb-updater/pull/73
@@ -543,15 +549,14 @@ def handle_ci_umb(msg):
             'log': msg_body['run']['log'],
             'system_os': system.get('os'),
             'system_provider': system.get('provider'),
-            'ci_name': msg_body_ci.get('name'),
-            'ci_url': msg_body_ci.get('url', 'not available'),
-            'ci_team': msg_body_ci.get('team'),
-            'ci_irc': msg_body_ci.get('irc', 'not available'),
-            'ci_email': msg_body_ci.get('email'),
+            'ci_name': contact.get('name'),
+            'ci_url': contact.get('url', 'not available'),
+            'ci_team': contact.get('team'),
+            'ci_irc': contact.get('irc', 'not available'),
+            'ci_email': contact.get('email'),
         }
     # used as a default
     elif item_type == 'brew-build':
-        msg_body_ci = msg_body['ci']
         item = msg_body['artifact']['nvr']
         component = msg_body['artifact']['component']
         scratch = msg_body['artifact'].get('scratch', '')
@@ -578,11 +583,11 @@ def handle_ci_umb(msg):
             'log': msg_body['run']['log'],  # required
             'system_os': system.get('os'),
             'system_provider': system.get('provider'),
-            'ci_name': msg_body_ci.get('name'),
-            'ci_url': msg_body_ci.get('url', 'not available'),
-            'ci_team': msg_body_ci.get('team'),
-            'ci_irc': msg_body_ci.get('irc', 'not available'),
-            'ci_email': msg_body_ci.get('email'),
+            'ci_name': contact.get('name'),
+            'ci_url': contact.get('url', 'not available'),
+            'ci_team': contact.get('team'),
+            'ci_irc': contact.get('irc', 'not available'),
+            'ci_email': contact.get('email'),
         }
 
     # an unknown artifact type

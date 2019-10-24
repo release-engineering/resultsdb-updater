@@ -40,9 +40,10 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
 
         # Next, detect if the message bears the primary format we support.
         # The "FACTORY 2.0 CI UMB messages"
-        # https://docs.google.com/document/d/16L5odC-B4L6iwb9dp8Ry0Xk5Sc49h9KvTHrG86fdfQM/edit
-        ci_umb_keys = set(['ci', 'run', 'artifact'])
-        if actual_keys.issuperset(ci_umb_keys):
+        # See: https://pagure.io/fedora-ci/messages
+        ci_umb_keys = set(['run', 'artifact'])
+        contact_umb_keys = set(['ci', 'contact'])
+        if actual_keys.issuperset(ci_umb_keys) and not actual_keys.isdisjoint(contact_umb_keys):
             self.log_msg(msg)
             utils.handle_ci_umb(msg)
             return
