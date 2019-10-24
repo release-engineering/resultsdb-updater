@@ -80,6 +80,8 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
     def consume(self, msg):
         try:
             self._consume_helper(msg)
+        except utils.CreateResultError as e:
+            utils.LOGGER.error(e)
         except (AttributeError, IndexError, KeyError, ValueError, TypeError):
             # Disallow propagating exceptions which would be raised again on
             # message redelivery.
