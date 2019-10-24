@@ -938,3 +938,15 @@ def test_validate_throws_only_runtime_warning(mock_requests, caplog):
     with pytest.raises(RuntimeWarning):
         consumer.validate({'body': None})
     assert 'Failed to validate message: {' in caplog.text
+
+
+@mock.patch('resultsdbupdater.utils.requests')
+def test_results_create_failed(mock_requests, caplog):
+    fake_msg = get_fake_msg('osci_success_message')
+
+    mock_requests.post.return_value.json.return_value = {'message': 'Dummy failure message'}
+    mock_requests.post.return_value.status_code = 400
+
+    consumer.consume(fake_msg)
+    assert mock_requests.post.call_count == 1
+    assert 'Failed to create result: Dummy failure message; Payload: {' in caplog.text

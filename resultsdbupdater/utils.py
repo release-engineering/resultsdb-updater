@@ -46,6 +46,16 @@ FedoraCiTestArray = namedtuple(
 )
 
 
+class CreateResultError(RuntimeError):
+    def __init__(self, msg, payload):
+        super(CreateResultError, self).__init__()
+        self.msg = msg
+        self.payload = payload
+
+    def __str__(self):
+        return 'Failed to create result: {0}; Payload: {1}'.format(self.msg, self.payload)
+
+
 def get_contact(msg_body):
     if semantic_version.match('<0.2.1', msg_body['version']):
         return msg_body['ci']
@@ -92,15 +102,17 @@ RESULTSDB_AUTH = get_http_auth(
 
 
 def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
+    payload = json.dumps({
+        'testcase': testcase,
+        'groups': groups or [],
+        'outcome': outcome,
+        'ref_url': ref_url,
+        'note': note or '',
+        'data': data
+    })
     post_req = requests.post(
         '{0}/results'.format(RESULTSDB_API_URL),
-        data=json.dumps({
-            'testcase': testcase,
-            'groups': groups or [],
-            'outcome': outcome,
-            'ref_url': ref_url,
-            'note': note or '',
-            'data': data}),
+        data=payload,
         headers={
             'content-type': 'application/json',
             'User-Agent': USER_AGENT,
@@ -108,6 +120,11 @@ def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
         auth=RESULTSDB_AUTH,
         timeout=TIMEOUT,
         verify=TRUSTED_CA)
+
+    if post_req.status_code == 400:
+        message = post_req.json().get('message')
+        raise CreateResultError(message, payload)
+
     post_req.raise_for_status()
 
 
