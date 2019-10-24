@@ -1,0 +1,51 @@
+{
+  "body": {
+    "msg": {
+      "ci": {
+        "team": "team",
+        "irc": "#team",
+        "email": "team-list@redhat.com",
+        "name": "TEAM"
+      },
+      "run": {
+        "url": "https://jenkins/job/pipeline/170/",
+        "rebuild": "https://jenkins/job/pipeline/170/rebuild/parameterized",
+        "log": "https://jenkins/job/pipeline/170/console"
+      },
+      "pipeline": {
+        "stage": {
+          "name": "package-tests"
+        },
+        "build": "170",
+        "name": "pipeline",
+        "id": "2b2b27d4-de01-49ab-bbc3-cd30dd5286d2"
+      },
+      "artifact": {
+        "nvr": "binutils-2.30-43.el8",
+        "scratch": false,
+        "component": "binutils",
+        "source": "git://pkgs/rpms/binutils#3af926c26b6271969238d87d245006d412eae274",
+        "dependencies": [],
+        "type": "brew-build",
+        "id": 18400235,
+        "issuer": "batman"
+      },
+      "system": {
+        "provider": "downshaft",
+        "os": "RHEL-8.0.0",
+        "architecture": "x86_64",
+        "label": "downstream-rhel-pipeline"
+      },
+      "thread_id": "2b2b27d4-de01-49ab-bbc3-cd30dd5286d2",
+      "version": "0.2.1",
+      "notification": {
+        "recipients": [ "ovasik", "mvadkert" ]
+      },
+      "generated_at": "2019-02-11T16:47:27.445Z"
+    }
+  },
+  "headers": {
+    "message-id": "some-id"
+  },
+  "topic": "/topic/VirtualTopic.eng.ci.brew-build.test.complete"
+}

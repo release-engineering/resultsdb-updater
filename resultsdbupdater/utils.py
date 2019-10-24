@@ -46,10 +46,6 @@ FedoraCiTestArray = namedtuple(
 )
 
 
-class RequiredFieldException(Exception):
-    pass
-
-
 def get_contact(msg_body):
     if semantic_version.match('<0.2.1', msg_body['version']):
         return msg_body['ci']
@@ -240,19 +236,6 @@ def _test_result_outcome(topic, outcome):
     return broken_mapping.get(outcome.lower(), outcome.upper())
 
 
-def _get_required_field(message, field):
-    """
-    Try to get a required field and blows up if it was not successful.
-    """
-
-    value = message.get(field, None)
-
-    if value is None:
-        raise RequiredFieldException("Required field '{}' is missing".format(field))
-
-    return value
-
-
 def _get_test_details(topic, message):
     """
     Returns test details according to the version of the spec.
@@ -261,24 +244,22 @@ def _get_test_details(topic, message):
 
     # version 0.1.x
     if semantic_version.match('<0.2.0', message['version']):
-        category = _get_required_field(message, 'category')
-        namespace = _get_required_field(message, 'namespace')
-        test_type = _get_required_field(message, 'type')
+        category = message['category']
+        namespace = message['namespace']
+        test_type = message['type']
         xunit = message.get('xunit', None)
         result = message.get('status', None)
 
     # version >= 0.2.0
     else:
-        if 'test' not in message:
-            raise RequiredFieldException("Message does not contain required 'test' array")
-
-        category = _get_required_field(message['test'], 'category')
-        namespace = _get_required_field(message['test'], 'namespace')
-        test_type = _get_required_field(message['test'], 'type')
+        test = message['test']
+        category = test['category']
+        namespace = test['namespace']
+        test_type = test['type']
 
         # result is required for complete messages only
         if topic.endswith('.complete'):
-            result = _get_required_field(message['test'], 'result')
+            result = test['result']
 
         xunit = message.get('xunit', None)
 
@@ -400,11 +381,7 @@ def handle_ci_umb(msg):
     item_type = msg_body['artifact']['type']
     test_run_url = msg_body['run']['url']
 
-    try:
-        test = _get_test_details(topic, msg_body)
-    except RequiredFieldException as e:
-        LOGGER.error(e)
-        return
+    test = _get_test_details(topic, msg_body)
 
     outcome = _test_result_outcome(topic, test.result)
 
