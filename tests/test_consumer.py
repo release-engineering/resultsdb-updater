@@ -23,24 +23,29 @@ uuid_patcher = mock.patch(
 uuid_patcher.start()
 
 
+@pytest.fixture
+def mock_session():
+    with mock.patch('resultsdbupdater.utils.retry_session') as mocked:
+        yield mocked()
+
+
 def get_fake_msg(name):
     fake_msg_path = path.join(json_dir, name + '.json')
     with open(fake_msg_path) as fake_msg_file:
         return json.load(fake_msg_file)
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_msg(mock_requests):
+def test_full_consume_msg(mock_session):
     fake_msg = get_fake_msg('message')
 
     consumer.consume(fake_msg)
+    assert mock_session.post.call_count == 2
     # Verify the URLs called
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
-    assert mock_requests.post.call_args_list[1][0][0] == \
+    assert mock_session.post.call_args_list[1][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 2
     expected_data_one = {
         'data': {
             'CI_tier': 1,
@@ -91,16 +96,15 @@ def test_full_consume_msg(mock_requests):
         }
     }
     actual_data_one = json.loads(
-        mock_requests.post.call_args_list[0][1]['data'])
+        mock_session.post.call_args_list[0][1]['data'])
     actual_data_two = json.loads(
-        mock_requests.post.call_args_list[1][1]['data'])
+        mock_session.post.call_args_list[1][1]['data'])
     assert expected_data_one == actual_data_one, actual_data_one
     assert expected_data_two == actual_data_two, actual_data_two
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_overall_rpmdiff_msg(mock_requests):
-    mock_requests.get.return_value.json.return_value = {
+def test_full_consume_overall_rpmdiff_msg(mock_session):
+    mock_session.get.return_value.json.return_value = {
         'data': [{
             'description': 'https://domain.local/run/12345',
             'uuid': '529da400-fc74-4b28-af81-52f56816a2cb'
@@ -112,18 +116,17 @@ def test_full_consume_overall_rpmdiff_msg(mock_requests):
     consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
     # result to
-    mock_requests.get.assert_called_once_with(
+    mock_session.get.assert_called_once_with(
         ('https://resultsdb.domain.local/api/v2.0/groups?description='
          'https://domain.local/run/12345'),
-        headers=mock.ANY,
         timeout=15,
         verify=None
     )
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     expected_data = {
         'data': {
             'item': 'setup-2.8.71-5.el7_1',
@@ -147,29 +150,27 @@ def test_full_consume_overall_rpmdiff_msg(mock_requests):
         }
     }
     assert expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_rpmdiff_msg(mock_requests):
-    mock_requests.get.return_value.json.return_value = {'data': []}
+def test_full_consume_rpmdiff_msg(mock_session):
+    mock_session.get.return_value.json.return_value = {'data': []}
     fake_msg = get_fake_msg('rpmdiff_message_two')
 
     consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
     # result to, but this time nothing was returned
-    mock_requests.get.assert_called_once_with(
+    mock_session.get.assert_called_once_with(
         ('https://resultsdb.domain.local/api/v2.0/groups?description='
          'https://domain.local/run/12345'),
-        headers=mock.ANY,
         timeout=15,
         verify=None
     )
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     expected_data = {
         'data': {
             'item': 'lapack-3.4.2-8.el7 lapack-3.4.2-7.el7',
@@ -192,29 +193,27 @@ def test_full_consume_rpmdiff_msg(mock_requests):
         }
     }
     assert expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_covscan_msg(mock_requests):
-    mock_requests.get.return_value.json.return_value = {'data': []}
+def test_full_consume_covscan_msg(mock_session):
+    mock_session.get.return_value.json.return_value = {'data': []}
     fake_msg = get_fake_msg('covscan_message')
 
     consumer.consume(fake_msg)
     # Assert it checked to see if an existing group exists to add the new
     # result to, but this time nothing was returned
-    mock_requests.get.assert_called_once_with(
+    mock_session.get.assert_called_once_with(
         ('https://resultsdb.domain.local/api/v2.0/groups?description='
          'http://domain.local/covscanhub/task/64208/log/added.html'),
-        headers=mock.ANY,
         timeout=15,
         verify=None
     )
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     expected_data = {
         'data': {
             'item': 'ipa-4.5.4-5.el7 ipa-4.5.4-4.el7',
@@ -241,11 +240,10 @@ def test_full_consume_covscan_msg(mock_requests):
         }
     }
     assert expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_bulk_results_msg(mock_requests):
+def test_full_consume_bulk_results_msg(mock_session):
     fake_msg = get_fake_msg('bulk_results_message')
 
     consumer.consume(fake_msg)
@@ -290,7 +288,7 @@ def test_full_consume_bulk_results_msg(mock_requests):
     testcase_names = list(all_expected_data.keys())
     for i in range(len(all_expected_data)):
         post_call_data = json.loads(
-            mock_requests.post.call_args_list[i][1]['data'])
+            mock_session.post.call_args_list[i][1]['data'])
         testcase_name = post_call_data['testcase']
         assert post_call_data == all_expected_data[testcase_name]
         testcase_names.pop(testcase_names.index(testcase_name))
@@ -298,22 +296,20 @@ def test_full_consume_bulk_results_msg(mock_requests):
     assert len(testcase_names) == 0, msg
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_bogus_msg(mock_requests):
+def test_full_consume_bogus_msg(mock_session):
     fake_msg = get_fake_msg('bogus')
     consumer.consume(fake_msg)
-    mock_requests.post.assert_not_called()
+    mock_session.post.assert_not_called()
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_pipeline_failure_msg(mock_requests):
+def test_full_consume_pipeline_failure_msg(mock_session):
     fake_msg = get_fake_msg('pipeline_failure_message')
     consumer.consume(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     all_expected_data = {
         'data': {
             'item': 'tigervnc-1.8.0-5.el9000+5',
@@ -353,18 +349,17 @@ def test_full_consume_pipeline_failure_msg(mock_requests):
     }
 
     assert all_expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_platformci_success_msg(mock_requests):
+def test_full_consume_platformci_success_msg(mock_session):
     fake_msg = get_fake_msg('platformci_success_message')
     consumer.consume(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     all_expected_data = {
         'data': {
             'item': 'setup-2.8.71-7.el7_4',
@@ -408,18 +403,17 @@ def test_full_consume_platformci_success_msg(mock_requests):
     }
 
     assert all_expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_osci_success_msg(mock_requests):
+def test_full_consume_osci_success_msg(mock_session):
     fake_msg = get_fake_msg('osci_success_message')
     consumer.consume(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     all_expected_data = {
         'data': {
             'item': 'passwd-0.80-1.el8+5',
@@ -464,35 +458,32 @@ def test_full_consume_osci_success_msg(mock_requests):
     }
 
     assert all_expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_fedora_ci_no_version(mock_requests):
+def test_fedora_ci_no_version(mock_session):
     """ Make sure message is not processed if version is missing. """
     fake_msg = get_fake_msg('fedora-ci-message-no-version')
     consumer.consume(fake_msg)
-    mock_requests.post.assert_not_called()
+    mock_session.post.assert_not_called()
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_fedora_ci_no_test(mock_requests, caplog):
+def test_fedora_ci_no_test(mock_session, caplog):
     """ Make sure message is not processed if test is missing. """
     fake_msg = get_fake_msg('fedora-ci-message-no-test')
     consumer.consume(fake_msg)
-    mock_requests.post.assert_not_called()
+    mock_session.post.assert_not_called()
     assert "KeyError: 'test'" in caplog.text
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_compose_msg(mock_requests):
+def test_full_consume_compose_msg(mock_session):
     fake_msg = get_fake_msg('compose_message')
     consumer.consume(fake_msg)
     # Verify the URLs called
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     url = 'https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/'
     expected_data = {
         'testcase': {
@@ -526,19 +517,18 @@ def test_full_consume_compose_msg(mock_requests):
     }
 
     actual_data = json.loads(
-        mock_requests.post.call_args_list[0][1]['data'])
+        mock_session.post.call_args_list[0][1]['data'])
     assert expected_data == actual_data, actual_data
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_queued_outcome_msg(mock_requests):
+def test_queued_outcome_msg(mock_session):
     fake_msg = get_fake_msg('platformci_queued_message')
     consumer.consume(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     all_expected_data = {
         'data': {
             'item': 'openstack-neutron-lbaas-13.0.1-0.20180913154426.eb47e20.el7ost',
@@ -575,18 +565,17 @@ def test_queued_outcome_msg(mock_requests):
     }
 
     assert all_expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_queued_running_msg(mock_requests):
+def test_queued_running_msg(mock_session):
     fake_msg = get_fake_msg('platformci_running_message')
     consumer.consume(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     all_expected_data = {
         'data': {
             'item': 'setup-2.8.71-7.el7_4',
@@ -623,15 +612,14 @@ def test_queued_running_msg(mock_requests):
     }
 
     assert all_expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_pelc_component_version_msg(mock_requests):
+def test_pelc_component_version_msg(mock_session):
     fake_msg = get_fake_msg('pelc_component_version')
     consumer.consume(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
 
     # Verify the URLs called
@@ -667,19 +655,18 @@ def test_pelc_component_version_msg(mock_requests):
     }
 
     actual_data = json.loads(
-        mock_requests.post.call_args_list[0][1]['data'])
+        mock_session.post.call_args_list[0][1]['data'])
     assert expected_data == actual_data, actual_data
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_redhat_module_success_msg(mock_requests):
+def test_full_consume_redhat_module_success_msg(mock_session):
     fake_msg = get_fake_msg('redhat_module_message')
     consumer.consume(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     all_expected_data = {
         'data': {
             'item': 'go-toolset-rhel8_8-820181119195405.b754926a',
@@ -735,18 +722,17 @@ def test_full_consume_redhat_module_success_msg(mock_requests):
     }
 
     assert all_expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_container_image_msg(mock_requests):
+def test_container_image_msg(mock_session):
     fake_msg = get_fake_msg('container_image_message')
     consumer.consume(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     all_expected_data = {
         "note": "",
         "ref_url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job/waiverdb-test"
@@ -799,26 +785,25 @@ def test_container_image_msg(mock_requests):
         }
     }
     assert all_expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
 @pytest.mark.parametrize('consume_fn', (
     resultsdbupdater.utils.handle_ci_umb,
     resultsdbupdater.utils.handle_ci_metrics,
     resultsdbupdater.utils.handle_resultsdb_format,
 ))
-def test_publisher_id(mock_requests, consume_fn):
-    mock_requests.get.return_value.json.return_value = {'data': []}
+def test_publisher_id(mock_session, consume_fn):
+    mock_session.get.return_value.json.return_value = {'data': []}
 
     fake_msg = get_fake_msg('jmsx_user_id')
     consume_fn(fake_msg)
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
 
     actual_data = json.loads(
-        mock_requests.post.call_args_list[0][1]['data'])
+        mock_session.post.call_args_list[0][1]['data'])
     assert 'msg-example-ci' == actual_data['data'].get('publisher_id'), actual_data
 
 
@@ -854,9 +839,8 @@ def test_topic_namespace_missing(caplog):
             for rec in caplog.records)
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_post_failed(mock_requests):
-    mock_requests.post.return_value.raise_for_status.side_effect = \
+def test_full_consume_post_failed(mock_session):
+    mock_session.post.return_value.raise_for_status.side_effect = \
         requests.exceptions.HTTPError()
     fake_msg = get_fake_msg('message')
 
@@ -864,9 +848,8 @@ def test_full_consume_post_failed(mock_requests):
         consumer._consume_helper(fake_msg)
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_full_consume_post_timeout(mock_requests):
-    mock_requests.post.side_effect = requests.exceptions.Timeout()
+def test_full_consume_post_timeout(mock_session):
+    mock_session.post.side_effect = requests.exceptions.Timeout()
     fake_msg = get_fake_msg('message')
 
     with pytest.raises(requests.exceptions.Timeout):
@@ -878,16 +861,15 @@ def test_consume_no_exception_on_bad_message(caplog):
     assert 'Failed to process message' in caplog.text
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_fedora_ci_message_brew_build_test_complete_version_2(mock_requests):
+def test_fedora_ci_message_brew_build_test_complete_version_2(mock_session):
     fake_msg = get_fake_msg('fedora-ci-message-brew-build.test.complete-2.0.0')
     consumer.consume(fake_msg)
 
     # Verify the post URL
-    assert mock_requests.post.call_args_list[0][0][0] == \
+    assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
     # Verify the post data
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     all_expected_data = {
         'data': {
             'item': 'binutils-2.30-43.el8',
@@ -930,37 +912,34 @@ def test_fedora_ci_message_brew_build_test_complete_version_2(mock_requests):
     }
 
     assert all_expected_data == \
-        json.loads(mock_requests.post.call_args_list[0][1]['data'])
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_validate_throws_only_runtime_warning(mock_requests, caplog):
+def test_validate_throws_only_runtime_warning(mock_session, caplog):
     with pytest.raises(RuntimeWarning):
         consumer.validate({'body': None})
     assert 'Failed to validate message: {' in caplog.text
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_results_create_failed(mock_requests, caplog):
+def test_results_create_failed(mock_session, caplog):
     fake_msg = get_fake_msg('osci_success_message')
 
-    mock_requests.post.return_value.json.return_value = {'message': 'Dummy failure message'}
-    mock_requests.post.return_value.status_code = 400
+    mock_session.post.return_value.json.return_value = {'message': 'Dummy failure message'}
+    mock_session.post.return_value.status_code = 400
 
     consumer.consume(fake_msg)
-    assert mock_requests.post.call_count == 1
+    assert mock_session.post.call_count == 1
     assert 'Failed to create result: Dummy failure message; Payload: {' in caplog.text
 
 
-@mock.patch('resultsdbupdater.utils.requests')
-def test_consumer_no_throw(mock_requests, caplog):
+def test_consumer_no_throw(mock_session, caplog):
     """
     Consumer must not throw an exception (it would cause NACK and potentially
     blocked queue).
     """
     fake_msg = get_fake_msg('osci_success_message')
 
-    mock_requests.post.side_effect = RuntimeError
+    mock_session.post.side_effect = RuntimeError
 
     consumer.consume(fake_msg)
     assert 'Unexpected exception' in caplog.text
