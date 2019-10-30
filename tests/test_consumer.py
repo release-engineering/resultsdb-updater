@@ -977,3 +977,10 @@ def test_fedora_ci_message_brew_build_test_complete_version_2(mock_requests):
 
     assert all_expected_data == \
         json.loads(mock_requests.post.call_args_list[0][1]['data'])
+
+
+@mock.patch('resultsdbupdater.utils.requests')
+def test_validate_throws_only_runtime_warning(mock_requests, caplog):
+    with pytest.raises(RuntimeWarning):
+        consumer.validate({'body': None})
+    assert 'Failed to validate message: {' in caplog.text

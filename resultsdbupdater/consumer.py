@@ -19,6 +19,20 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             msg['headers']['message-id']))
         utils.LOGGER.debug(str(msg))
 
+    def validate(self, message):
+        """
+        Wraps fedmsg.consumers.FedmsgConsumer.validate() to avoid propagating
+        unexpected exceptions which would cause fedmsg-hub to get stuck (stops
+        processing messages but doesn't quit).
+        """
+        try:
+            return super(CIConsumer, self).validate(message)
+        except RuntimeWarning:
+            raise
+        except Exception:
+            utils.LOGGER.exception('Failed to validate message: %s', message)
+            raise RuntimeWarning('Unexpected exception during message validation')
+
     def _consume_helper(self, msg):
         # Some of the messages here can be empty strings, so only process
         # them if they are dicts to avoid tracebacks
