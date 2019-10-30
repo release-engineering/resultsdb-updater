@@ -861,7 +861,7 @@ def test_full_consume_post_failed(mock_requests):
     fake_msg = get_fake_msg('message')
 
     with pytest.raises(requests.exceptions.HTTPError):
-        consumer.consume(fake_msg)
+        consumer._consume_helper(fake_msg)
 
 
 @mock.patch('resultsdbupdater.utils.requests')
@@ -870,7 +870,7 @@ def test_full_consume_post_timeout(mock_requests):
     fake_msg = get_fake_msg('message')
 
     with pytest.raises(requests.exceptions.Timeout):
-        consumer.consume(fake_msg)
+        consumer._consume_helper(fake_msg)
 
 
 def test_consume_no_exception_on_bad_message(caplog):
@@ -950,3 +950,18 @@ def test_results_create_failed(mock_requests, caplog):
     consumer.consume(fake_msg)
     assert mock_requests.post.call_count == 1
     assert 'Failed to create result: Dummy failure message; Payload: {' in caplog.text
+
+
+@mock.patch('resultsdbupdater.utils.requests')
+def test_consumer_no_throw(mock_requests, caplog):
+    """
+    Consumer must not throw an exception (it would cause NACK and potentially
+    blocked queue).
+    """
+    fake_msg = get_fake_msg('osci_success_message')
+
+    mock_requests.post.side_effect = RuntimeError
+
+    consumer.consume(fake_msg)
+    assert 'Unexpected exception' in caplog.text
+    assert 'RuntimeError' in caplog.text

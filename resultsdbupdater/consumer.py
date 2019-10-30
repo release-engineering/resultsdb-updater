@@ -86,3 +86,9 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
             # Disallow propagating exceptions which would be raised again on
             # message redelivery.
             utils.LOGGER.exception('Failed to process message')
+        except Exception:
+            # Disallow propagating any other exception, otherwise NACK is sent
+            # and the message is scheduled to be received later. But it seems
+            # these messages can be only received by other consumer (or after
+            # restart) otherwise the messages can block the queue completely.
+            utils.LOGGER.exception('Unexpected exception')
