@@ -1,29 +1,12 @@
-import logging
 import json
 import uuid
 import re
 
-from collections import namedtuple
-
-import fedmsg
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-import semantic_version
-
-
-CONFIG = fedmsg.config.load_config()
-RESULTSDB_API_URL = CONFIG.get('resultsdb-updater.resultsdb_api_url')
-TRUSTED_CA = CONFIG.get('resultsdb-updater.resultsdb_api_ca')
-TIMEOUT = CONFIG.get('resultsdb-updater.requests_timeout', 15)
-
-LOGGER = logging.getLogger('CIConsumer')
-log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-logging.basicConfig(
-    format=log_format, level=CONFIG.get('resultsdb-updater.log_level'))
-
-USER_AGENT = 'resultsdb_updater'
+from . import config, exceptions
 
 
 def update_publisher_id(data, msg):
@@ -31,76 +14,9 @@ def update_publisher_id(data, msg):
     Sets data['publisher_id'] to message publisher ID (JMSXUserID) if it
     exists.
     """
-    msg_publisher_id = msg['headers'].get('JMSXUserID')
+    msg_publisher_id = msg.header('JMSXUserID')
     if msg_publisher_id:
         data['publisher_id'] = msg_publisher_id
-
-
-FedoraCiTestArray = namedtuple(
-    'FedoraCiTestArray',
-    [
-        'category',
-        'namespace',
-        'type',
-        'result',
-        'xunit',
-    ]
-)
-
-
-class CreateResultError(RuntimeError):
-    def __init__(self, msg, payload):
-        super(CreateResultError, self).__init__()
-        self.msg = msg
-        self.payload = payload
-
-    def __str__(self):
-        return 'Failed to create result: {0}; Payload: {1}'.format(self.msg, self.payload)
-
-
-def get_contact(msg_body):
-    if semantic_version.match('<0.2.1', msg_body['version']):
-        return msg_body['ci']
-    return msg_body['contact']
-
-
-def get_http_auth(user, password, url):
-    """Return an auth tuple to be used with requests
-
-    Args:
-        user (string) - username used for Basic auth
-        password (string) - password for Basic auth
-        url (string) - URL for which the credentials above will be used
-
-    Returns:
-        Tuple of (user, password), if both defined, or None
-
-    Raises:
-        RuntimeError, if only one of (user, password) is defined
-        RuntimeError, if url is not HTTPS
-    """
-    auth = None
-
-    if not user and not password:
-        pass
-    elif user and password:
-        auth = (user, password)
-    else:
-        raise RuntimeError(
-            'User or password not configured for ResultDB Basic authentication!')
-
-    # https://tools.ietf.org/html/rfc7617#section-4
-    if auth and not url.startswith('https://'):
-        raise RuntimeError(
-            'Basic authentication should not be used without HTTPS!')
-
-    return auth
-
-
-RESULTSDB_AUTH = get_http_auth(
-    CONFIG.get('resultsdb-updater.resultsdb_user'),
-    CONFIG.get('resultsdb-updater.resultsdb_pass'),
-    RESULTSDB_API_URL)
 
 
 def retry_session():
@@ -124,7 +40,7 @@ def retry_session():
     session.mount('https://', adapter)
 
     session.headers.update({
-        'User-Agent': USER_AGENT,
+        'User-Agent': config.USER_AGENT,
     })
 
     return session
@@ -142,18 +58,18 @@ def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
 
     session = retry_session()
     post_req = session.post(
-        '{0}/results'.format(RESULTSDB_API_URL),
+        '{0}/results'.format(config.RESULTSDB_API_URL),
         data=payload,
         headers={
             'content-type': 'application/json',
         },
-        auth=RESULTSDB_AUTH,
-        timeout=TIMEOUT,
-        verify=TRUSTED_CA)
+        auth=config.RESULTSDB_AUTH,
+        timeout=config.TIMEOUT,
+        verify=config.TRUSTED_CA)
 
     if post_req.status_code == 400:
         message = post_req.json().get('message')
-        raise CreateResultError(message, payload)
+        raise exceptions.CreateResultError(message, payload)
 
     post_req.raise_for_status()
 
@@ -161,9 +77,9 @@ def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
 def get_first_group(description):
     session = retry_session()
     get_req = session.get(
-        '{0}/groups?description={1}'.format(RESULTSDB_API_URL, description),
-        timeout=TIMEOUT,
-        verify=TRUSTED_CA,
+        '{0}/groups?description={1}'.format(config.RESULTSDB_API_URL, description),
+        timeout=config.TIMEOUT,
+        verify=config.TRUSTED_CA,
     )
     get_req.raise_for_status()
     if len(get_req.json()['data']) > 0:
@@ -173,33 +89,30 @@ def get_first_group(description):
 
 
 def handle_ci_metrics(msg):
-    msg_id = msg['headers']['message-id']
-    team = msg['body']['msg'].get('team', 'unassigned')
+    team = msg.get('team', default='unassigned')
     if team == 'unassigned':
-        LOGGER.warning(
-            'The message "{0}" did not contain a team. Using "unassigned" as '
+        msg.log.warning(
+            'Missing "team". Using "unassigned" as '
             'the team namespace section of the Test Case'
-            .format(msg_id)
         )
 
-    if 'job_name' in msg['body']['msg']:
-        test_name = msg['body']['msg']['job_name']  # new format
-    else:
+    test_name = msg.get('job_name', default=None)  # new format
+    if test_name is None:
         # This should eventually be deprecated and removed.
-        test_name = msg['body']['msg']['job_names']  # old format
-        LOGGER.warning('Saw message "{0}" with job_names field.'.format(msg_id))
+        test_name = msg.get('job_names')  # old format
+        msg.log.warning('Using with "job_names" field.')
 
-    testcase_url = msg['body']['msg']['jenkins_job_url']
-    group_ref_url = msg['body']['msg']['jenkins_build_url']
-    build_type = msg['body']['msg'].get('build_type', 'unknown')
-    artifact = msg['body']['msg'].get('artifact', 'unknown')
-    brew_task_id = msg['body']['msg'].get('brew_task_id', 'unknown')
-    tests = msg['body']['msg']['tests']
+    testcase_url = msg.get('jenkins_job_url')
+    group_ref_url = msg.get('jenkins_build_url')
+    build_type = msg.get('build_type', default='unknown')
+    artifact = msg.get('artifact', default='unknown')
+    brew_task_id = msg.get('brew_task_id', default='unknown')
+    tests = msg.get('tests')
     group_tests_ref_url = '{0}/console'.format(group_ref_url.rstrip('/'))
-    component = msg['body']['msg'].get('component', 'unknown')
+    component = msg.get('component', default='unknown')
     # This comes as a string of comma separated names
-    recipients = msg['body']['msg'].get('recipients', 'unknown').split(',')
-    ci_tier = msg['body']['msg'].get('CI_tier', ['unknown'])
+    recipients = msg.get('recipients', default='unknown').split(',')
+    ci_tier = msg.get('CI_tier', default=['unknown'])
     test_type = 'unknown'
 
     if brew_task_id != 'unknown':
@@ -281,42 +194,6 @@ def _test_result_outcome(topic, outcome):
     return broken_mapping.get(outcome.lower(), outcome.upper())
 
 
-def _get_test_details(topic, message):
-    """
-    Returns test details according to the version of the spec.
-    """
-    result = None
-
-    # version 0.1.x
-    if semantic_version.match('<0.2.0', message['version']):
-        category = message['category']
-        namespace = message['namespace']
-        test_type = message['type']
-        xunit = message.get('xunit', None)
-        result = message.get('status', None)
-
-    # version >= 0.2.0
-    else:
-        test = message['test']
-        category = test['category']
-        namespace = test['namespace']
-        test_type = test['type']
-
-        # result is required for complete messages only
-        if topic.endswith('.complete'):
-            result = test['result']
-
-        xunit = message.get('xunit', None)
-
-    return FedoraCiTestArray(
-        category=category,
-        namespace=namespace,
-        result=result,
-        type=test_type,
-        xunit=xunit
-    )
-
-
 def namespace_from_topic(topic):
     """
     Returns namespace from message topic.
@@ -350,16 +227,13 @@ def verify_topic_and_testcase_name(topic, testcase_name):
     """
     Verifies that the topic contains same namespace as the test case name.
 
-    If an old topic format is encountered, this test is skipped and a warning
-    is logged. This will be removed in the future after everyone uses the new
-    topic format.
+    Raises MissingTopicError if an old topic format is encountered.
 
     The new topic format is:
 
         /topic/VirtualTopic.eng.ci.<namespace>.<artifact>.<event>.{queued,running,complete,error}
 
-    Returns true only if topic format is different or the namespace does not
-    match.
+    Raises TopicMismatchError if topic doesn't match test namespace.
 
     Note: If the "namespace" field in the message contains ".", only the
     component before the first "." is expected to be in the topic.
@@ -385,22 +259,17 @@ def verify_topic_and_testcase_name(topic, testcase_name):
     """
     topic_namespace = namespace_from_topic(topic)
     if not topic_namespace:
-        LOGGER.warning(
-            'The message topic "%s" uses old scheme not containing '
-            'namespace from test case name "%s"',
-            topic, testcase_name)
-        # Old topics are allowed for now.
-        return True
+        raise exceptions.MissingTopicError(
+            topic=topic,
+            testcase_name=testcase_name)
 
     testcase_namespace = namespace_from_testcase_name(testcase_name)
     if testcase_namespace != topic_namespace:
-        LOGGER.warning(
-            'Test case "%s" namespace "%s" does not match '
-            'message topic "%s" namespace "%s"',
-            testcase_name, testcase_namespace, topic, topic_namespace)
-        return False
-
-    return True
+        raise exceptions.TopicMismatchError(
+            testcase_name=testcase_name,
+            testcase_namespace=testcase_namespace,
+            topic=topic,
+            topic_namespace=topic_namespace)
 
 
 def handle_ci_umb(msg):
@@ -410,25 +279,16 @@ def handle_ci_umb(msg):
     # https://pagure.io/fedora-ci/messages
     #
 
-    msg_body = msg['body']['msg']
-
     # check if required version is provided in the message
-    if not msg_body.get('version'):
-        default_version = '0.1.0'
-        LOGGER.warning((
-            'The message "%s" does not contain required version information, '
-            'using default version %s'
-        ), msg_body, default_version)
-        msg_body['version'] = default_version
+    if msg.get('version', default=None) is None:
+        msg.log.warning((
+            'Missing required version information, using default version %s'
+        ), msg.version)
 
-    topic = msg['topic']
+    item_type = msg.get('artifact', 'type')
+    test_run_url = msg.get('run', 'url')
 
-    item_type = msg_body['artifact']['type']
-    test_run_url = msg_body['run']['url']
-
-    test = _get_test_details(topic, msg_body)
-
-    outcome = _test_result_outcome(topic, test.result)
+    outcome = _test_result_outcome(msg.topic, msg.result.result)
 
     # variables to be passed to create_result
     groups = [{
@@ -436,100 +296,73 @@ def handle_ci_umb(msg):
         'url': test_run_url
     }]
 
-    system = msg_body.get('system', {})
-
-    # Oddly, sometimes people pass us a sytem dict but other times a
-    # list of one system dict.  Try to handle those two situation here.
-    if isinstance(system, list):
-        system = system[0] if system else {}
-
-    contact = get_contact(msg_body)
-
     if item_type == 'productmd-compose':
-        architecture = system['architecture']
-        variant = system.get('variant')
+        architecture = msg.system('architecture')
+        variant = msg.system('variant', default=None)
         # Field compose_id in artifacts is deprecated.
-        compose_id = msg_body['artifact'].get('id') or msg_body['artifact']['compose_id']
+        compose_id = msg.get('artifact', 'id', default=None) or msg.get('artifact', 'compose_id')
         item = '{0}/{1}/{2}'.format(compose_id, variant or 'unknown', architecture)
         result_data = {
             key: value for key, value in (
                 ('item', item),
 
-                ('ci_name', contact['name']),
-                ('ci_team', contact['team']),
-                ('ci_url', contact.get('url', 'not available')),
-                ('ci_irc', contact.get('irc', 'not available')),
-                ('ci_email', contact['email']),
-
-                ('log', msg_body['run']['log']),
+                ('log', msg.get('run', 'log')),
 
                 ('type', item_type),
                 ('productmd.compose.id', compose_id),
 
-                ('system_provider', system['provider']),
+                ('system_provider', msg.system('provider')),
                 ('system_architecture', architecture),
                 ('system_variant', variant),
 
-                ('category', test.category),
+                ('category', msg.result.category),
             ) if value is not None
         }
 
     elif item_type == 'component-version':
-        component = msg_body['artifact']['component']
-        version = msg_body['artifact']['version']
+        component = msg.get('artifact', 'component')
+        version = msg.get('artifact', 'version')
         item = '{0}-{1}'.format(component, version)
         result_data = {
             key: value for key, value in (
                 ('item', item),
 
-                ('ci_name', contact['name']),
-                ('ci_team', contact['team']),
-                ('ci_url', contact.get('url', 'not available')),
-                ('ci_irc', contact.get('irc', 'not available')),
-                ('ci_email', contact['email']),
-
-                ('log', msg_body['run']['log']),
+                ('log', msg.get('run', 'log')),
 
                 ('type', item_type),
                 ('component', component),
                 ('version', version),
 
-                ('category', test.category),
+                ('category', msg.result.category),
             ) if value is not None
         }
 
     elif item_type == 'container-image':
-        repo = msg_body['artifact']['repository']
-        digest = msg_body['artifact']['digest']
+        repo = msg.get('artifact', 'repository')
+        digest = msg.get('artifact', 'digest')
         item = '{0}@{1}'.format(repo, digest)
         result_data = {
             key: value for key, value in (
                 ('item', item),
 
-                ('ci_name', contact['name']),
-                ('ci_team', contact['team']),
-                ('ci_url', contact.get('url', 'not available')),
-                ('ci_irc', contact.get('irc', 'not available')),
-                ('ci_email', contact['email']),
-
-                ('log', msg_body['run']['log']),
-                ('rebuild', msg_body['run'].get('rebuild')),
-                ('xunit', test.xunit),
+                ('log', msg.get('run', 'log')),
+                ('rebuild', msg.get('run', 'rebuild', default=None)),
+                ('xunit', msg.result.xunit),
 
                 ('type', item_type),
-                ('repository', msg_body['artifact'].get('repository')),
-                ('digest', msg_body['artifact'].get('digest')),
-                ('format', msg_body['artifact'].get('format')),
-                ('pull_ref', msg_body['artifact'].get('pull_ref')),
-                ('scratch', msg_body['artifact'].get('scratch')),
-                ('nvr', msg_body['artifact'].get('nvr')),
-                ('issuer', msg_body['artifact'].get('issuer')),
+                ('repository', msg.get('artifact', 'repository', default=None)),
+                ('digest', msg.get('artifact', 'digest', default=None)),
+                ('format', msg.get('artifact', 'format', default=None)),
+                ('pull_ref', msg.get('artifact', 'pull_ref', default=None)),
+                ('scratch', msg.get('artifact', 'scratch', default=None)),
+                ('nvr', msg.get('artifact', 'nvr', default=None)),
+                ('issuer', msg.get('artifact', 'issuer', default=None)),
 
-                ('system_os', system.get('os')),
-                ('system_provider', system.get('provider')),
-                ('system_architecture', system.get('architecture')),
+                ('system_os', msg.system('os', default=None)),
+                ('system_provider', msg.system('provider', default=None)),
+                ('system_architecture', msg.system('architecture', default=None)),
 
-                ('category', test.category),
+                ('category', msg.result.category),
             ) if value is not None
         }
 
@@ -538,44 +371,37 @@ def handle_ci_umb(msg):
         # contain '-', which MBS changes to '_' when importing to koji.
         # See https://github.com/release-engineering/resultsdb-updater/pull/73
         nsvc_regex = re.compile('^(.*):(.*):(.*):(.*)')
+        nsvc = msg.get('artifact', 'nsvc')
         try:
-            name, stream, version, context = re.match(
-                nsvc_regex, msg_body['artifact']['nsvc']).groups()
+            name, stream, version, context = re.match(nsvc_regex, nsvc).groups()
             stream = stream.replace('-', '_')
         except AttributeError:
-            LOGGER.error("Invalid nsvc '{}' encountered, ignoring result".format(
-                msg_body['artifact']['nsvc']))
-            return
+            raise exceptions.InvalidMessageError('Invalid nsvc "%s" encountered' % nsvc)
 
         nsvc = '{}-{}-{}.{}'.format(name, stream, version, context)
 
         result_data = {
             'item': nsvc,
             'type': item_type,
-            'mbs_id': msg_body['artifact'].get('id'),
-            'category': test.category,
-            'context': msg_body['artifact']['context'],
-            'name': msg_body['artifact']['name'],
+            'mbs_id': msg.get('artifact', 'id', default=None),
+            'category': msg.result.category,
+            'context': msg.get('artifact', 'context'),
+            'name': msg.get('artifact', 'name'),
             'nsvc': nsvc,
-            'stream': msg_body['artifact']['stream'],
-            'version': msg_body['artifact']['version'],
-            'issuer': msg_body['artifact'].get('issuer'),
-            'rebuild': msg_body['run'].get('rebuild'),
-            'log': msg_body['run']['log'],
-            'system_os': system.get('os'),
-            'system_provider': system.get('provider'),
-            'ci_name': contact.get('name'),
-            'ci_url': contact.get('url', 'not available'),
-            'ci_team': contact.get('team'),
-            'ci_irc': contact.get('irc', 'not available'),
-            'ci_email': contact.get('email'),
+            'stream': msg.get('artifact', 'stream'),
+            'version': msg.get('artifact', 'version'),
+            'issuer': msg.get('artifact', 'issuer', default=None),
+            'rebuild': msg.get('run', 'rebuild', default=None),
+            'log': msg.get('run', 'log'),
+            'system_os': msg.system('os', default=None),
+            'system_provider': msg.system('provider', default=None),
         }
-    # used as a default
+
     elif item_type == 'brew-build':
-        item = msg_body['artifact']['nvr']
-        component = msg_body['artifact']['component']
-        scratch = msg_body['artifact'].get('scratch', '')
-        brew_task_id = msg_body['artifact'].get('id')
+        item = msg.get('artifact', 'nvr')
+        component = msg.get('artifact', 'component')
+        scratch = msg.get('artifact', 'scratch', default='')
+        brew_task_id = msg.get('artifact', 'id', default=None)
 
         # scratch is supposed to be a bool but some messages in the wild
         # use a string instead
@@ -590,77 +416,65 @@ def handle_ci_umb(msg):
             'item': item,
             'type': item_type,
             'brew_task_id': brew_task_id,
-            'category': test.category,
+            'category': msg.result.category,
             'component': component,
             'scratch': scratch,
-            'issuer': msg_body['artifact'].get('issuer'),
-            'rebuild': msg_body['run'].get('rebuild'),
-            'log': msg_body['run']['log'],  # required
-            'system_os': system.get('os'),
-            'system_provider': system.get('provider'),
-            'ci_name': contact.get('name'),
-            'ci_url': contact.get('url', 'not available'),
-            'ci_team': contact.get('team'),
-            'ci_irc': contact.get('irc', 'not available'),
-            'ci_email': contact.get('email'),
+            'issuer': msg.get('artifact', 'issuer', default=None),
+            'rebuild': msg.get('run', 'rebuild', default=None),
+            'log': msg.get('run', 'log'),
+            'system_os': msg.system('os', default=None),
+            'system_provider': msg.system('provider', default=None),
         }
 
-    # an unknown artifact type
     else:
-        LOGGER.error("Artifact type '{}' handling not implemented".format(item_type))
-        return
+        raise exceptions.InvalidMessageError('Unknown artifact type "%s"' % item_type)
 
-    # add optional recipients field, according to the version
-    if semantic_version.match('<0.2.0', msg_body['version']):
-        result_data['recipients'] = msg_body.get('recipients', [])
-
-    else:
-        notification = msg_body.get('notification', None)
-
-        if notification:
-            result_data['recipients'] = notification.get('recipients', [])
+    result_data.update(msg.contact_dict)
+    result_data['recipients'] = msg.recipients
 
     update_publisher_id(data=result_data, msg=msg)
 
     # construct resultsdb testcase dict
     testcase = {
-        'name': '.'.join([test.namespace, test.type, test.category]),
-        'ref_url': msg_body['run']['url'],
+        'name': msg.result.testcase,
+        'ref_url': msg.get('run', 'url'),
     }
 
-    if not verify_topic_and_testcase_name(msg['topic'], testcase['name']):
-        return
+    try:
+        verify_topic_and_testcase_name(msg.topic, testcase['name'])
+    except exceptions.MissingTopicError as e:
+        # Old topics are allowed for now.
+        msg.log.warning(e)
 
     create_result(testcase, outcome, test_run_url, result_data, groups)
 
 
 def handle_resultsdb_format(msg):
-    msg_body = msg['body']['msg']
-    group_ref_url = msg_body['ref_url']
+    group_ref_url = msg.get('ref_url')
     rpmdiff_url_regex_pattern = \
         r'^(?P<url_prefix>http.+\/run\/)(?P<run>\d+)(?:\/)?(?P<result>\d+)?$'
 
-    if msg_body.get('testcase', {}).get('name', '').startswith('dist.rpmdiff'):
-        rpmdiff_url_regex_match = re.match(
-            rpmdiff_url_regex_pattern, msg_body['ref_url'])
+    if msg.get('testcase', 'name', default='').startswith('dist.rpmdiff'):
+        rpmdiff_url_regex_match = re.match(rpmdiff_url_regex_pattern, group_ref_url)
 
         if rpmdiff_url_regex_match:
             group_ref_url = '{0}{1}'.format(
                 rpmdiff_url_regex_match.groupdict()['url_prefix'],
                 rpmdiff_url_regex_match.groupdict()['run'])
         else:
-            raise ValueError(
-                'The ref_url of "{0}" did not match the rpmdiff URL scheme'
-                .format(msg_body['ref_url']))
+            raise exceptions.InvalidMessageError(
+                'The ref_url "{0}" did not match the rpmdiff URL scheme'
+                .format(group_ref_url))
 
     # Check if the message is in bulk format
-    if msg_body.get('results'):
+    results = msg.get('results', default=None)
+    if results:
         groups = [{
             'uuid': str(uuid.uuid4()),
             'ref_url': group_ref_url
         }]
 
-        for testcase, result in msg_body['results'].items():
+        for testcase, result in results.items():
             result_data = result.get('data', {})
             update_publisher_id(data=result_data, msg=msg)
             create_result(
@@ -684,14 +498,14 @@ def handle_resultsdb_format(msg):
             'description': group_ref_url
         }]
 
-        result_data = msg_body['data']
+        result_data = msg.get('data')
         update_publisher_id(data=result_data, msg=msg)
 
         create_result(
-            msg_body['testcase'],
-            msg_body['outcome'],
-            msg_body['ref_url'],
+            msg.get('testcase'),
+            msg.get('outcome'),
+            msg.get('ref_url'),
             result_data,
             groups,
-            msg_body.get('note', '')
+            msg.get('note', default='')
         )

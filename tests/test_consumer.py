@@ -7,6 +7,7 @@ import mock
 import requests
 
 import resultsdbupdater.utils
+from resultsdbupdater.message import create_message
 
 from resultsdbupdater import consumer as ciconsumer
 
@@ -194,6 +195,17 @@ def test_full_consume_rpmdiff_msg(mock_session):
     }
     assert expected_data == \
         json.loads(mock_session.post.call_args_list[0][1]['data'])
+
+
+def test_full_consume_rpmdiff_msg_with_bad_ref_url(mock_session, caplog):
+    fake_msg = get_fake_msg('rpmdiff_message')
+    fake_msg['body']['msg']['ref_url'] = 'https://example.com/bad/123'
+    consumer.consume(fake_msg)
+    mock_session.post.assert_not_called()
+    assert (
+        'Invalid message rejected: The ref_url "https://example.com/bad/123"'
+        ' did not match the rpmdiff URL scheme'
+    ) in caplog.text
 
 
 def test_full_consume_covscan_msg(mock_session):
@@ -468,7 +480,7 @@ def test_fedora_ci_no_test(mock_session, caplog):
     fake_msg = get_fake_msg('fedora-ci-message-no-test')
     consumer.consume(fake_msg)
     mock_session.post.assert_not_called()
-    assert "KeyError: 'test'" in caplog.text
+    assert 'Invalid message rejected: Missing field "test.result"' in caplog.text
 
 
 def test_full_consume_compose_msg(mock_session):
@@ -720,6 +732,22 @@ def test_full_consume_redhat_module_success_msg(mock_session):
         json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
+def test_full_consume_redhat_module_with_bad_nsvc(mock_session, caplog):
+    fake_msg = get_fake_msg('redhat_module_message')
+    fake_msg['body']['msg']['artifact']['nsvc'] = 'BAD_FORMAT'
+    consumer.consume(fake_msg)
+    mock_session.post.assert_not_called()
+    assert 'Invalid message rejected: Invalid nsvc "BAD_FORMAT" encountered' in caplog.text
+
+
+def test_full_consume_redhat_module_with_unknown_artifact_type(mock_session, caplog):
+    fake_msg = get_fake_msg('redhat_module_message')
+    fake_msg['body']['msg']['artifact']['type'] = 'mysterious-artifact'
+    consumer.consume(fake_msg)
+    mock_session.post.assert_not_called()
+    assert 'Invalid message rejected: Unknown artifact type "mysterious-artifact"' in caplog.text
+
+
 def test_container_image_msg(mock_session):
     fake_msg = get_fake_msg('container_image_message')
     consumer.consume(fake_msg)
@@ -792,7 +820,7 @@ def test_publisher_id(mock_session, consume_fn):
     mock_session.get.return_value.json.return_value = {'data': []}
 
     fake_msg = get_fake_msg('jmsx_user_id')
-    consume_fn(fake_msg)
+    consume_fn(create_message(fake_msg))
     # Verify the post URL
     assert mock_session.post.call_args_list[0][0][0] == \
         'https://resultsdb.domain.local/api/v2.0/results'
@@ -840,7 +868,7 @@ def test_full_consume_post_failed(mock_session):
     fake_msg = get_fake_msg('message')
 
     with pytest.raises(requests.exceptions.HTTPError):
-        consumer._consume_helper(fake_msg)
+        consumer._consume_helper(create_message(fake_msg))
 
 
 def test_full_consume_post_timeout(mock_session):
@@ -848,12 +876,12 @@ def test_full_consume_post_timeout(mock_session):
     fake_msg = get_fake_msg('message')
 
     with pytest.raises(requests.exceptions.Timeout):
-        consumer._consume_helper(fake_msg)
+        consumer._consume_helper(create_message(fake_msg))
 
 
 def test_consume_no_exception_on_bad_message(caplog):
     consumer.consume({})
-    assert 'Failed to process message' in caplog.text
+    assert 'Failed to parse message version' in caplog.text
 
 
 def test_fedora_ci_message_brew_build_test_complete_version_2(mock_session):
