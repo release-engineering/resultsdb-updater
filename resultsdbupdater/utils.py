@@ -7,6 +7,8 @@ from collections import namedtuple
 
 import fedmsg
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 import semantic_version
 
@@ -101,6 +103,33 @@ RESULTSDB_AUTH = get_http_auth(
     RESULTSDB_API_URL)
 
 
+def retry_session():
+    # This will give the total wait time in minutes:
+    # >>> sum([min((0.3 * (2 ** (i - 1))), 120) / 60 for i in range(24)])
+    # >>> 30.5575
+    # This works by the using the minimum time in seconds of the backoff time
+    # and the max back off time which defaults to 120 seconds. The backoff time
+    # increases after every failed attempt.
+    session = requests.Session()
+    retry = Retry(
+        total=24,
+        read=5,
+        connect=24,
+        backoff_factor=0.3,
+        status_forcelist=(500, 502, 504),
+        method_whitelist=('GET', 'POST'),
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    session.headers.update({
+        'User-Agent': USER_AGENT,
+    })
+
+    return session
+
+
 def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
     payload = json.dumps({
         'testcase': testcase,
@@ -110,12 +139,13 @@ def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
         'note': note or '',
         'data': data
     })
-    post_req = requests.post(
+
+    session = retry_session()
+    post_req = session.post(
         '{0}/results'.format(RESULTSDB_API_URL),
         data=payload,
         headers={
             'content-type': 'application/json',
-            'User-Agent': USER_AGENT,
         },
         auth=RESULTSDB_AUTH,
         timeout=TIMEOUT,
@@ -129,13 +159,11 @@ def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
 
 
 def get_first_group(description):
-    get_req = requests.get(
+    session = retry_session()
+    get_req = session.get(
         '{0}/groups?description={1}'.format(RESULTSDB_API_URL, description),
         timeout=TIMEOUT,
         verify=TRUSTED_CA,
-        headers={
-            'User-Agent': USER_AGENT,
-        },
     )
     get_req.raise_for_status()
     if len(get_req.json()['data']) > 0:
