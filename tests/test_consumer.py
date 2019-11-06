@@ -352,8 +352,10 @@ def test_full_consume_pipeline_failure_msg(mock_session):
         json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-def test_full_consume_platformci_success_msg(mock_session):
+@pytest.mark.parametrize('spec_version', (None, '0.1.0'))
+def test_full_consume_platformci_success_msg(mock_session, spec_version):
     fake_msg = get_fake_msg('platformci_success_message')
+    fake_msg['body']['msg']['version'] = spec_version
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_session.post.call_args_list[0][0][0] == \
@@ -459,13 +461,6 @@ def test_full_consume_osci_success_msg(mock_session):
 
     assert all_expected_data == \
         json.loads(mock_session.post.call_args_list[0][1]['data'])
-
-
-def test_fedora_ci_no_version(mock_session):
-    """ Make sure message is not processed if version is missing. """
-    fake_msg = get_fake_msg('fedora-ci-message-no-version')
-    consumer.consume(fake_msg)
-    mock_session.post.assert_not_called()
 
 
 def test_fedora_ci_no_test(mock_session, caplog):

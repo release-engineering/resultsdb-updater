@@ -413,13 +413,13 @@ def handle_ci_umb(msg):
     msg_body = msg['body']['msg']
 
     # check if required version is provided in the message
-    if 'version' not in msg_body:
-        LOGGER.error((
-            'The message "{0}" does not contain required version information'
-            .format(msg_body),
-            ', cannot continue'
-        ))
-        return
+    if not msg_body.get('version'):
+        default_version = '0.1.0'
+        LOGGER.warning((
+            'The message "%s" does not contain required version information, '
+            'using default version %s'
+        ), msg_body, default_version)
+        msg_body['version'] = default_version
 
     topic = msg['topic']
 
