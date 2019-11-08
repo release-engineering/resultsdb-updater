@@ -908,6 +908,58 @@ def test_full_consume_redhat_module_with_unknown_artifact_type(mock_session, cap
     assert 'Invalid message rejected: Unknown artifact type "mysterious-artifact"' in caplog.text
 
 
+def test_redhat_container_image_msg(mock_session):
+    fake_msg = get_fake_msg('redhat-container-image.test.complete')
+    consumer.consume(fake_msg)
+
+    assert mock_session.post.call_count == 1
+    all_expected_data = {
+        'data': {
+            'item': 'sha256:67dad89757a55bfdfabec8abd0e22f8c7c12a1856514726470228063ed865934',
+            'type': 'redhat-container-image',
+            'brew_task_id': 835014,
+            'brew_build_id': None,
+            'category': 'functional',
+            'full_names': [
+                'example.com:8888/openshift/'
+                'ose-machine-config-operator-container:v4.3.0-201911080317'],
+            'registry_url': 'example.com:8888',
+            'tag': 'v4.3.0-201911080317',
+            'issuer': 'user',
+            'component': 'ose-machine-config-operator',
+            'name': 'ose-machine-config-operator-container',
+            'namespace': 'openshift',
+            'rebuild': 'https://somewhere.com/job/ci-job/4794/rebuild/parametrized',
+            'log': 'https://somewhere.com/job/ci-job/4794/console',
+            'ci_name': 'C3I Jenkins',
+            'ci_url': 'https://example.com',
+            'ci_team': 'DevOps',
+            'ci_irc': '#some-channel',
+            'ci_email': 'someone@example.com',
+            'recipients': ['alice', 'bob'],
+            'scratch': False,
+            'nvr': 'ose-machine-config-operator-container-v4.3.0-201911080317',
+            'source': (
+                'git://dist-git.com/containers/ose-machine-config-operator'
+                '#422f238e6011b411c93198ad00299a4002979843'
+            )
+        },
+        'groups': [{
+            'url': 'https://somewhere.com/job/ci-job/4794',
+            'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',
+        }],
+        'note': '',
+        'outcome': 'FAILED',
+        'ref_url': 'https://somewhere.com/job/ci-job/4794',
+        'testcase': {
+            'name': 'factory2.c3i-ci.tier1.functional',
+            'ref_url': 'https://somewhere.com/job/ci-job/4794'
+        },
+    }
+    assert all_expected_data == \
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
+
+
 def test_container_image_msg(mock_session):
     fake_msg = get_fake_msg('container_image_message')
     consumer.consume(fake_msg)
