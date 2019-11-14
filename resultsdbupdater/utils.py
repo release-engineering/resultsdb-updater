@@ -176,10 +176,10 @@ def _test_result_outcome(topic, outcome):
 
     Some systems generate outcomes that don't match spec.
 
-    Test outcome is FAILED for messages with "*.error" topic.
+    Test outcome is ERROR for messages with "*.error" topic.
     """
     if topic.endswith('.error'):
-        return 'FAILED'
+        return 'ERROR'
     elif topic.endswith('.queued'):
         return 'QUEUED'
     elif topic.endswith('.running'):
@@ -445,6 +445,14 @@ def handle_ci_umb(msg):
     except exceptions.MissingTopicError as e:
         # Old topics are allowed for now.
         msg.log.warning(e)
+
+    if outcome == 'ERROR':
+        error_reason = msg.get('error', 'reason')
+        result_data['error_reason'] = error_reason
+
+        issue_url = msg.get('error', 'issue_url', default=None)
+        if issue_url:
+            result_data['issue_url'] = issue_url
 
     create_result(testcase, outcome, test_run_url, result_data, groups)
 

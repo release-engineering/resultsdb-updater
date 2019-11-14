@@ -328,6 +328,7 @@ def test_full_consume_pipeline_failure_msg(mock_session):
             'type': 'brew-build_scratch',
 
             'component': 'tigervnc',
+            'error_reason': 'unknown execution error',
             'brew_task_id': '15665813',
             'category': 'functional',
             'scratch': True,
@@ -352,7 +353,7 @@ def test_full_consume_pipeline_failure_msg(mock_session):
             'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
         }],
         'note': '',
-        'outcome': 'FAILED',
+        'outcome': 'ERROR',
         'ref_url': 'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/',
         'testcase': {
             'name': 'contra.pipeline.functional',
