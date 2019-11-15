@@ -364,10 +364,15 @@ def test_full_consume_pipeline_failure_msg(mock_session):
         json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-@pytest.mark.parametrize('spec_version', (None, '0.1.0'))
+@pytest.mark.parametrize('spec_version', (None, '0.1.0', ''))
 def test_full_consume_platformci_success_msg(mock_session, spec_version):
     fake_msg = get_fake_msg('platformci_success_message')
-    fake_msg['body']['msg']['version'] = spec_version
+
+    if spec_version is None:
+        del fake_msg['body']['msg']['version']
+    else:
+        fake_msg['body']['msg']['version'] = spec_version
+
     consumer.consume(fake_msg)
     # Verify the post URL
     assert mock_session.post.call_args_list[0][0][0] == \

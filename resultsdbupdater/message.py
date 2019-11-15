@@ -135,7 +135,7 @@ class Message(object):
 
     @property
     def version(self):
-        return self.get('version')
+        return get_version(self.msg_data)
 
     def header(self, name):
         return self.msg_data.get('headers', {}).get(name)
