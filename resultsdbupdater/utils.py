@@ -497,7 +497,7 @@ def handle_ci_umb(msg):
         if issue_url:
             result_data['issue_url'] = issue_url
 
-    create_result(testcase, outcome, test_run_url, result_data, groups)
+    create_result(testcase, outcome, test_run_url, result_data, groups, msg.result.note)
 
 
 def handle_resultsdb_format(msg):

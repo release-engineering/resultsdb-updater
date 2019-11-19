@@ -57,6 +57,10 @@ class Result(object):
     def result(self):
         return self.get('status', default=None)
 
+    @property
+    def note(self):
+        return self.get('note', default='')
+
 
 class ResultV2(Result):
     def get(self, *args, **kwargs):

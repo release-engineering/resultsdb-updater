@@ -400,7 +400,7 @@ def test_full_consume_brew_build_v2_failure_msg(mock_session):
             'url': 'https://somewhere.com/job/ci-openstack/4794',
             'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
         }],
-        'note': '',
+        'note': 'Operation team was notified about the issue, follow the Sentry issue link',
         'outcome': 'ERROR',
         'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
         'testcase': {
@@ -948,7 +948,7 @@ def test_redhat_container_image_msg(mock_session):
             'url': 'https://somewhere.com/job/ci-job/4794',
             'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',
         }],
-        'note': '',
+        'note': 'Some notes.',
         'outcome': 'FAILED',
         'ref_url': 'https://somewhere.com/job/ci-job/4794',
         'testcase': {
