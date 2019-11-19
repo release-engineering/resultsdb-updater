@@ -11,6 +11,7 @@ results on the CI message bus and updates ResultsDB in a standard format." \
 RUN dnf install -y \
         fedmsg \
         python-requests \
+        python2-semantic_version \
     && dnf clean -y all
 
 COPY ["setup.py", "requirements.txt", "/src/resultsdb-updater/"]
