@@ -1,0 +1,74 @@
+{
+  "body": {
+    "msg": {
+      "contact": {
+        "name": "BaseOS CI",
+        "team": "BaseOS",
+        "url": "https://somewhere.com",
+        "docs": "https://somewhere.com/user-documentation",
+        "irc": "#baseosci",
+        "email": "baseos-ci@somewhere.com"
+      },
+      "run": {
+        "url": "https://somewhere.com/job/ci-openstack/4794",
+        "log": "https://somewhere.com/job/ci-openstack/4794/console",
+        "log_raw": "https://somewhere.com/job/ci-openstack/4794/consoleText",
+        "log_stream": "https://somewhere.com/job/ci-openstack/4794/consoleText",
+        "debug": "https://somewhere.com/job/ci-openstack/4794/artifacts/debug.txt",
+        "rebuild": "https://somewhere.com/job/ci-openstack/4794/rebuild/parametrized"
+      },
+      "artifact": {
+        "type": "brew-build-group",
+        "id": "sha256:acbfb0c61199e5a05f07ee4ec2cdf7fb93376513b82cb5ad444e4d94e4258785",
+        "repository": "https://some.url/repo",
+        "builds":
+        [{
+          "type": "brew-build",
+          "id": 14546276,
+          "issuer": "alice",
+          "component": "libselinux",
+          "nvr": "libselinux-2.8-6.el7.x86_64",
+          "scratch": false,
+          "source": "git+https://src.fedoraproject.org/rpms/libselinux.git?#5e0ae23a"
+        }, {
+          "type": "brew-build",
+          "id": 14546277,
+          "issuer": "bob",
+          "component": "libsepol",
+          "nvr": "libsepol-2.8-3.el7.x86_64",
+          "scratch": false,
+          "source": "git+https://src.fedoraproject.org/rpms/libsepol.git?#5e0ae23a"
+        }]
+      },
+      "pipeline": {
+        "id": "ac11dcddf99a",
+        "name": "ci-openstack"
+      },
+      "test": {
+        "category": "functional",
+        "label": [ "fast", "aarch64" ],
+        "namespace": "baseos-qe.baseos-ci",
+        "note": "Some notes.",
+        "result": "failed",
+        "type": "tier1",
+        "xunit": "https://somewhere.com/job/ci-openstack/4794/artifacts/results.xml"
+      },
+      "system":
+      [{
+        "os": "Fedora-Cloud-Base-28",
+        "provider": "openstack",
+        "architecture": "x86_64",
+        "label": "master"
+      }],
+      "notification": {
+        "recipients": [ "claire", "daniel" ]
+      },
+      "generated_at": "2018-05-10 08:58:31.222602",
+      "version": "0.2.5"
+    }
+  },
+  "headers": {
+    "message-id": "some-id"
+  },
+  "topic": "/topic/VirtualTopic.eng.ci.brew-build-group.test.complete"
+}

@@ -470,6 +470,23 @@ def handle_ci_umb(msg):
             'system_provider': msg.system('provider', default=None),
         }
 
+    elif item_type == 'brew-build-group':
+        item = msg.get('artifact', 'id')
+        repository = msg.get('artifact', 'repository')
+        builds = msg.get('artifact', 'builds')
+
+        result_data = {
+            'item': item,
+            'type': item_type,
+            'category': msg.result.category,
+            'repository': repository,
+            'builds': builds,
+            'rebuild': msg.get('run', 'rebuild', default=None),
+            'log': msg.get('run', 'log'),
+            'system_os': msg.system('os', default=None),
+            'system_provider': msg.system('provider', default=None),
+        }
+
     else:
         raise exceptions.InvalidMessageError('Unknown artifact type "%s"' % item_type)
 
