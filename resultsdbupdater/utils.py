@@ -319,6 +319,25 @@ def handle_ci_umb(msg):
             ) if value is not None
         }
 
+    elif item_type == 'product-build':
+        product = msg.get('artifact', 'name')
+        version = msg.get('artifact', 'version')
+        release = msg.get('artifact', 'release')
+        item = '{0}-{1}-{2}'.format(product, version, release)
+        result_data = {
+            key: value for key, value in (
+                ('item', item),
+                ('product', product),
+                ('version', version),
+                ('release', release),
+                ('artifacts', msg.get('artifact', 'artifacts', default=[])),
+                ('log', msg.get('run', 'log')),
+                ('type', item_type),
+                ('system_architecture', msg.system('architecture')),
+                ('category', msg.result.category),
+            ) if value is not None
+        }
+
     elif item_type == 'component-version':
         component = msg.get('artifact', 'component')
         version = msg.get('artifact', 'version')
