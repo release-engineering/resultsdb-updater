@@ -46,9 +46,7 @@
         "id": "15665813",
         "issuer": null
       },
-      "error": {
-          "reason": "unknown execution error"
-      },
+      "reason": "unknown execution error",
       "type": "pipeline",
       "namespace": "contra",
       "version": "0.1.0"

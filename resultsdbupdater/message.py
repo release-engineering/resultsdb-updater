@@ -197,6 +197,10 @@ class Message(object):
     def recipients(self):
         return self.get('recipients', default=[])
 
+    @property
+    def error_reason(self):
+        return self.get('reason')
+
 
 class MessageV2(Message):
     @property
@@ -206,6 +210,10 @@ class MessageV2(Message):
     @property
     def recipients(self):
         return self.get('notification', 'recipients', default=[])
+
+    @property
+    def error_reason(self):
+        return self.get('error', 'reason')
 
 
 class MessageV2_1(MessageV2):
