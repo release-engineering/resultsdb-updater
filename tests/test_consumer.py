@@ -365,6 +365,54 @@ def test_full_consume_pipeline_failure_msg(mock_session):
         json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
+def test_full_consume_brew_build_v2_failure_msg(mock_session):
+    fake_msg = get_fake_msg('brew-build.test.error.v2')
+    consumer.consume(fake_msg)
+    # Verify the post URL
+    assert mock_session.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+    # Verify the post data
+    assert mock_session.post.call_count == 1
+    all_expected_data = {
+        'data': {
+            'item': 'setup-2.8.71-7.el7_4',
+            'type': 'brew-build_scratch',
+
+            'component': 'setup',
+            'error_reason': 'CI pipeline aborted',
+            'issue_url': 'http://sentry.somewhere.com/baseos/production/issues/1149/',
+            'brew_task_id': 14546276,
+            'category': 'functional',
+            'scratch': True,
+            'issuer': 'alice',
+            'rebuild': 'https://somewhere.com/job/ci-openstack/4794/rebuild/parametrized',
+            'log': 'https://somewhere.com/job/ci-openstack/4794/console',
+            'system_os': None,
+            'system_provider': None,
+            'ci_name': 'BaseOS CI',
+            'ci_url': 'https://somewhere.com',
+            'ci_team': 'BaseOS',
+            'ci_irc': '#baseosci',
+            'ci_email': 'baseos-ci@somewhere.com',
+            'recipients': ['alice', 'bob']
+        },
+        'groups': [{
+            'url': 'https://somewhere.com/job/ci-openstack/4794',
+            'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
+        }],
+        'note': '',
+        'outcome': 'ERROR',
+        'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
+        'testcase': {
+            'name': 'baseos-qe.baseos-ci.tier1.functional',
+            'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
+        },
+    }
+
+    assert all_expected_data == \
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
+
+
 @pytest.mark.parametrize('spec_version', (None, '0.1.0', ''))
 def test_full_consume_platformci_success_msg(mock_session, spec_version):
     fake_msg = get_fake_msg('platformci_success_message')

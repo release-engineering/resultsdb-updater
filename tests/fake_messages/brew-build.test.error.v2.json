@@ -1,0 +1,56 @@
+{
+  "body": {
+    "msg": {
+      "contact": {
+        "name": "BaseOS CI",
+        "team": "BaseOS",
+        "url": "https://somewhere.com",
+        "docs": "https://somewhere.com/user-documentation",
+        "irc": "#baseosci",
+        "email": "baseos-ci@somewhere.com"
+      },
+      "run": {
+        "url": "https://somewhere.com/job/ci-openstack/4794",
+        "log": "https://somewhere.com/job/ci-openstack/4794/console",
+        "log_raw": "https://somewhere.com/job/ci-openstack/4794/console",
+        "log_stream": "https://somewhere.com/job/ci-openstack/4794/console",
+        "debug": "https://somewhere.com/job/ci-openstack/4794/artifacts/debug.txt",
+        "rebuild": "https://somewhere.com/job/ci-openstack/4794/rebuild/parametrized"
+      },
+      "artifact": {
+        "type": "brew-build",
+        "id": 14546276,
+        "issuer": "alice",
+        "component": "setup",
+        "nvr": "setup-2.8.71-7.el7_4",
+        "scratch": true,
+        "dependencies": ["gcc-3.8.2-1.el7", "make-2.3.1-2.el7_4"]
+      },
+      "pipeline": {
+        "id": "fc11dcddf99a",
+        "name": "ci-openstack"
+      },
+      "test": {
+        "category": "functional",
+        "docs": "https://my-ci-system/docs/contribute-retrigger-reproduce",
+        "label": [ "slow", "x86_64" ],
+        "namespace": "baseos-qe.baseos-ci",
+        "note": "Operation team was notified about the issue, follow the Sentry issue link",
+        "type": "tier1"
+      },
+      "error": {
+        "reason": "CI pipeline aborted",
+        "issue_url": "http://sentry.somewhere.com/baseos/production/issues/1149/"
+      },
+      "notification": {
+        "recipients": [ "alice", "bob" ]
+      },
+      "generated_at": "2018-05-10 08:58:31.222602",
+      "version": "0.2.1"
+    }
+  },
+  "headers": {
+    "message-id": "some-id"
+  },
+  "topic": "/topic/VirtualTopic.eng.ci.brew-build.test.error"
+}
