@@ -191,7 +191,11 @@ def _test_result_outcome(topic, outcome):
         'failure': 'FAILED',
     }
 
-    return broken_mapping.get(outcome.lower(), outcome.upper())
+    try:
+        return broken_mapping.get(outcome.lower(), outcome.upper())
+    except AttributeError:
+        raise exceptions.InvalidMessageError(
+            'Unexpected result status/outcome, expected a string, got: %r' % outcome)
 
 
 def namespace_from_topic(topic):
