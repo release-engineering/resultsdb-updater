@@ -1127,3 +1127,11 @@ def test_consumer_no_throw(mock_session, caplog):
     consumer.consume(fake_msg)
     assert 'Unexpected exception' in caplog.text
     assert 'RuntimeError' in caplog.text
+
+
+def test_unexpected_status(mock_session, caplog):
+    fake_msg = get_fake_msg('container_image_message')
+    del fake_msg['body']['msg']['status']
+    consumer.consume(fake_msg)
+    mock_session.post.assert_not_called()
+    assert 'Unexpected result status/outcome, expected a string, got: None' in caplog.text
