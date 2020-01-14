@@ -1,0 +1,67 @@
+{
+  "msg_id": "ID:jenkins-1-xxxxx-666-666-666:1:1:1:1",
+  "topic": "VirtualTopic.eng.ci.redhat-container-image.test.complete",
+  "body": {
+    "msg": {
+      "contact": {
+        "name": "C3I Jenkins",
+        "team": "DevOps",
+        "url": "https://example.com",
+        "docs": "https://example.com/user-documentation",
+        "irc": "#some-channel",
+        "email": "someone@example.com"
+      },
+      "run": {
+        "url": "https://somewhere.com/job/ci-job/4794",
+        "log": "https://somewhere.com/job/ci-job/4794/console",
+        "log_raw": "https://somewhere.com/job/ci-job/4794/consoleText",
+        "log_stream": "https://somewhere.com/job/ci-job/4794/consoleText",
+        "debug": "https://somewhere.com/job/ci-job/4794/artifacts/debug.txt",
+        "rebuild": "https://somewhere.com/job/ci-job/4794/rebuild/parametrized"
+      },
+      "artifact": {
+        "type": "redhat-container-image",
+        "id": "sha256:67dad89757a55bfdfabec8abd0e22f8c7c12a1856514726470228063ed865934",
+        "task_id": 835014,
+        "component": "ose-machine-config-operator",
+        "name": "ose-machine-config-operator-container",
+        "namespace": "openshift",
+        "full_names": ["example.com:8888/openshift/ose-machine-config-operator-container:v4.3.0-201911080317"],
+        "registry_url": "example.com:8888",
+        "tag": "v4.3.0-201911080317",
+        "issuer": "user",
+        "scratch": false,
+        "nvr": "ose-machine-config-operator-container-v4.3.0-201911080317",
+        "source": "git://dist-git.com/containers/ose-machine-config-operator#422f238e6011b411c93198ad00299a4002979843"
+      },
+      "pipeline": {
+        "id": "ac11dcddf99a",
+        "name": "ci-job"
+      },
+      "test": {
+        "type": "tier1",
+        "category": "functional",
+        "result": "failed",
+        "namespace": "factory2.c3i-ci",
+        "note": "Some notes.",
+        "label": [ "fast", "aarch64" ],
+        "xunit": "https://somewhere.com/job/ci-openstack/4794/artifacts/results.xml"
+      },
+      "system":
+         [{
+            "os": "docker.io/openshift/jenkins-slave-base-centos7:latest",
+            "provider": "openshift",
+            "architecture": "x86_64"
+         }],
+      "notification": {
+          "recipients": [ "alice", "bob" ]
+      },
+      "generated_at": "2018-05-10 08:58:31.222602",
+      "version": "0.2.5"
+    }
+  },
+  "headers": {
+    "message-id": "ID:jenkins-1-xxxxx-666-666-666:1:1:1:1",
+    "topic": "VirtualTopic.eng.ci.redhat-container-image.test.complete"
+  }
+}

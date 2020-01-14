@@ -389,6 +389,27 @@ def handle_ci_umb(msg):
             ) if value is not None
         }
 
+    elif item_type == 'redhat-container-image':
+        result_data = {
+            'item': msg.get('artifact', 'id'),
+            'type': item_type,
+            'brew_task_id': msg.get('artifact', 'task_id', default=None),
+            'brew_build_id': msg.get('artifact', 'build_id', default=None),
+            'category': msg.result.category,
+            'full_names': msg.get('artifact', 'full_names'),
+            'registry_url': msg.get('artifact', 'registry_url', default=None),
+            'tag': msg.get('artifact', 'tag', default=None),
+            'issuer': msg.get('artifact', 'issuer'),
+            'component': msg.get('artifact', 'component'),
+            'name': msg.get('artifact', 'name'),
+            'namespace': msg.get('artifact', 'namespace'),
+            'scratch': msg.get('artifact', 'scratch'),
+            'nvr': msg.get('artifact', 'nvr'),
+            'source': msg.get('artifact', 'source'),
+            'rebuild': msg.get('run', 'rebuild', default=None),
+            'log': msg.get('run', 'log'),
+        }
+
     elif item_type == 'redhat-module':
         # The pagure.io/messages spec defines the NSVC delimited with ':' and the stream name can
         # contain '-', which MBS changes to '_' when importing to koji.
