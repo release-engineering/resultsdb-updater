@@ -491,7 +491,7 @@ def handle_ci_umb(msg):
         msg.log.warning(e)
 
     if outcome == 'ERROR':
-        result_data['error_reason'] = msg.error_reason
+        result_data['error_reason'] = msg.error_reason[:256]
 
         issue_url = msg.get('error', 'issue_url', default=None)
         if issue_url:
