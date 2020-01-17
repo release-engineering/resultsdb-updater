@@ -1,4 +1,4 @@
-FROM fedora:28
+FROM fedora:31
 LABEL \
     name="ResultsDB-Updater application" \
     vendor="ResultsDB-Updater developers" \
@@ -10,8 +10,9 @@ results on the CI message bus and updates ResultsDB in a standard format." \
 
 RUN dnf install -y \
         fedmsg \
-        python-requests \
-        python2-semantic_version \
+        python3-pip \
+        python3-requests \
+        python3-semantic_version \
     && dnf clean -y all
 
 COPY ["setup.py", "requirements.txt", "/src/resultsdb-updater/"]
