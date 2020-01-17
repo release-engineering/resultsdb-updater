@@ -33,19 +33,13 @@ fedmsg-hub
 
 ### Running the service in a container
 
-Building the container image requires the ResultsDB-Updater rpm to be provided
-as a build argument:
+To build a container image with ResultsDB-Updater run:
 
 ```bash
-$ docker build -f openshift/Dockerfile \
-               --tag <IMAGE_TAG> \
-               --build-arg resultsdb_updater_rpm=<RESULTSDB_UPDATER_RPM> ./
+$ podman build --tag <IMAGE_TAG> .
 ```
 
 `IMAGE_TAG` is the tag to be applied on the image built.
-
-`RESULTSDB_UPDATER_RPM` is either the URL of the ResultsDB-Updater rpm, or the
-relative path of that rpm *within* the build context.
 
 There are two volumes expected to be mounted when ResultsDB-Updater containers
 are started:
