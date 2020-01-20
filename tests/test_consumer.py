@@ -400,7 +400,7 @@ def test_full_consume_brew_build_v2_failure_msg(mock_session):
             'url': 'https://somewhere.com/job/ci-openstack/4794',
             'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
         }],
-        'note': '',
+        'note': 'Operation team was notified about the issue, follow the Sentry issue link',
         'outcome': 'ERROR',
         'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
         'testcase': {
@@ -948,7 +948,7 @@ def test_redhat_container_image_msg(mock_session):
             'url': 'https://somewhere.com/job/ci-job/4794',
             'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',
         }],
-        'note': '',
+        'note': 'Some notes.',
         'outcome': 'FAILED',
         'ref_url': 'https://somewhere.com/job/ci-job/4794',
         'testcase': {
@@ -1144,6 +1144,61 @@ def test_fedora_ci_message_brew_build_test_complete_version_2(mock_session):
             'ref_url': 'https://jenkins/job/pipeline/170/',
         },
         'note': ''
+    }
+
+    assert all_expected_data == \
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
+
+
+def test_fedora_ci_message_brew_build_group_test_complete(mock_session):
+    fake_msg = get_fake_msg('brew-build-group.test.complete')
+    consumer.consume(fake_msg)
+    assert mock_session.post.call_count == 1
+    all_expected_data = {
+        'data': {
+            'item': 'sha256:acbfb0c61199e5a05f07ee4ec2cdf7fb93376513b82cb5ad444e4d94e4258785',
+            'type': 'brew-build-group',
+            'repository': 'https://some.url/repo',
+            'category': 'functional',
+            'builds': [{
+                'type': 'brew-build',
+                'id': 14546276,
+                'issuer': 'alice',
+                'component': 'libselinux',
+                'nvr': 'libselinux-2.8-6.el7.x86_64',
+                'scratch': False,
+                'source': 'git+https://src.fedoraproject.org/rpms/libselinux.git?#5e0ae23a'
+            }, {
+                'type': 'brew-build',
+                'id': 14546277,
+                'issuer': 'bob',
+                'component': 'libsepol',
+                'nvr': 'libsepol-2.8-3.el7.x86_64',
+                'scratch': False,
+                'source': 'git+https://src.fedoraproject.org/rpms/libsepol.git?#5e0ae23a'
+            }],
+            'rebuild': 'https://somewhere.com/job/ci-openstack/4794/rebuild/parametrized',
+            'log': 'https://somewhere.com/job/ci-openstack/4794/console',
+            'system_os': 'Fedora-Cloud-Base-28',
+            'system_provider': 'openstack',
+            'ci_name': 'BaseOS CI',
+            'ci_url': 'https://somewhere.com',
+            'ci_team': 'BaseOS',
+            'ci_irc': '#baseosci',
+            'ci_email': 'baseos-ci@somewhere.com',
+            'recipients': ['claire', 'daniel'],
+        },
+        'groups': [{
+            'url': 'https://somewhere.com/job/ci-openstack/4794',
+            'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
+        }],
+        'outcome': 'FAILED',
+        'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
+        'testcase': {
+            'name': 'baseos-qe.baseos-ci.tier1.functional',
+            'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
+        },
+        'note': 'Some notes.'
     }
 
     assert all_expected_data == \
