@@ -47,7 +47,7 @@ are started:
 1. A volume mounted at `/etc/fedmsg.d` with any `*.py` file holding fedmsg and
    ResultsDB-Updater configuration. For an example see `fedmsg.d/config.py` or
    the documentation on [how to configure
-   fedmsg](http://www.fedmsg.com/en/latest/configuration/#).
+   fedmsg](https://fedmsg.readthedocs.io/en/stable/configuration/).
 
 2. A volume mounted at `/etc/resultsdb` holding the client certificate and
    private key files, to be used with STOMP when authenticating with the
