@@ -9,6 +9,27 @@ from requests.packages.urllib3.util.retry import Retry
 from . import config, exceptions
 
 
+# Maximum length of a text value for result data.
+MAX_RESULT_DATA_SIZE = 8192
+
+
+def validate_data(data):
+    """
+    Verifies whether data can be stored in ResultsDB.
+
+    Raises InvalidMessageError if data cannot be stored.
+
+    Even thought size for result data are not limited in database schema,
+    Postgresql index has a size limited ("Values larger than 1/3 of a buffer
+    page cannot be indexed").
+    """
+    for k, v in data.items():
+        if isinstance(v, str) and len(v) > MAX_RESULT_DATA_SIZE:
+            raise exceptions.InvalidMessageError(
+                'Value for key "{0}" is too large (maximum size is {1})'.format(
+                    k, MAX_RESULT_DATA_SIZE))
+
+
 def update_publisher_id(data, msg):
     """
     Sets data['publisher_id'] to message publisher ID (JMSXUserID) if it
@@ -47,6 +68,8 @@ def retry_session():
 
 
 def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
+    validate_data(data)
+
     payload = json.dumps({
         'testcase': testcase,
         'groups': groups or [],

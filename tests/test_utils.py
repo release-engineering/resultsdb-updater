@@ -61,3 +61,18 @@ def test_verify_topic_and_testcase_name_with_non_eng_topic():
     testcase = 'rhproduct.default.functional'
     with pytest.raises(exceptions.MissingTopicError):
         utils.verify_topic_and_testcase_name(topic, testcase)
+
+
+def test_value_too_large():
+    """
+    Large values cannot be stored in ResultsDB in a DB index.
+
+    Storing values too big for DB index also caused the POST request to get
+    stuck for some reason.
+
+    JIRA: FACTORY-5780
+    """
+    expected_error = 'Value for key "reason" is too large (maximum size is 8192)'
+    with pytest.raises(exceptions.InvalidMessageError) as excinfo:
+        utils.validate_data({'reason': '.' * 8193})
+    assert str(excinfo.value) == expected_error
