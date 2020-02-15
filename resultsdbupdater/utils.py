@@ -13,11 +13,9 @@ from . import config, exceptions
 MAX_RESULT_DATA_SIZE = 8192
 
 
-def validate_data(data):
+def crop_data(log, data):
     """
-    Verifies whether data can be stored in ResultsDB.
-
-    Raises InvalidMessageError if data cannot be stored.
+    Crops large data values so they can be stored in ResultsDB.
 
     Even thought size for result data are not limited in database schema,
     Postgresql index has a size limited ("Values larger than 1/3 of a buffer
@@ -25,9 +23,8 @@ def validate_data(data):
     """
     for k, v in data.items():
         if isinstance(v, str) and len(v) > MAX_RESULT_DATA_SIZE:
-            raise exceptions.InvalidMessageError(
-                'Value for key "{0}" is too large (maximum size is {1})'.format(
-                    k, MAX_RESULT_DATA_SIZE))
+            log.warning('Cropping large value for field %s', k)
+            data[k] = v[:MAX_RESULT_DATA_SIZE - 3] + "..."
 
 
 def update_publisher_id(data, msg):
@@ -67,8 +64,8 @@ def retry_session():
     return session
 
 
-def create_result(testcase, outcome, ref_url, data, groups=None, note=None):
-    validate_data(data)
+def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None):
+    crop_data(log, data)
 
     payload = json.dumps({
         'testcase': testcase,
@@ -171,7 +168,7 @@ def handle_ci_metrics(msg):
         test['brew_task_id'] = brew_task_id
 
         update_publisher_id(data=test, msg=msg)
-        create_result(testcase, outcome, group_tests_ref_url, test, groups)
+        create_result(msg.log, testcase, outcome, group_tests_ref_url, test, groups)
 
     # Create the overall test result
     testcase = {
@@ -189,7 +186,7 @@ def handle_ci_metrics(msg):
     }
 
     update_publisher_id(data=result_data, msg=msg)
-    create_result(testcase, overall_outcome, group_tests_ref_url, result_data, groups)
+    create_result(msg.log, testcase, overall_outcome, group_tests_ref_url, result_data, groups)
 
 
 def _test_result_outcome(topic, outcome):
@@ -537,7 +534,7 @@ def handle_ci_umb(msg):
         if issue_url:
             result_data['issue_url'] = issue_url
 
-    create_result(testcase, outcome, test_run_url, result_data, groups, msg.result.note)
+    create_result(msg.log, testcase, outcome, test_run_url, result_data, groups, msg.result.note)
 
 
 def handle_resultsdb_format(msg):
@@ -569,6 +566,7 @@ def handle_resultsdb_format(msg):
             result_data = result.get('data', {})
             update_publisher_id(data=result_data, msg=msg)
             create_result(
+                msg.log,
                 testcase,
                 result['outcome'],
                 result.get('ref_url', ''),
@@ -593,6 +591,7 @@ def handle_resultsdb_format(msg):
         update_publisher_id(data=result_data, msg=msg)
 
         create_result(
+            msg.log,
             msg.get('testcase'),
             msg.get('outcome'),
             msg.get('ref_url'),

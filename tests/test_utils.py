@@ -1,3 +1,4 @@
+import mock
 import pytest
 
 from resultsdbupdater import exceptions, utils
@@ -72,7 +73,9 @@ def test_value_too_large():
 
     JIRA: FACTORY-5780
     """
-    expected_error = 'Value for key "reason" is too large (maximum size is 8192)'
-    with pytest.raises(exceptions.InvalidMessageError) as excinfo:
-        utils.validate_data({'reason': '.' * 8193})
-    assert str(excinfo.value) == expected_error
+    data = {'reason': 'x' * 8193}
+    log = mock.Mock()
+    utils.crop_data(log, data)
+    assert len(data['reason']) == 8192
+    assert data['reason'].endswith('x...')
+    log.warning.assert_called_with('Cropping large value for field %s', 'reason')
