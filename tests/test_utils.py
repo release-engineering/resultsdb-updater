@@ -1,5 +1,7 @@
 import mock
 import pytest
+import requests
+import requests_mock
 
 from resultsdbupdater import exceptions, utils
 
@@ -79,3 +81,19 @@ def test_value_too_large():
     assert len(data['reason']) == 8192
     assert data['reason'].endswith('x...')
     log.warning.assert_called_with('Cropping large value for field %s', 'reason')
+
+
+@pytest.mark.parametrize(
+    ('status_code', 'exception', 'message'),
+    [
+        (400, exceptions.CreateResultError, 'An error occurred'),
+        (500, requests.exceptions.HTTPError, ''),
+    ]
+)
+def test_create_results_failure(status_code, exception, message):
+    url = '{0}/results'.format(utils.config.RESULTSDB_API_URL)
+    with requests_mock.Mocker() as mocked_requests:
+        mocked_requests.post(url, json={'message': message}, status_code=status_code)
+        log = mock.Mock()
+        with pytest.raises(exception, match=message):
+            utils.create_result(log, 'testcase', 'PASSED', 'http://example.com', {})
