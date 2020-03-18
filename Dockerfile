@@ -8,19 +8,25 @@ results on the CI message bus and updates ResultsDB in a standard format." \
     usage="https://github.com/release-engineering/resultsdb-updater" \
     build-date=""
 
-RUN dnf install -y \
+RUN dnf install -y --nodocs --setopt=install_weak_deps=false \
+        git-core \
         fedmsg \
         python3-pip \
         python3-requests \
         python3-semantic_version \
     && dnf clean -y all
 
-COPY ["setup.py", "requirements.txt", "/src/resultsdb-updater/"]
-COPY ["resultsdbupdater/", "/src/resultsdb-updater/resultsdbupdater/"]
+COPY . /tmp/code
 
 # Dependencies should be resolved in the dnf install step above,
 # in order to avoid pulling something unsafe from pypi.
-RUN pip install --no-deps /src/resultsdb-updater/
+RUN pushd /tmp/code \
+    && pip install --no-deps . \
+    && sed --regexp-extended -i -e "/^    version=/c\\    version='$(./version.sh)'," setup.py \
+    && popd \
+    && dnf remove -y git-core \
+    && rm -rf /tmp/*
 
+USER 1001
 VOLUME ["/etc/resultsdb", "/etc/fedmsg.d"]
-ENTRYPOINT fedmsg-hub
+CMD ["/usr/bin/fedmsg-hub"]
