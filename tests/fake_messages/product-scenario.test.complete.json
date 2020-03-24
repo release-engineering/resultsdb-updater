@@ -1,0 +1,75 @@
+{
+  "body": {
+    "msg": {
+      "contact": {
+        "name": "CSI-QE",
+        "team": "CSI-QE",
+        "docs": "https://somewhere.com",
+        "email": "https://somewhere.com/user-documentation",
+        "url": "csi-qe@somewhere.com"
+      },
+      "run": {
+        "url": "https://somewhere.com/job/testjob/1",
+        "log": "https://somewhere.com/job/testjob/1/console"
+      },
+      "artifact": {
+        "type": "product-scenario",
+        "id": "1234",
+        "products":
+        [{
+          "type": "product-build",
+          "id": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "nvr": "product1-1.0.0-1",
+          "name": "rhel",
+          "version": "8.1",
+          "release": ".01",
+          "architecture": "x86_64",
+          "phase": "testing",
+          "build": "PreGA",
+          "state": "interop-ready",
+          "repos": ["https://somewhere.com/compose/rhel-8.1/repos"],
+          "artifacts" : []
+        },
+        {
+          "type": "product-build",
+          "id": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "nvr": "product2-1.0.0-1",
+          "name": "jbosseap",
+          "version": "7.0",
+          "release": ".01",
+          "architecture": "x86_64",
+          "phase": "testing",
+          "build": "GA",
+          "state": "interop ready",
+          "artifacts": [
+              {
+                  "key": "value"
+              },
+              {
+                  "key": {"subkey": "subvalue"}
+              }
+          ]
+        }]
+      },
+      "system":
+      [{
+        "os": "RHEL-8.1.0-20190523.0-x86_64",
+        "provider": "openstack",
+        "architecture": "x86_64"
+      }],
+      "test": {
+        "category": "interoperability",
+        "namespace": "interop",
+        "type": "product-scenario",
+        "result": "passed",
+        "xunit_urls": ["https://somewhere.com/job/testjob/1/artifacts/results.xml"]
+      },
+      "generated_at": "2019-06-03T15:15:34.228Z",
+      "version": "0.2.2"
+    }
+  },
+  "headers": {
+    "message-id": "some-id"
+  },
+  "topic": "/topic/VirtualTopic.eng.ci.product-scenario.test.complete"
+}

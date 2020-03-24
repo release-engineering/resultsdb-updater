@@ -509,6 +509,22 @@ def handle_ci_umb(msg):
             'system_provider': msg.system('provider', default=None),
         }
 
+    elif item_type == 'product-scenario':
+        product_scenario = msg.get('artifact', 'id')
+        products = msg.get('artifact', 'products')
+        products_data = [json.dumps(product) for product in products]
+        item = [product.get('nvr', product['id']) for product in products]
+        item.insert(0, product_scenario)
+        result_data = {
+            'item': item,
+            'type': item_type,
+            'rebuild': msg.get('run', 'rebuild', default=None),
+            'log': msg.get('run', 'log'),
+            'system_os': msg.system('os', default=None),
+            'system_provider': msg.system('provider', default=None),
+            'products': products_data,
+        }
+
     else:
         raise exceptions.InvalidMessageError('Unknown artifact type "%s"' % item_type)
 
