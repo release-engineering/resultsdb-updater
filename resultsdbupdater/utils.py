@@ -64,6 +64,52 @@ def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None)
     post_req.raise_for_status()
 
 
+def update_common_ci_data(msg, outcome, data):
+    data.update(msg.contact_dict)
+    data['recipients'] = msg.recipients
+
+    update_publisher_id(data=data, msg=msg)
+
+    if outcome == 'ERROR':
+        data['error_reason'] = msg.error_reason[:256]
+
+        issue_url = msg.get('error', 'issue_url', default=None)
+        if issue_url:
+            data['issue_url'] = issue_url
+
+
+def brew_build_group_builds(brew_build_group, builds):
+    builds_data = []
+    for build in builds:
+        if build.get('type') != 'brew-build':
+            continue
+
+        try:
+            build_data = {
+                'brew_build_group': brew_build_group,
+
+                # required values
+                'type': build['type'],
+                'item': build['id'],
+                'issuer': build['issuer'],
+                'component': build['component'],
+                'nvr': build['nvr'],
+                'scratch': build['scratch'],
+
+                # optional values
+                'baseline': build.get('baseline'),
+                'dependencies': build.get('dependencies', []),
+                'source': build.get('source'),
+            }
+        except KeyError as e:
+            key_name = e.args[0]
+            raise exceptions.MissingMessageField(key_name)
+
+        builds_data.append(build_data)
+
+    return builds_data
+
+
 def get_first_group(description):
     get_req = session.get(
         '{0}/groups?description={1}'.format(config.RESULTSDB_API_URL, description),
@@ -289,6 +335,17 @@ def handle_ci_umb(msg):
         'url': test_run_url
     }]
 
+    testcase = {
+        'name': msg.result.testcase,
+        'ref_url': msg.get('run', 'url'),
+    }
+
+    try:
+        verify_topic_and_testcase_name(msg.topic, testcase['name'])
+    except exceptions.MissingTopicError as e:
+        # Old topics are allowed for now.
+        msg.log.warning(e)
+
     if item_type == 'productmd-compose':
         architecture = msg.system('architecture')
         variant = msg.system('variant', default=None)
@@ -464,47 +521,29 @@ def handle_ci_umb(msg):
     elif item_type == 'brew-build-group':
         item = msg.get('artifact', 'id')
         repository = msg.get('artifact', 'repository')
-        builds = msg.get('artifact', 'builds')
 
         result_data = {
             'item': item,
             'type': item_type,
             'category': msg.result.category,
             'repository': repository,
-            'builds': builds,
             'rebuild': msg.get('run', 'rebuild', default=None),
             'log': msg.get('run', 'log'),
             'system_os': msg.system('os', default=None),
             'system_provider': msg.system('provider', default=None),
         }
 
+        products = msg.get('artifact', 'builds')
+        builds_data = brew_build_group_builds(item, products)
+        for build_data in builds_data:
+            update_common_ci_data(msg, outcome, build_data)
+            create_result(
+                msg.log, testcase, outcome, test_run_url, build_data, groups, msg.result.note)
+
     else:
         raise exceptions.InvalidMessageError('Unknown artifact type "%s"' % item_type)
 
-    result_data.update(msg.contact_dict)
-    result_data['recipients'] = msg.recipients
-
-    update_publisher_id(data=result_data, msg=msg)
-
-    # construct resultsdb testcase dict
-    testcase = {
-        'name': msg.result.testcase,
-        'ref_url': msg.get('run', 'url'),
-    }
-
-    try:
-        verify_topic_and_testcase_name(msg.topic, testcase['name'])
-    except exceptions.MissingTopicError as e:
-        # Old topics are allowed for now.
-        msg.log.warning(e)
-
-    if outcome == 'ERROR':
-        result_data['error_reason'] = msg.error_reason[:256]
-
-        issue_url = msg.get('error', 'issue_url', default=None)
-        if issue_url:
-            result_data['issue_url'] = issue_url
-
+    update_common_ci_data(msg, outcome, result_data)
     create_result(msg.log, testcase, outcome, test_run_url, result_data, groups, msg.result.note)
 
 
