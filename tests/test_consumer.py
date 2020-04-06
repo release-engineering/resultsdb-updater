@@ -26,8 +26,8 @@ uuid_patcher.start()
 
 @pytest.fixture
 def mock_session():
-    with mock.patch('resultsdbupdater.utils.retry_session') as mocked:
-        yield mocked()
+    with mock.patch('resultsdbupdater.utils.session') as mocked:
+        yield mocked
 
 
 def get_fake_msg(name):

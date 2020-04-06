@@ -2,9 +2,7 @@ import json
 import uuid
 import re
 
-import requests
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from .session import session
 
 from . import config, exceptions
 
@@ -37,33 +35,6 @@ def update_publisher_id(data, msg):
         data['publisher_id'] = msg_publisher_id
 
 
-def retry_session():
-    # This will give the total wait time in minutes:
-    # >>> sum([min((0.3 * (2 ** (i - 1))), 120) / 60 for i in range(24)])
-    # >>> 30.5575
-    # This works by the using the minimum time in seconds of the backoff time
-    # and the max back off time which defaults to 120 seconds. The backoff time
-    # increases after every failed attempt.
-    session = requests.Session()
-    retry = Retry(
-        total=24,
-        read=5,
-        connect=24,
-        backoff_factor=0.3,
-        status_forcelist=(500, 502, 504),
-        method_whitelist=('GET', 'POST'),
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-
-    session.headers.update({
-        'User-Agent': config.USER_AGENT,
-    })
-
-    return session
-
-
 def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None):
     crop_data(log, data)
 
@@ -76,7 +47,6 @@ def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None)
         'data': data
     })
 
-    session = retry_session()
     post_req = session.post(
         '{0}/results'.format(config.RESULTSDB_API_URL),
         data=payload,
@@ -95,7 +65,6 @@ def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None)
 
 
 def get_first_group(description):
-    session = retry_session()
     get_req = session.get(
         '{0}/groups?description={1}'.format(config.RESULTSDB_API_URL, description),
         timeout=config.TIMEOUT,
