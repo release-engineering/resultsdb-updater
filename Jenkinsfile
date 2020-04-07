@@ -30,7 +30,7 @@ pipeline {
                 sudo dnf -y builddep $SPEC_FILE
                 # This works because the spec file is only for the python2 package
                 sudo dnf -y install $(awk '/^Requires: / {printf $2" "}' $SPEC_FILE)
-                sudo dnf -y install python3-flake8 python2-pytest
+                sudo dnf -y install python3-flake8 python2-pytest python2-requests-mock
                 '''
 
                 sh 'flake8 --ignore E731 --exclude .tox,.git'
