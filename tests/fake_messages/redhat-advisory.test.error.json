@@ -1,0 +1,42 @@
+{
+  "topic": "/topic/VirtualTopic.eng.ci.redhat-advisory.test.error",
+  "headers": {
+    "message-id": "some-id"
+  },
+  "body": {
+    "msg": {
+      "pipeline": {
+        "id": "ac11dcddf99a",
+        "name": "ci-job"
+      },
+      "run": {
+        "url": "https://example.redhat.com/tests/583271",
+        "id": 583271,
+        "log": "https://example.redhat.com/tests/583271/file/stdout.txt"
+      },
+      "version": "0.2.6",
+      "system": [],
+      "artifact": {
+        "type": "redhat-advisory",
+        "id": "RHBA-2017:01234-03"
+      },
+      "contact": {
+        "name": "Fictional Content Compressibility Test Team Jenkins (FCCTT)",
+        "url": "https://example.redhat.com",
+        "docs": "https://example.redhat.com/wiki/FCCTT",
+        "team": "Fictional Content Compressibility Testing Team",
+        "irc": "#fcctt-team-is-the-best",
+        "email": "fcctt-team@redhat.com"
+      },
+      "error": {
+        "reason": "content is not adequately compressible"
+      },
+      "test": {
+        "category": "validation",
+        "type": "compression",
+        "namespace": "fcctt"
+      },
+      "generated_at": "2020-02-24T16:40:18Z"
+    }
+  }
+}
