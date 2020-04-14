@@ -413,6 +413,21 @@ def test_full_consume_brew_build_v2_failure_msg(mock_session):
         json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
+def test_brew_build_scratch_null(mock_session):
+    fake_msg = get_fake_msg('brew-build.test.error.v2')
+    fake_msg['body']['msg']['artifact']['scratch'] = None
+
+    consumer.consume(fake_msg)
+    # Verify the post URL
+    assert mock_session.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+    # Verify the post data
+    assert mock_session.post.call_count == 1
+
+    actual_data = json.loads(mock_session.post.call_args_list[0][1]['data'])
+    assert actual_data['data']['scratch'] is False
+
+
 @pytest.mark.parametrize('spec_version', (None, '0.1.0', ''))
 def test_full_consume_platformci_success_msg(mock_session, spec_version):
     fake_msg = get_fake_msg('platformci_success_message')

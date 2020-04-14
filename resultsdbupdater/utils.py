@@ -438,7 +438,10 @@ def handle_ci_umb(msg):
         # scratch is supposed to be a bool but some messages in the wild
         # use a string instead
         if not isinstance(scratch, bool):
-            scratch = scratch.lower() == 'true'
+            try:
+                scratch = scratch.lower() == 'true'
+            except AttributeError:
+                scratch = False
 
         # we need to differentiate between scratch and non-scratch builds
         if scratch:
