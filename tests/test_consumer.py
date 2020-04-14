@@ -582,69 +582,8 @@ def test_full_consume_compose_msg(mock_session):
     assert expected_data == actual_data, actual_data
 
 
-def test_product_build_with_artifacts(mock_session):
-    fake_msg = get_fake_msg('product_build_with_artifacts')
-    consumer.consume(fake_msg)
-    # Verify the URLs called
-    assert mock_session.post.call_args_list[0][0][0] == \
-        'https://resultsdb.domain.local/api/v2.0/results'
-    # Verify the post data
-    assert mock_session.post.call_count == 1
-    url = 'https://jenkins-cnv14.192.168.42.176.nip.io/job/send-product-build-message-resultdb/3/'
-    digest = 'sha256:f2b8d884775ca10e32ea01aa43ce8e9fc06a53101f10386bd8557cfa42536729'
-    full_name = 'registry-proxy.engineering.redhat.com/rh-osbs/cnv-tech-preview-virt-cdi-controller-cpaas-mvp:v1.4.0-27'    # noqa: E501
-    source_url = 'git://pkgs.devel.redhat.com/containers/virt-cdi-controller-cpaas-mvp#628e4d697b0143aec599343b02f0dc79c0b80175'    # noqa: E501
-    expected_data = {
-        'data': {
-            'artifacts': [
-                {
-                    'component': 'CNV',
-                    'digest': digest,
-                    'full_name': full_name,
-                    'id': '994547',
-                    'issuer': 'contra/pipeline',
-                    'name': 'virt-cdi-controller-cpaas-mvp-container',
-                    'nvr': 'virt-cdi-controller-cpaas-mvp-container-v1.4.0-27',
-                    'scratch': False,
-                    'source': source_url,
-                    'type': 'redhat-container-image'
-                }
-            ],
-            'category': 'validation',
-            'ci_email': 'cpaas-ops@redhat.com',
-            'ci_irc': 'not available',
-            'ci_name': 'CPaaS',
-            'ci_team': 'CPaaS',
-            'ci_url': 'https://jenkins-cnv14.192.168.42.176.nip.io/',
-            'item': 'CNV-1.4.0-20191023.57',
-            'log': url + 'console',
-            'product': 'CNV',
-            'recipients': [],
-            'release': '20191023.57',
-            'system_architecture': 'x86_64',
-            'type': 'product-build',
-            'version': '1.4.0'
-        },
-        'groups': [
-            {
-                'url': url,
-                'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
-            }
-        ],
-        'note': '',
-        'outcome': 'PASSED',
-        'ref_url': url,
-        'testcase': {
-            'name': 'cnv.product-build.smoke-test.validation',
-            'ref_url': url
-        }
-    }
-    assert expected_data == \
-        json.loads(mock_session.post.call_args_list[0][1]['data'])
-
-
-def test_product_build_empty_artifacts(mock_session):
-    fake_msg = get_fake_msg('product_build_empty_artifacts')
+def test_product_build(mock_session):
+    fake_msg = get_fake_msg('product_build')
     consumer.consume(fake_msg)
     # Verify the URLs called
     assert mock_session.post.call_args_list[0][0][0] == \
@@ -654,7 +593,6 @@ def test_product_build_empty_artifacts(mock_session):
     url = 'https://jenkins-cnv14.192.168.42.176.nip.io/job/send-product-build-message-resultdb/3/'
     expected_data = {
         'data': {
-            'artifacts': [],
             'category': 'validation',
             'ci_email': 'cpaas-ops@redhat.com',
             'ci_irc': 'not available',
