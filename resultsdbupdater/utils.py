@@ -323,7 +323,6 @@ def handle_ci_umb(msg):
                 ('product', product),
                 ('version', version),
                 ('release', release),
-                ('artifacts', msg.get('artifact', 'artifacts', default=[])),
                 ('log', msg.get('run', 'log')),
                 ('type', item_type),
                 ('system_architecture', msg.system('architecture')),
