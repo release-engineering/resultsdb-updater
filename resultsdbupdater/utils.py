@@ -18,11 +18,21 @@ def crop_data(log, data):
     Even thought size for result data are not limited in database schema,
     Postgresql index has a size limited ("Values larger than 1/3 of a buffer
     page cannot be indexed").
+
+    Raises InvalidMessageError if non-string value is too large.
     """
     for k, v in data.items():
-        if isinstance(v, str) and len(v) > MAX_RESULT_DATA_SIZE:
-            log.warning('Cropping large value for field %s', k)
-            data[k] = v[:MAX_RESULT_DATA_SIZE - 3] + "..."
+        if isinstance(v, str):
+            if len(v) > MAX_RESULT_DATA_SIZE:
+                log.warning('Cropping large value for field %s', k)
+                data[k] = v[:MAX_RESULT_DATA_SIZE - 3] + "..."
+        elif isinstance(v, list):
+            if any(len(str(item)) > MAX_RESULT_DATA_SIZE for item in v):
+                raise exceptions.InvalidMessageError(
+                    'Result value "{0}" contains items that are too large'.format(k))
+        elif len(str(v)) > MAX_RESULT_DATA_SIZE:
+            raise exceptions.InvalidMessageError(
+                'Result value "{0}" is too large'.format(k))
 
 
 def update_publisher_id(data, msg):
