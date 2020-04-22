@@ -429,6 +429,27 @@ def handle_ci_umb(msg):
             'system_provider': msg.system('provider', default=None),
         }
 
+    elif item_type == 'redhat-advisory':
+        item = msg.get('artifact', 'id')
+        result_data = {
+            'item': item,
+            'type': item_type,
+            'category': msg.result.category,
+            'numeric_id': msg.get('artifact', 'numeric_id', default=None),
+
+            'pipeline_id': msg.get('pipeline', 'id'),
+            'pipeline_name': msg.get('pipeline', 'name'),
+            'pipeline_build': msg.get('pipeline', 'build', default=None),
+            'pipeline_stage': msg.get('pipeline', 'stage', 'name', default=None),
+
+            'log': msg.get('run', 'log'),
+            'log_raw': msg.get('run', 'log_raw', default=None),
+            'log_stream': msg.get('run', 'log_stream', default=None),
+
+            'system_os': msg.system('os', default=None),
+            'system_provider': msg.system('provider', default=None),
+        }
+
     elif item_type == 'brew-build':
         item = msg.get('artifact', 'nvr')
         component = msg.get('artifact', 'component')

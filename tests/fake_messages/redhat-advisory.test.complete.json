@@ -1,0 +1,45 @@
+{
+  "topic": "/topic/VirtualTopic.eng.ci.redhat-advisory.test.complete",
+  "headers": {
+    "message-id": "some-id"
+  },
+  "body": {
+    "msg": {
+      "pipeline": {
+        "id": "ac11dcddf99a",
+        "name": "ci-job",
+        "stage": {
+          "name": "testing"
+        }
+      },
+      "run": {
+        "url": "https://example.redhat.com/tests/583271",
+        "id": 583271,
+        "log": "https://example.redhat.com/tests/583271/file/stdout.txt",
+        "log_raw": "https://somewhere.com/583271/log_raw",
+        "log_stream": "https://somewhere.com/583271/log_stream"
+      },
+      "version": "0.2.6",
+      "system": [],
+      "artifact": {
+        "type": "redhat-advisory",
+        "id": "RHBA-2017:01234-03"
+      },
+      "contact": {
+        "name": "Fictional Content Compressibility Test Team Jenkins (FCCTT)",
+        "url": "https://example.redhat.com",
+        "docs": "https://example.redhat.com/wiki/FCCTT",
+        "team": "Fictional Content Compressibility Testing Team",
+        "irc": "#fcctt-team-is-the-best",
+        "email": "fcctt-team@redhat.com"
+      },
+      "test": {
+        "category": "validation",
+        "type": "compression",
+        "namespace": "fcctt",
+        "result": "passed"
+      },
+      "generated_at": "2020-02-24T16:40:18Z"
+    }
+  }
+}

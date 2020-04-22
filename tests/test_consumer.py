@@ -913,6 +913,93 @@ def test_redhat_container_image_msg(mock_session):
         json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
+def test_redhat_advisory_complete_msg(mock_session):
+    fake_msg = get_fake_msg('redhat-advisory.test.complete')
+    consumer.consume(fake_msg)
+
+    assert mock_session.post.call_count == 1
+    all_expected_data = {
+        'data': {
+            'category': 'validation',
+            'ci_email': 'fcctt-team@redhat.com',
+            'ci_irc': '#fcctt-team-is-the-best',
+            'ci_name': 'Fictional Content Compressibility Test Team Jenkins (FCCTT)',
+            'ci_team': 'Fictional Content Compressibility Testing Team',
+            'ci_url': 'https://example.redhat.com',
+            'item': 'RHBA-2017:01234-03',
+            'log': 'https://example.redhat.com/tests/583271/file/stdout.txt',
+            'log_raw': 'https://somewhere.com/583271/log_raw',
+            'log_stream': 'https://somewhere.com/583271/log_stream',
+            'numeric_id': None,
+            'pipeline_build': None,
+            'pipeline_id': 'ac11dcddf99a',
+            'pipeline_name': 'ci-job',
+            'pipeline_stage': 'testing',
+            'recipients': [],
+            'system_os': None,
+            'system_provider': None,
+            'type': 'redhat-advisory'
+        },
+        'groups': [{
+            'url': 'https://example.redhat.com/tests/583271',
+            'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
+        }],
+        'note': '',
+        'outcome': 'PASSED',
+        'ref_url': 'https://example.redhat.com/tests/583271',
+        'testcase': {
+            'name': 'fcctt.compression.validation',
+            'ref_url': 'https://example.redhat.com/tests/583271'
+        },
+    }
+    assert all_expected_data == \
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
+
+
+def test_redhat_advisory_error_msg(mock_session):
+    fake_msg = get_fake_msg('redhat-advisory.test.error')
+    consumer.consume(fake_msg)
+
+    assert mock_session.post.call_count == 1
+    all_expected_data = {
+        'data': {
+            'category': 'validation',
+            'ci_email': 'fcctt-team@redhat.com',
+            'ci_irc': '#fcctt-team-is-the-best',
+            'ci_name': 'Fictional Content Compressibility Test Team Jenkins (FCCTT)',
+            'ci_team': 'Fictional Content Compressibility Testing Team',
+            'ci_url': 'https://example.redhat.com',
+            'error_reason': 'content is not adequately compressible',
+            'item': 'RHBA-2017:01234-03',
+            'log': 'https://example.redhat.com/tests/583271/file/stdout.txt',
+            'log_raw': None,
+            'log_stream': None,
+            'numeric_id': None,
+            'pipeline_build': None,
+            'pipeline_id': 'ac11dcddf99a',
+            'pipeline_name': 'ci-job',
+            'pipeline_stage': None,
+            'recipients': [],
+            'system_os': None,
+            'system_provider': None,
+            'type': 'redhat-advisory'
+        },
+        'groups': [{
+            'url': 'https://example.redhat.com/tests/583271',
+            'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37'
+        }],
+        'note': '',
+        'outcome': 'ERROR',
+        'ref_url': 'https://example.redhat.com/tests/583271',
+        'testcase': {
+            'name': 'fcctt.compression.validation',
+            'ref_url': 'https://example.redhat.com/tests/583271'
+        },
+    }
+    assert all_expected_data == \
+        json.loads(mock_session.post.call_args_list[0][1]['data'])
+
+
 def test_container_image_msg(mock_session):
     fake_msg = get_fake_msg('container_image_message')
     consumer.consume(fake_msg)
