@@ -66,7 +66,7 @@ def test_verify_topic_and_testcase_name_with_non_eng_topic():
         utils.verify_topic_and_testcase_name(topic, testcase)
 
 
-def test_value_too_large():
+def test_string_too_large():
     """
     Large values cannot be stored in ResultsDB in a DB index.
 
@@ -81,6 +81,37 @@ def test_value_too_large():
     assert len(data['reason']) == 8192
     assert data['reason'].endswith('x...')
     log.warning.assert_called_with('Cropping large value for field %s', 'reason')
+
+
+def test_dict_too_large():
+    """
+    Raises an exception if the dict data is too large.
+
+    JIRA: RHELWF-558
+    """
+    data = {'artifact': {'x': 'x' * 8192}}
+    log = mock.Mock()
+    message = 'Result value "artifact" is too large'
+    with pytest.raises(exceptions.InvalidMessageError, match=message):
+        utils.crop_data(log, data)
+
+
+def test_list_too_large():
+    """
+    Raises an exception if the dict data is too large.
+
+    JIRA: RHELWF-558
+    """
+    data = {'artifact': ['x', 'x' * 8192]}
+    log = mock.Mock()
+    utils.crop_data(log, data)
+    assert data == {'artifact': ['x', 'x' * 8192]}
+
+    data = {'artifact': ['x', 'x' * 8193]}
+    log = mock.Mock()
+    message = 'Result value "artifact" contains items that are too large'
+    with pytest.raises(exceptions.InvalidMessageError, match=message):
+        utils.crop_data(log, data)
 
 
 @pytest.mark.parametrize(
