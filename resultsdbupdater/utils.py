@@ -11,6 +11,32 @@ from . import config, exceptions
 MAX_RESULT_DATA_SIZE = 8192
 
 
+def json_serialize_data_item(item):
+    if isinstance(item, list):
+        return [
+            json.dumps(v) if isinstance(v, dict) else v
+            for v in item
+        ]
+
+    if isinstance(item, dict):
+        return json.dumps(item)
+
+    return item
+
+
+def json_serialize_data(data):
+    """
+    Serialize data correctly for ResultsDB.
+
+    Results data should be only strings or lists of strings, otherwise the data
+    are stored as string representations of Python objects in ResultsDB.
+    """
+    return {
+        k: json_serialize_data_item(v)
+        for k, v in data.items()
+    }
+
+
 def crop_data(log, data):
     """
     Crops large data values so they can be stored in ResultsDB.
@@ -46,6 +72,7 @@ def update_publisher_id(data, msg):
 
 
 def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None):
+    data = json_serialize_data(data)
     crop_data(log, data)
 
     payload = json.dumps({

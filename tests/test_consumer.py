@@ -1194,29 +1194,15 @@ def test_fedora_ci_message_brew_build_group_test_complete(mock_session):
     fake_msg = get_fake_msg('brew-build-group.test.complete')
     consumer.consume(fake_msg)
     assert mock_session.post.call_count == 1
+    builds = fake_msg['body']['msg']['artifact']['builds']
+    builds = [json.dumps(item) for item in builds]
     all_expected_data = {
         'data': {
             'item': 'sha256:acbfb0c61199e5a05f07ee4ec2cdf7fb93376513b82cb5ad444e4d94e4258785',
             'type': 'brew-build-group',
             'repository': 'https://some.url/repo',
             'category': 'functional',
-            'builds': [{
-                'type': 'brew-build',
-                'id': 14546276,
-                'issuer': 'alice',
-                'component': 'libselinux',
-                'nvr': 'libselinux-2.8-6.el7.x86_64',
-                'scratch': False,
-                'source': 'git+https://src.fedoraproject.org/rpms/libselinux.git?#5e0ae23a'
-            }, {
-                'type': 'brew-build',
-                'id': 14546277,
-                'issuer': 'bob',
-                'component': 'libsepol',
-                'nvr': 'libsepol-2.8-3.el7.x86_64',
-                'scratch': False,
-                'source': 'git+https://src.fedoraproject.org/rpms/libsepol.git?#5e0ae23a'
-            }],
+            'builds': builds,
             'rebuild': 'https://somewhere.com/job/ci-openstack/4794/rebuild/parametrized',
             'log': 'https://somewhere.com/job/ci-openstack/4794/console',
             'system_os': 'Fedora-Cloud-Base-28',
