@@ -1,0 +1,52 @@
+{
+  "topic": "/topic/VirtualTopic.eng.ci.productmd-compose.test.complete",
+  "headers": {
+    "CI_NAME": "arch=x86_64,variant=BaseOS",
+    "CI_TYPE": "tier-2-validation-testing-done",
+    "JMSXUserID": "msg-client-rtt",
+    "destination": "/topic/VirtualTopic.eng.ci.productmd-compose.test.complete",
+    "message-id": "ID:server.domain.local-16295-1512954431690-2:858666:0:0:1",
+    "original-destination": "/topic/VirtualTopic.eng.ci.productmd-compose.test.complete",
+    "persistent": "true",
+    "priority": "4",
+    "subscription": "/queue/Consumer.client-datanommer.upshift-prod.VirtualTopic.eng.>",
+    "timestamp": "1589280453399",
+    "type": "productmd-compose"
+  },
+  "body": {
+    "msg": {
+      "artifact": {
+        "compose_type": "gate",
+        "id": "RHEL-X.0-20200512.1",
+        "type": "productmd-compose"
+      },
+      "contact": {
+        "email": "release-test-team@example.com",
+        "name": "RTT CI",
+        "team": "RTT",
+        "url": "https://rtt-jenkins"
+      },
+      "generated_at": "2020-05-12T10:47:32+0000",
+      "label": "BaseOS-x86_64",
+      "run": {
+        "url": "https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/",
+        "log": "https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/console"
+      },
+      "system": [
+        {
+          "architecture": "x86_64",
+          "provider": "beaker",
+          "variant": "BaseOS"
+        }
+      ],
+      "test": {
+        "type": "installability",
+        "scenario": "BaseOS x86_64",
+        "category": "validation",
+        "result": "passed",
+        "namespace": "rtt"
+      },
+      "version": "0.2.5"
+    }
+  }
+}

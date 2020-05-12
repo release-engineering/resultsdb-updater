@@ -597,6 +597,52 @@ def test_full_consume_compose_msg(mock_session):
     assert expected_data == actual_data, actual_data
 
 
+def test_full_consume_compose_msg_v2(mock_session):
+    fake_msg = get_fake_msg('compose_message_v2')
+    consumer.consume(fake_msg)
+    # Verify the URLs called
+    assert mock_session.post.call_args_list[0][0][0] == \
+        'https://resultsdb.domain.local/api/v2.0/results'
+    # Verify the post data
+    assert mock_session.post.call_count == 1
+    url = 'https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/'
+    expected_data = {
+        'testcase': {
+            'name': 'rtt.installability.validation',
+            'ref_url': url,
+        },
+        'groups': [{
+            'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',
+            'url': url
+        }],
+        'outcome': 'PASSED',
+        'ref_url': 'https://rtt-jenkins/job/compose-RHEL-X.0-rel-eng-tier2-acceptance/1/',
+        'note': '',
+        'data': {
+            'item': 'RHEL-X.0-20200512.1/BaseOS/x86_64',
+            'productmd.compose.id': 'RHEL-X.0-20200512.1',
+            'type': 'productmd-compose',
+            'category': 'validation',
+            'log': url + 'console',
+            'system_provider': 'beaker',
+            'system_variant': 'BaseOS',
+            'system_architecture': 'x86_64',
+            'scenario': 'BaseOS x86_64',
+            'ci_name': 'RTT CI',
+            'ci_team': 'RTT',
+            'ci_url': 'https://rtt-jenkins',
+            'ci_irc': 'not available',
+            'ci_email': 'release-test-team@example.com',
+            'publisher_id': 'msg-client-rtt',
+            'recipients': []
+        }
+    }
+
+    actual_data = json.loads(
+        mock_session.post.call_args_list[0][1]['data'])
+    assert expected_data == actual_data, actual_data
+
+
 def test_product_build(mock_session):
     fake_msg = get_fake_msg('product_build')
     consumer.consume(fake_msg)
