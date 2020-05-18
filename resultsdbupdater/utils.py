@@ -517,6 +517,9 @@ def handle_ci_umb(msg):
 
     update_publisher_id(data=result_data, msg=msg)
 
+    if msg.result.scenario is not None:
+        result_data['scenario'] = msg.result.scenario
+
     # construct resultsdb testcase dict
     testcase = {
         'name': msg.result.testcase,

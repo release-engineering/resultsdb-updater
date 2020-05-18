@@ -61,6 +61,10 @@ class Result(object):
     def note(self):
         return self.get('note', default='')
 
+    @property
+    def scenario(self):
+        return self.get('scenario', default=None)
+
 
 class ResultV2(Result):
     def get(self, *args, **kwargs):
