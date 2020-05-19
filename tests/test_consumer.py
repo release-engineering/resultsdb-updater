@@ -1314,3 +1314,59 @@ def test_unexpected_status(mock_session, caplog):
     consumer.consume(fake_msg)
     mock_session.post.assert_not_called()
     assert 'Unexpected result status/outcome, expected a string, got: None' in caplog.text
+
+
+def test_product_scenario_msg(mock_session):
+    fake_msg = get_fake_msg('product-scenario.test.complete')
+    consumer.consume(fake_msg)
+
+    expected_data = [
+        {
+            "testcase": {
+                "name": "interop.product-scenario.interoperability",
+                "ref_url": "https://somewhere.com/job/testjob/1"
+            },
+            "groups": [
+                {
+                    "uuid": "1bb0a6a5-3287-4321-9dc5-72258a302a37",
+                    "url": "https://somewhere.com/job/testjob/1"
+                }
+            ],
+            "outcome": "PASSED",
+            "ref_url": "https://somewhere.com/job/testjob/1",
+            "note": "",
+            "data": {
+                "item": ["1234", "product1-1.0.0-1", "product2-1.0.0-1"],
+                "type": "product-scenario",
+                "rebuild": None,
+                "log": "https://somewhere.com/job/testjob/1/console",
+                "system_os": "RHEL-8.1.0-20190523.0-x86_64",
+                "system_provider": "openstack",
+                "ci_name": "CSI-QE",
+                "ci_team": "CSI-QE",
+                "ci_url": "csi-qe@somewhere.com",
+                "ci_irc": "not available",
+                "ci_email": "https://somewhere.com/user-documentation",
+                "recipients": [],
+
+                "products": [
+                    mock.ANY,
+                    mock.ANY,
+                ],
+            }
+        }
+    ]
+
+    actual_data = [
+        json.loads(args[1]['data'])
+        for args in mock_session.post.call_args_list
+    ]
+
+    assert expected_data == actual_data
+
+    expected_products = fake_msg["body"]["msg"]["artifact"]["products"]
+    actual_products = [
+        json.loads(product)
+        for product in actual_data[0]["data"]["products"]
+    ]
+    assert expected_products == actual_products
