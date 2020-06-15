@@ -1,4 +1,4 @@
-fedmsg
+fedmsg>=1.1.2
 moksha.hub
 psutil
 requests
