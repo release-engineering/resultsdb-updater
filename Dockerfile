@@ -14,6 +14,9 @@ RUN dnf install -y --nodocs --setopt=install_weak_deps=false \
         python3-pip \
         python3-requests \
         python3-semantic_version \
+    # replace fedmsg with latest bug-fixed version
+    && dnf remove -y --setopt=clean_requirements_on_remove=false fedmsg python3-fedmsg \
+    && pip install --no-deps "fedmsg>=1.1.2" \
     && dnf clean -y all
 
 COPY . /tmp/code
@@ -29,4 +32,4 @@ RUN pushd /tmp/code \
 
 USER 1001
 VOLUME ["/etc/resultsdb", "/etc/fedmsg.d"]
-CMD ["/usr/bin/fedmsg-hub"]
+CMD ["fedmsg-hub"]
