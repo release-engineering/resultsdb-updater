@@ -15,8 +15,9 @@ def _retry_session():
     session = requests.Session()
     retry = Retry(
         total=24,
-        read=5,
+        read=24,
         connect=24,
+        status=24,
         backoff_factor=0.3,
         status_forcelist=(500, 502, 504),
         method_whitelist=('GET', 'POST'),
