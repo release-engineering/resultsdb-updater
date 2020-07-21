@@ -1277,10 +1277,14 @@ def test_fedora_ci_message_brew_build_group_test_complete(mock_session):
         json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-def test_validate_throws_only_runtime_warning(mock_session, caplog):
+def test_consuming_invalid_messages(mock_session, caplog):
     with pytest.raises(RuntimeWarning):
-        consumer.validate({'body': None})
+        consumer.validate({})
     assert 'Failed to validate message: {' in caplog.text
+
+    consumer.validate({'body': None})
+    consumer.consume({'body': None})
+    consumer.consume({})
 
 
 def test_results_create_failed(mock_session, caplog):
