@@ -1374,3 +1374,18 @@ def test_product_scenario_msg(mock_session):
         for product in actual_data[0]["data"]["products"]
     ]
     assert expected_products == actual_products
+
+
+def test_unsupported_version(caplog):
+    """
+    Versions 1.0.0 and greater are ignored here and consumed by a new service.
+    """
+    fake_msg = get_fake_msg('brew-build.test.error.v2')
+    fake_msg['body']['msg']['version'] = '1.0.0'
+
+    with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
+        consumer.consume(fake_msg)
+        mock_create_result.assert_not_called()
+        assert any(
+            'Unsupported version: 1.0.0' in rec.message
+            for rec in caplog.records)
