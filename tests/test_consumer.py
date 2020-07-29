@@ -1277,10 +1277,14 @@ def test_fedora_ci_message_brew_build_group_test_complete(mock_session):
         json.loads(mock_session.post.call_args_list[0][1]['data'])
 
 
-def test_validate_throws_only_runtime_warning(mock_session, caplog):
+def test_consuming_invalid_messages(mock_session, caplog):
     with pytest.raises(RuntimeWarning):
-        consumer.validate({'body': None})
+        consumer.validate({})
     assert 'Failed to validate message: {' in caplog.text
+
+    consumer.validate({'body': None})
+    consumer.consume({'body': None})
+    consumer.consume({})
 
 
 def test_results_create_failed(mock_session, caplog):
@@ -1370,3 +1374,18 @@ def test_product_scenario_msg(mock_session):
         for product in actual_data[0]["data"]["products"]
     ]
     assert expected_products == actual_products
+
+
+def test_unsupported_version(caplog):
+    """
+    Versions 1.0.0 and greater are ignored here and consumed by a new service.
+    """
+    fake_msg = get_fake_msg('brew-build.test.error.v2')
+    fake_msg['body']['msg']['version'] = '1.0.0'
+
+    with mock.patch('resultsdbupdater.utils.create_result') as mock_create_result:
+        consumer.consume(fake_msg)
+        mock_create_result.assert_not_called()
+        assert any(
+            'Unsupported version: 1.0.0' in rec.message
+            for rec in caplog.records)

@@ -315,6 +315,10 @@ def handle_ci_umb(msg):
             'Missing required version information, using default version %s'
         ), msg.version)
 
+    if isinstance(msg.version, str) and msg.version and not msg.version.startswith('0.'):
+        raise exceptions.InvalidMessageError(
+            'Unsupported version: %s (supported are only versions less than 1.0.0)' % msg.version)
+
     item_type = msg.get('artifact', 'type')
     test_run_url = msg.get('run', 'url')
 
