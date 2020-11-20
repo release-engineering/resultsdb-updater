@@ -24,8 +24,8 @@ COPY . /tmp/code
 # Dependencies should be resolved in the dnf install step above,
 # in order to avoid pulling something unsafe from pypi.
 RUN pushd /tmp/code \
-    && pip install --no-deps . \
     && sed --regexp-extended -i -e "/^    version=/c\\    version='$(./version.sh)'," setup.py \
+    && pip install --no-deps . \
     && popd \
     && dnf remove -y git-core \
     && rm -rf /tmp/*
