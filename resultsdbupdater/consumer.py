@@ -73,8 +73,8 @@ class CIConsumer(fedmsg.consumers.FedmsgConsumer):
 
     def consume(self, msg_data):
         try:
+            config.LOGGER.debug('Message received: %s', msg_data)
             msg = create_message(msg_data)
-            msg.log.info('Message received')
             msg.log.debug('%s', msg)
 
             self._consume_helper(msg)

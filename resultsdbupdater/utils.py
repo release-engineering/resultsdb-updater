@@ -84,6 +84,8 @@ def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None)
         'data': data
     })
 
+    log.debug('Requesting new result: %s', payload)
+
     post_req = session.post(
         '{0}/results'.format(config.RESULTSDB_API_URL),
         data=payload,
@@ -93,6 +95,8 @@ def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None)
         auth=config.RESULTSDB_AUTH,
         timeout=config.TIMEOUT,
         verify=config.TRUSTED_CA)
+
+    log.debug('New result requested (HTTP %s)', post_req.status_code)
 
     if post_req.status_code == 400:
         message = post_req.json().get('message')
