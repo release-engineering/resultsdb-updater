@@ -434,7 +434,7 @@ def handle_ci_umb(msg):
             'tag': msg.get('artifact', 'tag', default=None),
             'issuer': msg.get('artifact', 'issuer'),
             'component': msg.get('artifact', 'component'),
-            'name': msg.get('artifact', 'name'),
+            'name': msg.get('artifact', 'name', default=None),
             'namespace': msg.get('artifact', 'namespace'),
             'scratch': msg.get('artifact', 'scratch'),
             'nvr': msg.get('artifact', 'nvr'),
