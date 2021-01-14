@@ -1,4 +1,4 @@
-FROM fedora:31
+FROM registry.fedoraproject.org/fedora:33
 LABEL \
     name="ResultsDB-Updater application" \
     vendor="ResultsDB-Updater developers" \
