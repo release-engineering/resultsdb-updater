@@ -1,3 +1,4 @@
+from fnmatch import fnmatch
 import json
 import uuid
 import re
@@ -71,7 +72,12 @@ def update_publisher_id(data, msg):
         data['publisher_id'] = msg_publisher_id
 
 
-def create_result(log, testcase, outcome, ref_url, data, groups=None, note=None):
+def create_result(msg, testcase, outcome, ref_url, data, groups=None, note=None):
+    msg_publisher_id = msg.header('JMSXUserID')
+    testcase_name = testcase['name'] if isinstance(testcase, dict) else testcase
+    verify_private_testcase(msg_publisher_id, testcase_name)
+
+    log = msg.log
     data = json_serialize_data(data)
     crop_data(log, data)
 
@@ -178,7 +184,7 @@ def handle_ci_metrics(msg):
         test['brew_task_id'] = brew_task_id
 
         update_publisher_id(data=test, msg=msg)
-        create_result(msg.log, testcase, outcome, group_tests_ref_url, test, groups)
+        create_result(msg, testcase, outcome, group_tests_ref_url, test, groups)
 
     # Create the overall test result
     testcase = {
@@ -196,7 +202,7 @@ def handle_ci_metrics(msg):
     }
 
     update_publisher_id(data=result_data, msg=msg)
-    create_result(msg.log, testcase, overall_outcome, group_tests_ref_url, result_data, groups)
+    create_result(msg, testcase, overall_outcome, group_tests_ref_url, result_data, groups)
 
 
 def _test_result_outcome(topic, outcome):
@@ -304,6 +310,16 @@ def verify_topic_and_testcase_name(topic, testcase_name):
             testcase_namespace=testcase_namespace,
             topic=topic,
             topic_namespace=topic_namespace)
+
+
+def verify_private_testcase(msg_publisher_id, testcase_name):
+    for testcase_glob, publisher_id in config.PRIVATE_TESTCASE_PUBLISHER_MAP:
+        if fnmatch(testcase_name, testcase_glob) and publisher_id != msg_publisher_id:
+            raise exceptions.PrivateTestCaseMismatchError(
+                publisher_id=publisher_id,
+                msg_publisher_id=msg_publisher_id,
+                testcase_glob=testcase_glob,
+                testcase_name=testcase_name)
 
 
 def handle_ci_umb(msg):
@@ -590,7 +606,7 @@ def handle_ci_umb(msg):
         if issue_url:
             result_data['issue_url'] = issue_url
 
-    create_result(msg.log, testcase, outcome, test_run_url, result_data, groups, msg.result.note)
+    create_result(msg, testcase, outcome, test_run_url, result_data, groups, msg.result.note)
 
 
 def handle_resultsdb_format(msg):
@@ -622,7 +638,7 @@ def handle_resultsdb_format(msg):
             result_data = result.get('data', {})
             update_publisher_id(data=result_data, msg=msg)
             create_result(
-                msg.log,
+                msg,
                 testcase,
                 result['outcome'],
                 result.get('ref_url', ''),
@@ -647,7 +663,7 @@ def handle_resultsdb_format(msg):
         update_publisher_id(data=result_data, msg=msg)
 
         create_result(
-            msg.log,
+            msg,
             msg.get('testcase'),
             msg.get('outcome'),
             msg.get('ref_url'),

@@ -36,6 +36,18 @@ class TopicMismatchError(InvalidMessageError):
         ).format(**self.kwargs)
 
 
+class PrivateTestCaseMismatchError(InvalidMessageError):
+    def __init__(self, **kwargs):
+        super(PrivateTestCaseMismatchError, self).__init__()
+        self.kwargs = kwargs
+
+    def __str__(self):
+        return (
+            'Test case "{testcase_name}" is private (matches "{testcase_glob}") but '
+            'message JMSXUserID "{msg_publisher_id}" does not match "{publisher_id}"'
+        ).format(**self.kwargs)
+
+
 class CreateResultError(RuntimeError):
     def __init__(self, msg, payload):
         super(CreateResultError, self).__init__()

@@ -1,5 +1,6 @@
 import mock
 import pytest
+import re
 import requests
 import requests_mock
 
@@ -66,6 +67,21 @@ def test_verify_topic_and_testcase_name_with_non_eng_topic():
         utils.verify_topic_and_testcase_name(topic, testcase)
 
 
+def test_verify_private_testcase_match():
+    msg_publisher_id = 'msg-producer-prodsec'
+    utils.verify_private_testcase(msg_publisher_id, 'prodsec.test')
+
+
+def test_verify_private_testcase_mismatch():
+    bad_msg_publisher_id = 'msg-producer-bad'
+    message = re.escape(
+        'Test case "prodsec.test" is private (matches "prodsec.*") but '
+        'message JMSXUserID "msg-producer-bad" does not match "msg-producer-prodsec"'
+    )
+    with pytest.raises(exceptions.PrivateTestCaseMismatchError, match=message):
+        utils.verify_private_testcase(bad_msg_publisher_id, 'prodsec.test')
+
+
 def test_string_too_large():
     """
     Large values cannot be stored in ResultsDB in a DB index.
@@ -125,6 +141,6 @@ def test_create_results_failure(status_code, exception, message):
     url = '{0}/results'.format(utils.config.RESULTSDB_API_URL)
     with requests_mock.Mocker() as mocked_requests:
         mocked_requests.post(url, json={'message': message}, status_code=status_code)
-        log = mock.Mock()
+        msg = mock.Mock()
         with pytest.raises(exception, match=message):
-            utils.create_result(log, 'testcase', 'PASSED', 'http://example.com', {})
+            utils.create_result(msg, 'testcase', 'PASSED', 'http://example.com', {})
