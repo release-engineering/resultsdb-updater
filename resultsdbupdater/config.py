@@ -53,3 +53,8 @@ RESULTSDB_AUTH = get_http_auth(
     CONFIG.get('resultsdb-updater.resultsdb_user'),
     CONFIG.get('resultsdb-updater.resultsdb_pass'),
     RESULTSDB_API_URL)
+
+# Private test case (glob pattern) always require to match JMSXUserID in
+# messages.
+PRIVATE_TESTCASE_PUBLISHER_MAP = CONFIG.get(
+    'resultsdb-updater.private_testcase_publisher_map', ())

@@ -24,4 +24,7 @@ config = {
     # 'resultsdb-updater.resultsdb_pass': 'password',
     'resultsdb-updater.topics': [],
     'resultsdb-updater.requests_timeout': 15,
+    'resultsdb-updater.private_testcase_publisher_map': (
+        ('prodsec.*', 'msg-producer-prodsec'),
+    ),
 }
