@@ -44,6 +44,7 @@
         "scenario": "BaseOS x86_64",
         "category": "validation",
         "result": "passed",
+        "docs": "https://example.com/test-case-documentation",
         "namespace": "rtt"
       },
       "version": "0.2.5"
