@@ -590,8 +590,10 @@ def handle_ci_umb(msg):
     # construct resultsdb testcase dict
     testcase = {
         'name': msg.result.testcase,
-        'ref_url': msg.get('run', 'url'),
     }
+    testcase_ref_url = msg.result.get('docs', default=None)
+    if isinstance(testcase_ref_url, str):
+        testcase['ref_url'] = testcase_ref_url
 
     try:
         verify_topic_and_testcase_name(msg.topic, testcase['name'])

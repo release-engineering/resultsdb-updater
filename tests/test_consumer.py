@@ -357,7 +357,6 @@ def test_full_consume_pipeline_failure_msg(mock_session):
         'ref_url': 'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/',
         'testcase': {
             'name': 'contra.pipeline.functional',
-            'ref_url': 'https://domain.redhat.com/job/downstream-rhel9000-build-pipeline/34/',
         },
     }
 
@@ -405,7 +404,7 @@ def test_full_consume_brew_build_v2_failure_msg(mock_session):
         'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
         'testcase': {
             'name': 'baseos-qe.baseos-ci.tier1.functional',
-            'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
+            'ref_url': 'https://my-ci-system/docs/contribute-retrigger-reproduce',
         },
     }
 
@@ -480,8 +479,6 @@ def test_full_consume_platformci_success_msg(mock_session, spec_version):
             'job/ci-openstack/8465/'),
         'testcase': {
             'name': 'baseos.tier1.functional',
-            'ref_url': 'https://baseos-jenkins.rhev-ci-vms.datacenter.redhat.com/'
-                       'job/ci-openstack/8465/',
         },
     }
 
@@ -534,9 +531,6 @@ def test_full_consume_osci_success_msg(mock_session):
             'job/pipeline/21/'),
         'testcase': {
             'name': 'osci.pipeline.functional',
-            'ref_url': (
-                'https://some-jenkins.osci.redhat.com/'
-                'job/pipeline/21/'),
         },
     }
 
@@ -564,7 +558,7 @@ def test_full_consume_compose_msg(mock_session):
     expected_data = {
         'testcase': {
             'name': 'rtt.tier2.functional',
-            'ref_url': url,
+            'ref_url': 'https://example.com/test-case-documentation',
         },
         'groups': [
             {
@@ -609,7 +603,7 @@ def test_full_consume_compose_msg_v2(mock_session):
     expected_data = {
         'testcase': {
             'name': 'rtt.installability.validation',
-            'ref_url': url,
+            'ref_url': 'https://example.com/test-case-documentation',
         },
         'groups': [{
             'uuid': '1bb0a6a5-3287-4321-9dc5-72258a302a37',
@@ -680,7 +674,6 @@ def test_product_build(mock_session):
         'ref_url': url,
         'testcase': {
             'name': 'cnv.product-build.smoke-test.validation',
-            'ref_url': url
         }
     }
     assert expected_data == \
@@ -726,7 +719,6 @@ def test_queued_outcome_msg(mock_session):
         'ref_url': 'https://some-jenkins.redhat.com/job/ci-brew-dispatcher/125157/',
         'testcase': {
             'name': 'baseos-ci.brew-build.covscan.static-analysis',
-            'ref_url': 'https://some-jenkins.redhat.com/job/ci-brew-dispatcher/125157/'
         }
     }
 
@@ -773,7 +765,6 @@ def test_queued_running_msg(mock_session):
         'ref_url': 'https://some-jenkins.redhat.com/job/ci-covscan/109087/',
         'testcase': {
             'name': 'baseos-ci.brew-build.covscan.static-analysis',
-            'ref_url': 'https://some-jenkins.redhat.com/job/ci-covscan/109087/'
         }
     }
 
@@ -793,7 +784,6 @@ def test_pelc_component_version_msg(mock_session):
     expected_data = {
         'testcase': {
             'name': 'pelc.scan.validation',
-            'ref_url': url
         },
         'groups': [
             {
@@ -881,9 +871,6 @@ def test_full_consume_redhat_module_success_msg(mock_session):
             'https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/ci-openstack-mbs/45/'),
         'testcase': {
             'name': 'baseos-ci.redhat-module.tier1.functional',
-            'ref_url': (
-                'https://baseos-jenkins.rhev-ci-vms.eng.rdu2.redhat.com/job/'
-                'ci-openstack-mbs/45/'),
         },
     }
 
@@ -952,7 +939,6 @@ def test_redhat_container_image_msg(mock_session):
         'ref_url': 'https://somewhere.com/job/ci-job/4794',
         'testcase': {
             'name': 'factory2.c3i-ci.tier1.functional',
-            'ref_url': 'https://somewhere.com/job/ci-job/4794'
         },
     }
     assert all_expected_data == \
@@ -995,7 +981,6 @@ def test_redhat_advisory_complete_msg(mock_session):
         'ref_url': 'https://example.redhat.com/tests/583271',
         'testcase': {
             'name': 'fcctt.compression.validation',
-            'ref_url': 'https://example.redhat.com/tests/583271'
         },
     }
     assert all_expected_data == \
@@ -1039,7 +1024,6 @@ def test_redhat_advisory_error_msg(mock_session):
         'ref_url': 'https://example.redhat.com/tests/583271',
         'testcase': {
             'name': 'fcctt.compression.validation',
-            'ref_url': 'https://example.redhat.com/tests/583271'
         },
     }
     assert all_expected_data == \
@@ -1059,8 +1043,6 @@ def test_container_image_msg(mock_session):
         "ref_url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job/waiverdb-test"
                    "/job/waiverdb-test-stage-waiverdb-dev-integration-test/104/",
         "testcase": {
-            "ref_url": "https://jenkins-waiverdb-test.cloud.paas.upshift.redhat.com/job/"
-                       "waiverdb-test/job/waiverdb-test-stage-waiverdb-dev-integration-test/104/",
             "name": "waiverdb-test.tier1.integration"
         },
         "groups": [
@@ -1227,7 +1209,6 @@ def test_fedora_ci_message_brew_build_test_complete_version_2(mock_session):
             'job/pipeline/170/'),
         'testcase': {
             'name': 'team.build.tier0.functional',
-            'ref_url': 'https://jenkins/job/pipeline/170/',
         },
         'note': ''
     }
@@ -1268,7 +1249,6 @@ def test_fedora_ci_message_brew_build_group_test_complete(mock_session):
         'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
         'testcase': {
             'name': 'baseos-qe.baseos-ci.tier1.functional',
-            'ref_url': 'https://somewhere.com/job/ci-openstack/4794',
         },
         'note': 'Some notes.'
     }
@@ -1328,7 +1308,6 @@ def test_product_scenario_msg(mock_session):
         {
             "testcase": {
                 "name": "interop.product-scenario.interoperability",
-                "ref_url": "https://somewhere.com/job/testjob/1"
             },
             "groups": [
                 {

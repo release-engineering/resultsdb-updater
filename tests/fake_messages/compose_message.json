@@ -32,6 +32,7 @@
       "category": "functional",
       "status": "passed",
       "namespace": "rtt",
+      "docs": "https://example.com/test-case-documentation",
       "version": "0.1.0"
     }
   }
